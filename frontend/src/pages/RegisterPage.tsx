@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import AuthBackground from '../components/AuthBackground';
 import Logo from '../components/Logo';
+import './RegisterPage.css';
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState('');
-  const [email, setEmail]       = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -16,20 +17,19 @@ const RegisterPage = () => {
 
   return (
     <AuthBackground>
-      <div className="flex items-center justify-center min-h-screen px-4">
-        <div className="w-full max-w-md bg-gray-900 bg-opacity-75 p-8 rounded-lg border border-teal-400">
-          <div className="flex flex-col items-center">
+      <div className="register-container">
+        <div className="register-card">
+          <div className="register-header">
             <Logo />
-            <h2 className="mt-4 text-3xl font-bold text-white">Sign Up</h2>
-            <p className="mt-2 text-sm text-gray-400">
+            <h2 className="register-title">Sign Up</h2>
+            <p className="register-subtitle">
               Register yourself to access the system
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-            {/* Full Name */}
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-300">
+          <form onSubmit={handleSubmit} className="register-form">
+            <div className="form-group">
+              <label htmlFor="fullName" className="form-label">
                 Full Name
               </label>
               <input
@@ -38,16 +38,13 @@ const RegisterPage = () => {
                 value={fullName}
                 onChange={e => setFullName(e.target.value)}
                 placeholder="Full Name"
-                className="mt-1 w-full px-4 py-2 bg-gray-800 bg-opacity-50 border border-gray-700 
-                           rounded-md text-white placeholder-gray-400 focus:outline-none 
-                           focus:ring-2 focus:ring-teal-400"
+                className="form-input"
                 required
               />
             </div>
 
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">
                 Email
               </label>
               <input
@@ -55,17 +52,14 @@ const RegisterPage = () => {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="email@example.com"
-                className="mt-1 w-full px-4 py-2 bg-gray-800 bg-opacity-50 border border-gray-700 
-                           rounded-md text-white placeholder-gray-400 focus:outline-none 
-                           focus:ring-2 focus:ring-teal-400"
+                placeholder="Enter your email"
+                className="form-input"
                 required
               />
             </div>
 
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">
                 Password
               </label>
               <input
@@ -74,16 +68,13 @@ const RegisterPage = () => {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="mt-1 w-full px-4 py-2 bg-gray-800 bg-opacity-50 border border-gray-700 
-                           rounded-md text-white placeholder-gray-400 focus:outline-none 
-                           focus:ring-2 focus:ring-teal-400"
+                className="form-input"
                 required
               />
             </div>
 
-            {/* Confirm Password */}
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
+            <div className="form-group">
+              <label htmlFor="confirmPassword" className="form-label">
                 Confirm Password
               </label>
               <input
@@ -91,31 +82,20 @@ const RegisterPage = () => {
                 type="password"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="mt-1 w-full px-4 py-2 bg-gray-800 bg-opacity-50 border border-gray-700 
-                           rounded-md text-white placeholder-gray-400 focus:outline-none 
-                           focus:ring-2 focus:ring-teal-400"
+                placeholder="Confirm your password"
+                className="form-input"
                 required
               />
             </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              className="w-full py-3 bg-teal-400 text-white font-semibold rounded-md 
-                         hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400 
-                         transition-colors"
-            >
-              SIGN UP
+            <button type="submit" className="form-button">
+              Create Account
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-gray-400">
-            Already have an account?{' '}
-            <Link to="/login" className="text-teal-400 hover:text-teal-300 font-medium">
-              Login now
-            </Link>
-          </p>
+          <Link to="/login" className="login-link">
+            Already have an account? Sign in
+          </Link>
         </div>
       </div>
     </AuthBackground>
