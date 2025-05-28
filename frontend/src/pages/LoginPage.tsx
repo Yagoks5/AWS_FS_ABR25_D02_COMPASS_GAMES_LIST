@@ -1,21 +1,24 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link }     from 'react-router-dom';
 import AuthBackground from '../components/AuthBackground';
-import Logo from '../components/Logo';
+import Logo           from '../components/Logo';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: lógica de login
+    // TODO: chamar sua API de login
   };
 
   return (
     <AuthBackground>
+      <div className="bg-red-500 text-white p-4">
+  Se isto aparecer em vermelho, o Tailwind está funcionando.
+</div>
       <div className="flex items-center justify-center min-h-screen px-4">
-        <div className="w-full max-w-md bg-gray-900 bg-opacity-75 p-8 rounded-lg border border-teal-400">
+        <div className="w-full max-w-md bg-gray-900 bg-opacity-75 p-8 rounded-2xl border border-teal-400">
           <div className="flex flex-col items-center">
             <Logo />
             <h2 className="mt-4 text-3xl font-bold text-white">Login</h2>
@@ -36,9 +39,8 @@ const LoginPage = () => {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="mt-1 w-full px-4 py-2 bg-gray-800 bg-opacity-50 border border-gray-700 
-                           rounded-md text-white placeholder-gray-400 focus:outline-none 
-                           focus:ring-2 focus:ring-teal-400"
+                className="mt-1 w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md 
+                           text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
                 required
               />
             </div>
@@ -54,19 +56,17 @@ const LoginPage = () => {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="mt-1 w-full px-4 py-2 bg-gray-800 bg-opacity-50 border border-gray-700 
-                           rounded-md text-white placeholder-gray-400 focus:outline-none 
-                           focus:ring-2 focus:ring-teal-400"
+                className="mt-1 w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md 
+                           text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
                 required
               />
             </div>
 
-            {/* Submit */}
+            {/* Botão */}
             <button
               type="submit"
               className="w-full py-3 bg-teal-400 text-white font-semibold rounded-md 
-                         hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400 
-                         transition-colors"
+                         hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-colors"
             >
               LOGIN
             </button>
