@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthBackground from '../components/AuthBackground';
 import Logo from '../components/Logo';
+import { register } from '../services/api';
+import axios from 'axios';
 import './RegisterPage.css';
 
 const RegisterPage = () => {
@@ -9,10 +11,28 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: lógica de registro
+    setError('');
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    try {
+      await register(fullName, email, password);
+      navigate('/login'); // Navigate to login after successful registration
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || 'An error occurred during registration');
+      } else {
+        setError('An unexpected error occurred');
+      }
+    }
   };
 
   return (
@@ -26,6 +46,8 @@ const RegisterPage = () => {
               Register yourself to access the system
             </p>
           </div>
+
+          {error && <div className="error-message">{error}</div>}
 
           <form onSubmit={handleSubmit} className="register-form">
             <div className="form-group">

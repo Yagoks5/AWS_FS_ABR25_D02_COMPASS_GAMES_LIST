@@ -1,16 +1,31 @@
 import { useState } from 'react';
-import { Link }     from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthBackground from '../components/AuthBackground';
-import Logo           from '../components/Logo';
+import Logo from '../components/Logo';
+import { login } from '../services/api';
 import './LoginPage.css';
+import axios from 'axios';
 
 const LoginPage = () => {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError]       = useState('');
+  const navigate                 = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: chamar sua API de login
+    setError('');
+
+    try {
+      await login(email, password);
+      navigate('/dashboard'); // Navigate to dashboard after successful login
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || 'An error occurred during login');
+      } else {
+        setError('An unexpected error occurred');
+      }
+    }
   };
 
   return (
@@ -24,6 +39,8 @@ const LoginPage = () => {
               Enter your credentials to access your account
             </p>
           </div>
+
+          {error && <div className="error-message">{error}</div>}
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
