@@ -1,7 +1,7 @@
 /* Estilos Globais e Variáveis */
 :root {
-  --primary-bg: #000000; /* Fundo escuro principal */
-  --secondary-bg: #14011a; /* Fundo para cards e sidebar */
+  --primary-bg: #181818; /* Fundo escuro principal */
+  --secondary-bg: #201624; /* Fundo para cards e sidebar */
   --sidebar-active-color: #00ffe1; /* Verde-azulado para item ativo na sidebar (da imagem desejada) */
   --text-color: #e0e0e0; /* Cor do texto principal */
   --text-muted: #ffffff; /* Cor do texto secundário/muted */
