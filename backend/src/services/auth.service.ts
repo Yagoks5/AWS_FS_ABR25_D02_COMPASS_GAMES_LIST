@@ -1,6 +1,7 @@
 import { PrismaClient } from '../generated/prisma';
 import bcrypt from 'bcryptjs';
-import { RegisterRequest, UserResponse } from '../types/auth.types';
+import { RegisterRequest } from '../types/auth.types';
+import { User, CreateUserData } from '../types/user.types';
 import {
   validateFullName,
   validateEmail,
@@ -11,7 +12,7 @@ import {
 export class AuthService {
   private prisma = new PrismaClient();
 
-  async registerUser(userData: RegisterRequest): Promise<UserResponse> {
+  async registerUser(userData: RegisterRequest): Promise<User> {
     const { fullName, email, password, confirmPassword } = userData;
 
     const fullNameValidation = validateFullName(fullName);
@@ -60,13 +61,12 @@ export class AuthService {
       id: user.id,
       fullName: user.fullName,
       email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 
-  async authenticateUser(
-    email: string,
-    password: string,
-  ): Promise<UserResponse> {
+  async authenticateUser(email: string, password: string): Promise<User> {
     if (!email || !password) {
       throw new Error('Email and password are required.');
     }
@@ -81,7 +81,7 @@ export class AuthService {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!user || !isPasswordValid) {
+    if (!isPasswordValid) {
       throw new Error('Invalid email or password'); // mais seguro
     }
 
@@ -89,6 +89,8 @@ export class AuthService {
       id: user.id,
       fullName: user.fullName,
       email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 }

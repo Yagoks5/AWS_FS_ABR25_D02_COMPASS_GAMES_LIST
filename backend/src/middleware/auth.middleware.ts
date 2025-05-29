@@ -23,7 +23,7 @@ export const authenticateUser = async (
     const { email, password } = credentials;
     const user = await authService.authenticateUser(email, password);
 
-    (req as any).user = user;
+    req.user = user;
     next();
   } catch (error) {
     res.status(401).json({

@@ -10,12 +10,6 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface UserResponse {
-  id: number;
-  fullName: string;
-  email: string;
-}
-
 export interface ValidationResult {
   isValid: boolean;
   message?: string;
