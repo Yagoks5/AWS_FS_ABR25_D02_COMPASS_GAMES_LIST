@@ -84,11 +84,11 @@ const Dashboard: React.FC = () => {
         // Dados mockados para exemplo:
         setTimeout(() => {
           setUserStats({
-            name: 'Juan',
-            gamesCount: 243,
-            categoriesCount: 13,
-            platformsCount: 4,
-            favoritesCount: 3,
+            name: 'User',
+            gamesCount: 0,
+            categoriesCount: 0,
+            platformsCount: 0,
+            favoritesCount: 0,
           });
         }, 1000); // Simula um delay da API
       } catch (error) {
@@ -150,7 +150,7 @@ const Dashboard: React.FC = () => {
             <li>
               <a href="#platforms">
                 <PlatformsIcon />
-                {!isSidebarCollapsed && <span>Plataforms</span>}
+                {!isSidebarCollapsed && <span>Platforms</span>}
               </a>
             </li>
           </ul>
@@ -197,7 +197,7 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="stat-card-info">
               <h2>{userStats.platformsCount}</h2>
-              <p>Plataforms</p>
+              <p>Platforms</p>
             </div>
             <button className="add-new-btn" onClick={() => handleAddNew('Platform')}>+ Add new</button>
           </div>
@@ -208,9 +208,9 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="stat-card-info">
               <h2>{userStats.favoritesCount}</h2>
-              <p>Favorites Games</p>
+              <p>Favorite Games</p>
             </div>
-            {/* O card de favoritos não tem botão "Add new" na imagem */}
+            <button className="add-new-btn" onClick={() => handleAddNew('Favorite')}>+ Add new</button>
           </div>
         </section>
       </main>
