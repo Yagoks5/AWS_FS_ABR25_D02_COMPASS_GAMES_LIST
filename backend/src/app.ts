@@ -7,7 +7,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Remove /api prefix since we're handling it in the frontend proxy
-app.use('/', authRoutes);
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Server is running',
+  });
+});
+
+app.use('/auth', authRoutes);
 
 export default app;

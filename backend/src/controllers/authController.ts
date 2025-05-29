@@ -1,73 +1,91 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '../generated/prisma';
-import bcrypt from 'bcryptjs';
+import { AuthService } from '../services/auth.service';
+import { extractBasicAuthCredentials } from '../utils/auth.utils';
 
-const prisma = new PrismaClient();
+const authService = new AuthService();
 
-export const register = async (req: Request, res: Response) => {
-  const { fullName, email, password } = req.body;
-
-  if (!fullName || !email || !password) {
-    return res.status(400).json({ message: 'All fields are required' });
+export const register = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
+  if (
+    !req.body ||
+    !req.body.fullName ||
+    !req.body.email ||
+    !req.body.password ||
+    !req.body.confirmPassword
+  ) {
+    return res.status(400).json({
+      success: false,
+      message:
+        'All fields are required: fullName, email, password, confirmPassword',
+    });
   }
 
-  const userExists = await prisma.user.findUnique({
-    where: { email },
-  });
+  try {
+    const { fullName, email, password, confirmPassword } = req.body;
 
-  if (userExists) {
-    return res.status(409).json({ message: 'Email already registered.' });
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const user = await prisma.user.create({
-    data: {
+    const user = await authService.registerUser({
       fullName,
       email,
-      password: hashedPassword,
-    },
-  });
+      password,
+      confirmPassword,
+    });
 
-  return res
-    .status(201)
-    .json({ id: user.id, fullName: user.fullName, email: user.email });
+    return res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      data: user,
+    });
+  } catch (error) {
+    console.error('Register error: ', error);
+
+    if (error instanceof Error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
 };
 
-export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+export const login = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const credentials = extractBasicAuthCredentials(req);
 
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
+    if (!credentials) {
+      return res.status(401).json({
+        success: false,
+        message: 'Basic Authentication credentials are required',
+      });
+    }
+
+    const { email, password } = credentials;
+    const user = await authService.authenticateUser(email, password);
+
+    return res.status(200).json({
+      success: true,
+      message: 'User authenticated successfully',
+      data: user,
+    });
+  } catch (error) {
+    console.error('Login error: ', error);
+
+    if (error instanceof Error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
   }
-
-  const user = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  if (!user) {
-    return res.status(401).json({ message: 'Invalid email or password' });
-  }
-
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-
-  if (!isPasswordValid) {
-    return res.status(401).json({ message: 'Invalid email or password' });
-  }
-
-  return res
-    .status(200)
-    .json({ id: user.id, fullName: user.fullName, email: user.email });
-};
-
-export const getUsers = async (req: Request, res: Response) => {
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      fullName: true,
-      email: true,
-    },
-  });
-
-  return res.status(200).json(users);
 };
