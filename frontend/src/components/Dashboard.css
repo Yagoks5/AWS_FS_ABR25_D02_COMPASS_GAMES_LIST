@@ -1,11 +1,10 @@
 /* Estilos Globais e Variáveis */
 :root {
-  --primary-bg: #121212; /* Fundo escuro principal */
-  --secondary-bg: #1e1e1e; /* Fundo para cards e sidebar */
-  --accent-color: #00aaff; /* Cor de destaque para o logo (azul da imagem) */
-  --sidebar-active-color: #28c796; /* Verde-azulado para item ativo na sidebar (da imagem desejada) */
+  --primary-bg: #000000; /* Fundo escuro principal */
+  --secondary-bg: #14011a; /* Fundo para cards e sidebar */
+  --sidebar-active-color: #00ffe1; /* Verde-azulado para item ativo na sidebar (da imagem desejada) */
   --text-color: #e0e0e0; /* Cor do texto principal */
-  --text-muted: #a0a0a0; /* Cor do texto secundário/muted */
+  --text-muted: #ffffff; /* Cor do texto secundário/muted */
   --sidebar-width: 260px;
   --sidebar-width-collapsed: 80px;
   --border-radius: 8px;
@@ -50,7 +49,7 @@ body {
 }
 
 .sidebar-header {
-  padding: 0 20px;
+  padding: 0 10px;
   margin-bottom: 30px;
   display: flex;
   align-items: center;
@@ -62,9 +61,13 @@ body {
 }
 
 .logo {
-  font-size: 1.8em;
-  font-weight: bold;
-  color: var(--accent-color); /* Logo continua azul */
+  background-image: url('/images/logo-icon.svg');
+  width: 100%;
+  height: 100%;
+  margin-top: 1rem;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
 }
 
 .collapse-btn {
@@ -79,8 +82,8 @@ body {
 }
 
 .collapse-btn svg {
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
 }
 
 .collapse-btn:hover {
@@ -93,12 +96,14 @@ body {
   list-style: none;
   padding: 0;
   margin: 0;
+  margin-top: -25%;
 }
 
 .sidebar-nav li a {
   display: flex;
   align-items: center;
   padding: 15px 25px;
+  margin-bottom: 30px;
   text-decoration: none;
   color: var(--text-muted);
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -108,6 +113,8 @@ body {
 .sidebar-nav li a svg {
   margin-right: 15px;
   min-width: 24px;
+  width: 40px;
+  height:30px;
 }
 
 /* Cor ativa da Sidebar alterada */
@@ -116,7 +123,7 @@ body {
   background-color: var(
     --sidebar-active-color
   ); /* Usando a nova cor verde-azulada */
-  color: white;
+  color: #000000;
   border-radius: 0 var(--border-radius) var(--border-radius) 0;
   margin-left: 5px;
 }
@@ -189,6 +196,11 @@ body {
   margin-bottom: 5px;
   color: var(--text-color);
 }
+
+.User-style {
+  color: #00ffe1;
+}
+
 .main-header p {
   font-size: 1.1em;
   color: var(--text-muted);
@@ -205,6 +217,7 @@ body {
   gap: 25px;
 }
 
+
 .stat-card {
   background-color: var(--secondary-bg);
   border-radius: var(--border-radius);
@@ -212,27 +225,65 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 170px; /* Levemente ajustado */
+  min-height: 170px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.stat-card-icon {
-  /* font-size: 2em; Tamanho do ícone controlado pelo SVG width/height */
-  margin-bottom: 15px;
-  /* width: 48px;  Não mais necessário se o SVG tiver tamanho definido */
-  /* height: 48px; Não mais necessário se o SVG tiver tamanho definido */
-  /* display: flex;  Pode não ser necessário se o SVG for block ou inline-block */
-  /* align-items: center; */
-  /* justify-content: center; */
-  /* border-radius: 50%; Removido para não ter círculo */
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  gap: 75%;
 }
 
+.stat-card-value {
+  color: rgb(0, 255, 255);
+  margin-top: -7%;
+}
+
+.fav-num {
+  color: rgb(251, 255, 0);
+}
+
+.stat-card-label {
+  margin: -5px 0px 0px 5px;
+  font-weight: 600;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px); 
+  box-shadow: 0 8px 20px 15px rgba(40, 199, 150, 0.3);
+}
+
+.star:hover{
+  box-shadow: 0 8px 20px 15px rgba(199, 196, 40, 0.3);
+}
 /* Cor padrão para todos os ícones dos cards */
-.stat-card-icon svg {
-  color: var(--text-color); /* Ícones brancos/claros */
-  width: 32px; /* Aumenta o tamanho do ícone */
-  height: 32px; /* Aumenta o tamanho do ícone */
+.stat-card-icon-display-games svg {
+  color: #00ffe1;
+  width: 50px;
+  height: 50px;
 }
+
+.stat-card-icon-display-categories svg {
+  color: #00ffe1;
+  width: 50px;
+  height: 50px;
+}
+
+.stat-card-icon-display-platforms svg {
+  color: #00ffe1;
+  width: 50px;
+  height: 50px;
+}
+
+.stat-card-icon-display-favorites svg {
+  color: rgb(251, 255, 0);
+  width: 50px;
+  height: 50px;
+}
+
+
 
 /* Removendo cores específicas anteriores dos ícones dos cards */
 /* .stat-card-icon.games svg { color: #3498db; } */
@@ -253,8 +304,8 @@ body {
 
 /* Estilo do botão "+ Add new" alterado */
 .add-new-btn {
-  background-color: white; /* Fundo transparente */
-  color: #6c6c6c; /* Texto cinza claro */
+  background-color: rgb(255, 255, 255); /* Fundo transparente */
+  color: hsla(0, 0%, 0%, 0.5); /* Texto cinza claro */
   border: 1px solid var(--text-muted); /* Borda cinza clara */
   padding: 8px 12px; /* Padding levemente ajustado */
   border-radius: var(--border-radius);
@@ -263,8 +314,7 @@ body {
   height: 30px;
   font-weight: 500;
   text-align: center;
-  transition: background-color 0.2s ease, color 0.2s ease,
-    border-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   margin-top: auto;
 }
 
