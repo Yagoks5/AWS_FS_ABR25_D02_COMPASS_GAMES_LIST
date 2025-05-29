@@ -119,7 +119,7 @@ const RegisterPage = () => {
           </form>
 
           <Link to="/login" className="login-link">
-            Already have an account? Sign in
+            Already have an account? <u>Login</u>
           </Link>
         </div>
       </div>

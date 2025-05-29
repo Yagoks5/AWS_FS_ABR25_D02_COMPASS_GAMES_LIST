@@ -10,22 +10,80 @@
   inset: 0;
   background-position: center;
   background-size: cover;
-  filter: brightness(0.2);
+  filter: brightness(0.23);
 }
+
+.auth-background::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.527); /* mais escuro se quiser */
+  z-index: 1;
+  pointer-events: none;
+}
+
+
+.decor-icons {
+  position: absolute;
+  z-index: 2;
+  opacity: 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.decor-icon_bottom-left { 
+  bottom: 18%; 
+  left: 7%; 
+  width: 130px;
+  height: 130px;
+  transform: rotate(-15deg);
+  flex-shrink: 0;
+}
+.decor-icon_bottom-right { 
+  bottom: 7%; 
+  right: 5%; 
+  width: 150px;
+  height: 150px;
+  transform: rotate(3deg);
+  flex-shrink: 0;
+}
+.decor-icon_top-left { 
+  top: 5%; 
+  left: 4%; 
+  width: 130px;
+  height: 130px;
+  transform: rotate(-30deg);
+  filter:blur(3.5px);
+  flex-shrink: 0;
+}
+.decor-icon_top-right { 
+  top: -2%; 
+  right: -2%; 
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0; 
+}
+
+
 
 .auth-background__glow {
   position: absolute;
   inset: 0;
-}
-
-.auth-background__glow-circle {
-  position: absolute;
+  z-index: 2;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 800px;
-  height: 800px;
-  background-color: rgba(20, 184, 166, 0.2);
+  width: 40%;
+  height: 65%;
+  background-color: rgb(0, 255, 225);
   border-radius: 50%;
   filter: blur(100px);
+}
+
+.auth-background__glow-circle {
+  opacity: 1;
+  background-color: rgb(47, 172, 245);
+  width: 50%;
+  height: 50%;
 }
