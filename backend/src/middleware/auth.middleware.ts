@@ -1,34 +1,33 @@
 import { Request, Response, NextFunction } from 'express';
-import { extractBasicAuthCredentials } from '../utils/auth.utils';
-import { AuthService } from '../services/auth.service';
+import { verifyToken } from '../utils/jwt.utils';
 
-const authService = new AuthService();
-
-export const authenticateUser = async (
+export const authenticateJWT = async (
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> => {
+) => {
   try {
-    const credentials = extractBasicAuthCredentials(req);
+    const authHeader = req.headers.authorization;
 
-    if (!credentials) {
-      res.status(401).json({
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
         success: false,
-        message: 'Authentication required',
+        message: 'Token required',
       });
-      return;
     }
 
-    const { email, password } = credentials;
-    const user = await authService.authenticateUser(email, password);
+    const token = authHeader.split(' ')[1];
+    const decoded = verifyToken(token);
 
-    req.user = user;
+    (req as any).user = {
+      userId: decoded.userId,
+      email: decoded.email,
+    };
     next();
   } catch (error) {
-    res.status(401).json({
+    return res.status(401).json({
       success: false,
-      message: 'Authentication failed',
+      message: 'Invalid token',
     });
   }
 };

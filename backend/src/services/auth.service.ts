@@ -1,7 +1,9 @@
 import { PrismaClient } from '../generated/prisma';
 import bcrypt from 'bcryptjs';
 import { RegisterRequest } from '../types/auth.types';
-import { User, CreateUserData } from '../types/user.types';
+import { generateToken } from '../utils/jwt.utils';
+import { User } from '../types/user.types';
+import type { AuthResponse } from '../types/auth.types';
 import {
   validateFullName,
   validateEmail,
@@ -66,7 +68,10 @@ export class AuthService {
     };
   }
 
-  async authenticateUser(email: string, password: string): Promise<User> {
+  async authenticateUser(
+    email: string,
+    password: string,
+  ): Promise<AuthResponse> {
     if (!email || !password) {
       throw new Error('Email and password are required.');
     }
@@ -85,12 +90,17 @@ export class AuthService {
       throw new Error('Invalid email or password'); // mais seguro
     }
 
+    const token = generateToken({ userId: user.id, email: user.email });
+
     return {
-      id: user.id,
-      fullName: user.fullName,
-      email: user.email,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+      token,
     };
   }
 }
