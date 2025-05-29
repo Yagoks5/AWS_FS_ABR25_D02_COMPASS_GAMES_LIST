@@ -16,7 +16,7 @@ export const authenticateJWT = async (
       });
     }
 
-    const token = authHeader.substring(7); // Remove "Bearer "
+    const token = authHeader.split(' ')[1];
     const decoded = verifyToken(token);
 
     (req as any).user = {

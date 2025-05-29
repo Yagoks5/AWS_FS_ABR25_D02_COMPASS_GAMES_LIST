@@ -11,17 +11,6 @@ import {
   validatePasswordConfirmation,
 } from '../utils/validation.utils';
 
-// type AuthResponse = {
-//   user: {
-//     id: number;
-//     fullName: string;
-//     email: string;
-//     createdAt: Date;
-//     updatedAt: Date;
-//   };
-//   token: string;
-// };
-
 export class AuthService {
   private prisma = new PrismaClient();
 
