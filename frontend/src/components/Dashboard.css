@@ -1,0 +1,314 @@
+/* Estilos Globais e Variáveis */
+:root {
+  --primary-bg: #121212; /* Fundo escuro principal */
+  --secondary-bg: #1e1e1e; /* Fundo para cards e sidebar */
+  --accent-color: #00aaff; /* Cor de destaque para o logo (azul da imagem) */
+  --sidebar-active-color: #28c796; /* Verde-azulado para item ativo na sidebar (da imagem desejada) */
+  --text-color: #e0e0e0; /* Cor do texto principal */
+  --text-muted: #a0a0a0; /* Cor do texto secundário/muted */
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 80px;
+  --border-radius: 8px;
+  --card-padding: 20px;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--primary-bg);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* Layout Principal */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  transition: padding-left 0.3s ease-in-out;
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--secondary-bg); /* Mantido como na imagem 2 */
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  transition: width 0.3s ease-in-out;
+  overflow-x: hidden;
+  z-index: 100;
+}
+
+.dashboard-container.sidebar-collapsed .sidebar {
+  width: var(--sidebar-width-collapsed);
+}
+
+.sidebar-header {
+  padding: 0 20px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard-container.sidebar-collapsed .sidebar-header {
+  justify-content: center;
+}
+
+.logo {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: var(--accent-color); /* Logo continua azul */
+}
+
+.collapse-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collapse-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.collapse-btn:hover {
+  color: var(
+    --sidebar-active-color
+  ); /* Hover do botão de colapso usa a nova cor ativa */
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li a {
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.sidebar-nav li a svg {
+  margin-right: 15px;
+  min-width: 24px;
+}
+
+/* Cor ativa da Sidebar alterada */
+.sidebar-nav li.active a,
+.sidebar-nav li a:hover {
+  background-color: var(
+    --sidebar-active-color
+  ); /* Usando a nova cor verde-azulada */
+  color: white;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  margin-left: 5px;
+}
+.sidebar-nav li.active a {
+  font-weight: bold;
+}
+
+.dashboard-container.sidebar-collapsed .sidebar-nav li a span {
+  display: none;
+}
+.dashboard-container.sidebar-collapsed .sidebar-nav li a {
+  justify-content: center;
+  padding: 15px 0;
+}
+.dashboard-container.sidebar-collapsed .sidebar-nav li a svg {
+  margin-right: 0;
+}
+
+.sidebar-footer {
+  padding: 0 20px;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: 1px solid var(--text-muted);
+  color: var(--text-muted);
+  padding: 10px 15px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+  white-space: nowrap;
+}
+.logout-btn svg {
+  margin-right: 10px;
+}
+.logout-btn:hover {
+  background-color: var(--text-muted);
+  color: var(--secondary-bg);
+  border-color: var(--text-muted);
+}
+.dashboard-container.sidebar-collapsed .logout-btn span {
+  display: none;
+}
+.dashboard-container.sidebar-collapsed .logout-btn {
+  justify-content: center;
+  padding: 10px;
+}
+.dashboard-container.sidebar-collapsed .logout-btn svg {
+  margin-right: 0;
+}
+
+/* Conteúdo Principal */
+.main-content {
+  flex-grow: 1;
+  padding: 30px 40px;
+  background-color: var(--primary-bg);
+  margin-left: var(--sidebar-width);
+  transition: margin-left 0.3s ease-in-out;
+}
+.dashboard-container.sidebar-collapsed .main-content {
+  margin-left: var(--sidebar-width-collapsed);
+}
+
+.main-header h1 {
+  font-size: 2.5em;
+  margin-bottom: 5px;
+  color: var(--text-color);
+}
+.main-header p {
+  font-size: 1.1em;
+  color: var(--text-muted);
+  margin-bottom: 30px;
+}
+
+/* Grid de Estatísticas */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(260px, 1fr)
+  ); /* Ajustado minmax para acomodar melhor */
+  gap: 25px;
+}
+
+.stat-card {
+  background-color: var(--secondary-bg);
+  border-radius: var(--border-radius);
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 170px; /* Levemente ajustado */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card-icon {
+  /* font-size: 2em; Tamanho do ícone controlado pelo SVG width/height */
+  margin-bottom: 15px;
+  /* width: 48px;  Não mais necessário se o SVG tiver tamanho definido */
+  /* height: 48px; Não mais necessário se o SVG tiver tamanho definido */
+  /* display: flex;  Pode não ser necessário se o SVG for block ou inline-block */
+  /* align-items: center; */
+  /* justify-content: center; */
+  /* border-radius: 50%; Removido para não ter círculo */
+}
+
+/* Cor padrão para todos os ícones dos cards */
+.stat-card-icon svg {
+  color: var(--text-color); /* Ícones brancos/claros */
+  width: 32px; /* Aumenta o tamanho do ícone */
+  height: 32px; /* Aumenta o tamanho do ícone */
+}
+
+/* Removendo cores específicas anteriores dos ícones dos cards */
+/* .stat-card-icon.games svg { color: #3498db; } */
+/* .stat-card-icon.categories svg { color: #e74c3c; } */
+/* .stat-card-icon.platforms svg { color: #9b59b6; } */
+/* .stat-card-icon.favorites svg { color: #f1c40f; } */
+
+.stat-card-info h2 {
+  font-size: 2.8em; /* Mantido */
+  margin: 0 0 5px 0;
+  color: var(--text-color);
+}
+.stat-card-info p {
+  font-size: 1em;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Estilo do botão "+ Add new" alterado */
+.add-new-btn {
+  background-color: white; /* Fundo transparente */
+  color: #6c6c6c; /* Texto cinza claro */
+  border: 1px solid var(--text-muted); /* Borda cinza clara */
+  padding: 8px 12px; /* Padding levemente ajustado */
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  width: 112px;
+  height: 30px;
+  font-weight: 500;
+  text-align: center;
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+  margin-top: auto;
+}
+
+.add-new-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05); /* Leve destaque no hover */
+  color: var(--text-color); /* Texto mais claro no hover */
+  border-color: var(--text-color); /* Borda mais clara no hover */
+}
+
+/* Responsividade para telas menores (exemplo) */
+@media (max-width: 768px) {
+  .sidebar {
+    width: var(--sidebar-width-collapsed);
+  }
+  .sidebar-header .logo,
+  .sidebar-nav li a span,
+  .sidebar-footer .logout-btn span {
+    display: none;
+  }
+  .sidebar-header {
+    justify-content: center;
+  }
+  .sidebar-nav li a {
+    justify-content: center;
+    padding: 15px 0;
+  }
+  .sidebar-nav li a svg {
+    margin-right: 0;
+  }
+  .logout-btn {
+    justify-content: center;
+    padding: 10px;
+  }
+  .logout-btn svg {
+    margin-right: 0;
+  }
+  .main-content {
+    margin-left: var(--sidebar-width-collapsed);
+    padding: 20px;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .main-header h1 {
+    font-size: 2em;
+  }
+}
