@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { PrismaClient } from "../generated/prisma";
-import bcrypt from "bcryptjs";
+import { Request, Response } from 'express';
+import { PrismaClient } from '../generated/prisma';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -8,7 +8,7 @@ export const register = async (req: Request, res: Response) => {
   const { fullName, email, password } = req.body;
 
   if (!fullName || !email || !password) {
-    return res.status(400).json({ message: "All fields are required" });
+    return res.status(400).json({ message: 'All fields are required' });
   }
 
   const userExists = await prisma.user.findUnique({
@@ -16,7 +16,7 @@ export const register = async (req: Request, res: Response) => {
   });
 
   if (userExists) {
-    return res.status(409).json({ message: "Email already registered." });
+    return res.status(409).json({ message: 'Email already registered.' });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -38,7 +38,7 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
+    return res.status(400).json({ message: 'Email and password are required' });
   }
 
   const user = await prisma.user.findUnique({
@@ -46,13 +46,13 @@ export const login = async (req: Request, res: Response) => {
   });
 
   if (!user) {
-    return res.status(401).json({ message: "Invalid email or password" });
+    return res.status(401).json({ message: 'Invalid email or password' });
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    return res.status(401).json({ message: "Invalid email or password" });
+    return res.status(401).json({ message: 'Invalid email or password' });
   }
 
   return res
@@ -66,7 +66,6 @@ export const getUsers = async (req: Request, res: Response) => {
       id: true,
       fullName: true,
       email: true,
-      password: true,
     },
   });
 
