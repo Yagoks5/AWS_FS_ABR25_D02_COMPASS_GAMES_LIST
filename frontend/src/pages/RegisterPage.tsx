@@ -24,11 +24,14 @@ const RegisterPage = () => {
     }
 
     try {
-      await register(fullName, email, password);
+      await register(fullName, email, password, confirmPassword);
       navigate('/login'); // Navigate to login after successful registration
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || 'An error occurred during registration');
+        setError(
+          err.response?.data?.message ||
+            'An error occurred during registration',
+        );
       } else {
         setError('An unexpected error occurred');
       }
@@ -58,7 +61,7 @@ const RegisterPage = () => {
                 id="fullName"
                 type="text"
                 value={fullName}
-                onChange={e => setFullName(e.target.value)}
+                onChange={(e) => setFullName(e.target.value)}
                 placeholder="Full Name"
                 className="form-input"
                 required
@@ -73,7 +76,7 @@ const RegisterPage = () => {
                 id="email"
                 type="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 className="form-input"
                 required
@@ -88,7 +91,7 @@ const RegisterPage = () => {
                 id="password"
                 type="password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className="form-input"
                 required
@@ -103,7 +106,7 @@ const RegisterPage = () => {
                 id="confirmPassword"
                 type="password"
                 value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm your password"
                 className="form-input"
                 required
