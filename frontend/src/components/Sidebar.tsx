@@ -22,10 +22,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar, onLogout 
       </div>
       <nav className="sidebar-nav">
         <ul>
-          <li className="active"><a href="#home"><AiOutlineHome />{!isCollapsed && <span>Home</span>}</a></li>
-          <li><a href="#games"><IoGameControllerOutline />{!isCollapsed && <span>Games</span>}</a></li>
-          <li><a href="#categories"><BiCategory />{!isCollapsed && <span>Categories</span>}</a></li>
-          <li><a href="#platforms"><HiOutlineCpuChip />{!isCollapsed && <span>Platforms</span>}</a></li>
+          <li className="active"><a href="/dashboard"><AiOutlineHome />{!isCollapsed && <span>Home</span>}</a></li>
+          <li><a href="/games"><IoGameControllerOutline />{!isCollapsed && <span>Games</span>}</a></li>
+          <li><a href="/categories"><BiCategory />{!isCollapsed && <span>Categories</span>}</a></li>
+          <li><a href="/platforms"><HiOutlineCpuChip />{!isCollapsed && <span>Platforms</span>}</a></li>
         </ul>
       </nav>
       <div className="sidebar-footer">
