@@ -19,4 +19,76 @@ model User {
   isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  games      Game[]
+  categories Category[]
+  platforms  Platform[]
+}
+
+model Game {
+  id              Int        @id @default(autoincrement())
+  title           String
+  description     String?
+  imageUrl        String?
+  acquisitionDate DateTime
+  finishDate      DateTime?
+  status          GameStatus
+  isFavorite      Boolean    @default(false)
+  isDeleted       Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  userId          Int
+  categoryId      Int
+  platformId      Int?
+
+  user            User       @relation(fields: [userId], references: [id])
+  category        Category   @relation(fields: [categoryId], references: [id])
+  platform        Platform?  @relation(fields: [platformId], references: [id])
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([platformId])
+  @@index([isFavorite])
+  @@index([status])
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  games       Game[]
+
+  @@index([userId])
+  @@unique([name, userId])
+}
+
+model Platform {
+  id              Int      @id @default(autoincrement())
+  title           String
+  company         String?
+  acquisitionYear Int?
+  imageUrl        String?
+  isDeleted       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id])
+  games           Game[]
+
+  @@index([userId])
+  @@unique([title, userId])
+}
+
+enum GameStatus {
+  Playing
+  Done
+  Abandoned
 }
