@@ -1,7 +1,7 @@
 export interface Category {
   id: number;
   name: string;
-  descripton?: string;
+  description?: string;
   userId: number;
   isDeleted: boolean;
   createdAt: Date;
@@ -15,13 +15,13 @@ export interface CreateCategoryData {
 
 export interface UpdateCategoryData {
   name?: string;
-  descripton?: string;
+  description?: string;
 }
 
 export interface CategoryResponse {
   id: number;
   name: string;
-  descripton?: string;
+  description?: string;
   createdAt: Date;
   updatedAt: Date;
 }
