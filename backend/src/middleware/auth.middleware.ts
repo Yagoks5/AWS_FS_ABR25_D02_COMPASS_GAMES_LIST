@@ -5,15 +5,16 @@ export const authenticateJWT = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Token required',
       });
+      return;
     }
 
     const token = authHeader.split(' ')[1];
@@ -25,7 +26,7 @@ export const authenticateJWT = async (
     };
     next();
   } catch (error) {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       message: 'Invalid token',
     });
