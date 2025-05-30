@@ -3,8 +3,8 @@ export interface Game {
   title: string;
   description?: string;
   imageUrl?: string;
-  acquisitionDate?: Date;
-  finishDate?: Date;
+  acquisitionYear?: number;
+  finishedDate?: Date;
   status: GameStatus;
   isFavorite: boolean;
   userId: number;
