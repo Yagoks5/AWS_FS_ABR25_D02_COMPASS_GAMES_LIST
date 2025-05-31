@@ -1,109 +1,112 @@
-import React, { useState } from 'react';
-import './Platforms.css';
-import { AiOutlineHome } from "react-icons/ai";
-import { IoGameControllerOutline } from "react-icons/io5";
-import { BiCategory } from "react-icons/bi";
-import { HiOutlineCpuChip } from "react-icons/hi2";
-import { MdLogout } from "react-icons/md";
-import { IoIosMenu } from "react-icons/io";
-import { Link } from 'react-router-dom';
+import { type FC, useState } from 'react';
+import { type Platform, type PlatformFormData } from '../types/platform';
+import PlatformModal from '../components/PlatformModal';
+import ConfirmationModal from '../components/ConfirmationModal';
+import Sidebar from '../components/Sidebar';
 import { BsEye, BsPencil, BsTrash } from 'react-icons/bs';
+import './Platforms.css';
 
-interface Platform {
-  icon: string;
-  title: string;
-  owner: string;
-  acquisitionYear: string;
-}
-
-const Platforms: React.FC = () => {
+const Platforms: FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Platform;
+    direction: 'asc' | 'desc';
+  } | null>(null);
 
-  const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
-  const handleLogout = () => alert('Logout functionality to be implemented!');
-  const handleAddPlatform = () => alert('Add new platform functionality to be implemented!');
-
-  // Sample data - replace with actual API data later
-  const platforms: Platform[] = [
-    {
-      icon: "/images/platforms/nintendo-switch.jpg",
-      title: "Nintendo Switch",
-      owner: "Nintendo",
-      acquisitionYear: "08/12/2021"
-    },
-    {
-      icon: "/images/platforms/epic-games.jpg",
-      title: "Epic Games",
-      owner: "Epic",
-      acquisitionYear: "08/12/2021"
-    }
-  ];
+  const handleSort = (key: keyof Platform) => {
+    const direction: 'asc' | 'desc' = 
+      sortConfig?.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    
+    setSortConfig({ key, direction });
+    
+    setPlatforms(prev => [...prev].sort((a, b) => {
+      if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+      if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+      return 0;
+    }));
+  };
 
   return (
     <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          {!isSidebarCollapsed && <div className="logo"></div>}
-          <button onClick={toggleSidebar} className="collapse-btn"><IoIosMenu /></button>
-        </div>
-        
-        <nav className="sidebar-nav">
-          <ul>
-            <li>
-              <Link to="/dashboard"><AiOutlineHome />{!isSidebarCollapsed && <span>Home</span>}</Link>
-            </li>
-            <li>
-              <Link to="/games"><IoGameControllerOutline />{!isSidebarCollapsed && <span>Games</span>}</Link>
-            </li>
-            <li>
-              <Link to="/categories"><BiCategory />{!isSidebarCollapsed && <span>Categories</span>}</Link>
-            </li>
-            <li className="active">
-              <Link to="/platforms"><HiOutlineCpuChip />{!isSidebarCollapsed && <span>Platforms</span>}</Link>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="sidebar-footer">
-          <button onClick={handleLogout} className="logout-btn">
-            <MdLogout />{!isSidebarCollapsed && <span>Logout</span>}
-          </button>
-        </div>
-      </aside>
-
+      <Sidebar 
+        isCollapsed={isSidebarCollapsed}
+        toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
+        onLogout={() => {/* Implement logout logic */}}
+      />
+      
       <main className="main-content">
         <div className="platforms-header">
-          <h1>Plataforms</h1>
-          <button className="add-platform-btn" onClick={handleAddPlatform}>
+          <h1>Platforms</h1>
+          <button 
+            type="button"
+            className="add-platform-btn" 
+            onClick={() => setIsAddModalOpen(true)}
+          >
             add new platform
           </button>
         </div>
 
         <div className="platforms-table">
           <div className="table-header">
-            <div className="column title">Title ⇅</div>
-            <div className="column owner">Owner ⇅</div>
-            <div className="column year">Acquisition year ⇅</div>
-            <div className="column actions"></div>
+            <div className="column title" onClick={() => handleSort('title')}>
+              Title {sortConfig?.key === 'title' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            </div>
+            <div className="column owner" onClick={() => handleSort('owner')}>
+              Owner {sortConfig?.key === 'owner' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            </div>
+            <div className="column year" onClick={() => handleSort('acquisitionYear')}>
+              Acquisition year {sortConfig?.key === 'acquisitionYear' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            </div>
+            <div className="column actions">Actions</div>
           </div>
 
           <div className="table-content">
-            {platforms.map((platform, index) => (
-              <div className="table-row" key={index}>
+            {platforms.map((platform) => (
+              <div className="table-row" key={platform.id}>
                 <div className="column title">
-                  <img src={platform.icon} alt={platform.title} className="platform-icon" />
+                  <img src={platform.imageUrl} alt={platform.title} className="platform-icon" />
                   <span>{platform.title}</span>
                 </div>
                 <div className="column owner">{platform.owner}</div>
                 <div className="column year">{platform.acquisitionYear}</div>
                 <div className="column actions">
-                  <button className="action-btn view" title="View">
+                  <button 
+                    type="button"
+                    className="action-btn view" 
+                    title="View"
+                    onClick={() => {
+                      setSelectedPlatform(platform);
+                      setIsViewModalOpen(true);
+                    }}
+                  >
                     <BsEye className="action-icon" />
                   </button>
-                  <button className="action-btn edit" title="Edit">
+                  <button 
+                    type="button"
+                    className="action-btn edit" 
+                    title="Edit"
+                    onClick={() => {
+                      setSelectedPlatform(platform);
+                      setIsEditModalOpen(true);
+                    }}
+                  >
                     <BsPencil className="action-icon" />
                   </button>
-                  <button className="action-btn delete" title="Delete">
+                  <button 
+                    type="button"
+                    className="action-btn delete" 
+                    title="Delete"
+                    onClick={() => {
+                      setSelectedPlatform(platform);
+                      setIsDeleteModalOpen(true);
+                    }}
+                  >
                     <BsTrash className="action-icon" />
                   </button>
                 </div>
@@ -112,11 +115,85 @@ const Platforms: React.FC = () => {
           </div>
         </div>
 
-        <div className="pagination">
-          <button className="pagination-btn" disabled>← Previous</button>
-          <span className="current-page">1</span>
-          <button className="pagination-btn">Next →</button>
-        </div>
+        {/* Modals */}
+        <PlatformModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onSubmit={(data: PlatformFormData) => {
+            setPlatforms(prev => [...prev, { id: Date.now().toString(), ...data }]);
+            setIsAddModalOpen(false);
+          }}
+          title="New platform"
+        />
+
+        <PlatformModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setSelectedPlatform(null);
+          }}
+          onSubmit={(data: PlatformFormData) => {
+            if (!selectedPlatform) return;
+            setPlatforms(prev => prev.map(platform => 
+              platform.id === selectedPlatform.id 
+                ? { ...platform, ...data }
+                : platform
+            ));
+            setIsEditModalOpen(false);
+            setSelectedPlatform(null);
+          }}
+          title="Edit platform"
+          initialData={selectedPlatform ?? undefined}
+        />
+
+        <ConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setSelectedPlatform(null);
+          }}
+          onConfirm={() => {
+            if (!selectedPlatform) return;
+            setPlatforms(prev => prev.filter(p => p.id !== selectedPlatform.id));
+            setIsDeleteModalOpen(false);
+            setSelectedPlatform(null);
+          }}
+          message="Deleting this platform will remove permanently from system. This action is not reversible."
+        />
+
+        {/* View Modal */}
+        {isViewModalOpen && selectedPlatform && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h2>Platform Details</h2>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setIsViewModalOpen(false);
+                    setSelectedPlatform(null);
+                  }} 
+                  className="close-btn"
+                  aria-label="Close modal"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="platform-details">
+                <img 
+                  src={selectedPlatform.imageUrl} 
+                  alt={selectedPlatform.title} 
+                  className="platform-detail-image" 
+                />
+                <div className="platform-info">
+                  <h3>{selectedPlatform.title}</h3>
+                  <p><strong>Owner:</strong> {selectedPlatform.owner}</p>
+                  <p><strong>Acquisition Year:</strong> {selectedPlatform.acquisitionYear}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
