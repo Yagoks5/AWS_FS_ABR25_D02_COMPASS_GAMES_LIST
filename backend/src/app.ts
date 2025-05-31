@@ -6,6 +6,7 @@ import categoryRoutes from './routes/categoryRoutes';
 import platformRoutes from './routes/platformRoutes';
 import gameRoutes from './routes/gameRoutes';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
+import dashboardRoutes from './routes/dashboardRoutes';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/user', userRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/platforms', platformRoutes);
 app.use('/games', gameRoutes);
+app.use('/dashboard', dashboardRoutes);
 
 app.use(notFoundHandler);
 
