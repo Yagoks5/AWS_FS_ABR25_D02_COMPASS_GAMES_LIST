@@ -1,15 +1,15 @@
 export interface Game {
   id: number;
   title: string;
-  description?: string;
-  imageUrl?: string;
-  acquisitionYear?: number;
-  finishedDate?: Date;
+  description?: string | null;
+  imageUrl?: string | null;
+  acquisitionDate: Date;
+  finishDate?: Date | null;
   status: GameStatus;
   isFavorite: boolean;
   userId: number;
   categoryId: number;
-  platformId?: number;
+  platformId?: number | null;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -21,25 +21,37 @@ export enum GameStatus {
   ABANDONED = 'Abandoned',
 }
 
+export interface CreateGameData {
+  title: string;
+  description?: string | null;
+  imageUrl?: string | null;
+  acquisitionDate: string;
+  finishDate?: string | null;
+  status: GameStatus;
+  categoryId: number;
+  platformId?: number | null;
+  isFavorite?: boolean;
+}
+
 export interface UpdateGameData {
   title?: string;
-  description?: string;
-  imageUrl?: string;
-  acquisitionDate?: Date;
-  finishDate?: Date;
+  description?: string | null;
+  imageUrl?: string | null;
+  acquisitionDate?: string;
+  finishDate?: string | null;
   status?: GameStatus;
   categoryId?: number;
-  platformId?: number;
+  platformId?: number | null;
   isFavorite?: boolean;
 }
 
 export interface GameResponse {
   id: number;
   title: string;
-  description?: string;
-  imageUrl?: string;
+  description?: string | null;
+  imageUrl?: string | null;
   acquisitionDate: Date;
-  finishDate?: Date;
+  finishDate?: Date | null;
   status: GameStatus;
   isFavorite: boolean;
   createdAt: Date;
@@ -51,7 +63,7 @@ export interface GameResponse {
   platform?: {
     id: number;
     title: string;
-  };
+  } | null;
 }
 
 export interface GameFilters {
