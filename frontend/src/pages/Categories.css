@@ -8,7 +8,6 @@
   --sidebar-width: 260px;
   --sidebar-width-collapsed: 80px;
   --border-radius: 8px;
-  --card-padding: 20px;
 }
 
 /* Main layout styles */
@@ -52,6 +51,12 @@
   cursor: pointer;
   font-weight: 500;
   text-transform: lowercase;
+}
+
+.add-category-btn:hover {
+  background-color:#00000000;
+  color: white;
+  border: solid 1px white
 }
 
 /* Categories table */
@@ -180,7 +185,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 53, 56, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -189,9 +194,12 @@
 .modal {
   background: #fff;
   padding: 2rem;
-  border-radius: 8px;
-  width: 400px;
+  border-radius: 10px;
+  width: 55%;
+  height: 60%;
   position: relative;
+  display: flex;
+  flex-flow: column;
 }
 
 .close-btn {
@@ -201,9 +209,45 @@
 }
 
 .save-btn {
-  background: #00f0f0;
+  background-color: #00f0f0;
+  margin-top: 1rem;
+  margin-bottom: -5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  width: 18%;
+  height: 10%;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.save-btn:hover {
+  background-color:#2e003a;
+  color: white;
+  border: solid 1px white
+}
+
+.title-new-category {
+  color:#201624;
+  margin-bottom: 1rem;
+}
+
+.title-category {
+  color:#201624;
+}
+
+.title-category-input{
+  height: 37px;
+}
+
+.description-category-card {
+  color:#201624;
+  margin-top: 1rem;
+}
+
+.description-category-textarea {
+  height: 154px;
 }

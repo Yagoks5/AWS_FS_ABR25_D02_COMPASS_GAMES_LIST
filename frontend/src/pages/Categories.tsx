@@ -184,10 +184,11 @@ const Categories: React.FC = () => {
         <div className="modal-overlay">
           <div className="modal">
             <button className="close-btn" onClick={handleCloseModal}>X</button>
-            <h2>{editingCategory.createdAt ? 'Edit category' : 'New category'}</h2>
+            <h2 className='title-new-category'>{editingCategory.createdAt ? 'Edit category' : 'New category'}</h2>
 
-            <label>Title*</label>
+            <label className="title-category">Title</label>
             <input
+              className="title-category-input"
               type="text"
               value={editingCategory.name}
               onChange={(e) =>
@@ -195,8 +196,9 @@ const Categories: React.FC = () => {
               }
             />
 
-            <label>Description</label>
+            <label className="description-category-card">Description</label>
             <textarea
+              className="description-category-textarea"
               value={editingCategory.description}
               onChange={(e) =>
                 setEditingCategory({ ...editingCategory, description: e.target.value })
