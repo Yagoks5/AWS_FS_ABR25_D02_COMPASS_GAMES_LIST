@@ -1,9 +1,9 @@
 export interface Platform {
   id: number;
   title: string;
-  company?: string;
-  acquisitionYear?: number;
-  imageUrl?: string;
+  company: string | null;
+  acquisitionYear: number | null;
+  imageUrl: string | null;
   userId: number;
   isDeleted: boolean;
   createdAt: Date;
@@ -27,9 +27,9 @@ export interface UpdatePlatformData {
 export interface PlatformResponse {
   id: number;
   title: string;
-  company?: string;
-  acquisitionYear?: number;
-  imageUrl?: string;
+  company: string | null; // Alterado
+  acquisitionYear: number | null; // Alterado
+  imageUrl: string | null; // Alterado
   createdAt: Date;
   updatedAt: Date;
 }
