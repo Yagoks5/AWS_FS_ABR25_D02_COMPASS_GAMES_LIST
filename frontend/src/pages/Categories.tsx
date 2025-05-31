@@ -17,12 +17,16 @@ interface Category {
 
 const Categories: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; category: Category | null }>({
+    show: false,
+    category: null,
+  });
 
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
   const handleLogout = () => alert('Logout functionality to be implemented!');
-  const handleAddCategory = () => alert('Add new category functionality to be implemented!');
 
-  // Sample data - replace with actual API data later
   const categories: Category[] = [
     {
       name: "Racing",
@@ -50,6 +54,51 @@ const Categories: React.FC = () => {
     }
   ];
 
+  const handleAddCategory = () => {
+    setEditingCategory({
+      name: '',
+      description: '',
+      createdAt: '',
+      updatedAt: ''
+    });
+    setShowModal(true);
+  };
+
+  const handleEditCategory = (category: Category) => {
+    setEditingCategory(category);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingCategory(null);
+  };
+
+  const handleSaveCategory = () => {
+    if (editingCategory) {
+      console.log('Categoria salva:', editingCategory);
+      // Aqui você pode enviar para API ou atualizar o estado de categories
+    }
+    setShowModal(false);
+    setEditingCategory(null);
+  };
+
+  const handleDeleteClick = (category: Category) => {
+    setDeleteModal({ show: true, category });
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteModal({ show: false, category: null });
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteModal.category) {
+      console.log('Categoria deletada:', deleteModal.category);
+      // Aqui você pode fazer a chamada para excluir na API ou remover do estado
+    }
+    setDeleteModal({ show: false, category: null });
+  };
+
   return (
     <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       <aside className="sidebar">
@@ -57,7 +106,7 @@ const Categories: React.FC = () => {
           {!isSidebarCollapsed && <div className="logo"></div>}
           <button onClick={toggleSidebar} className="collapse-btn"><IoIosMenu /></button>
         </div>
-        
+
         <nav className="sidebar-nav">
           <ul>
             <li>
@@ -107,8 +156,16 @@ const Categories: React.FC = () => {
                 <div className="column created">{category.createdAt}</div>
                 <div className="column updated">{category.updatedAt}</div>
                 <div className="column actions">
-                  <button className="action-btn edit" title="Edit">✏️</button>
-                  <button className="action-btn delete" title="Delete">🗑️</button>
+                  <button
+                    className="action-btn edit"
+                    title="Edit"
+                    onClick={() => handleEditCategory(category)}
+                  >✏️</button>
+                  <button
+                    className="action-btn delete"
+                    title="Delete"
+                    onClick={() => handleDeleteClick(category)}
+                  >🗑️</button>
                 </div>
               </div>
             ))}
@@ -121,6 +178,60 @@ const Categories: React.FC = () => {
           <button className="pagination-btn">Next →</button>
         </div>
       </main>
+
+      {/* Modal de edição/criação */}
+      {showModal && editingCategory && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <button className="close-btn" onClick={handleCloseModal}>X</button>
+            <h2 className='title-new-category'>{editingCategory.createdAt ? 'Edit category' : 'New category'}</h2>
+
+            <label className="title-category">Title</label>
+            <input
+              className="title-category-input"
+              type="text"
+              value={editingCategory.name}
+              onChange={(e) =>
+                setEditingCategory({ ...editingCategory, name: e.target.value })
+              }
+            />
+
+            <label className="description-category-card">Description</label>
+            <textarea
+              className="description-category-textarea"
+              value={editingCategory.description}
+              onChange={(e) =>
+                setEditingCategory({ ...editingCategory, description: e.target.value })
+              }
+            ></textarea>
+
+            <button onClick={handleSaveCategory} className="save-btn">
+              {editingCategory.createdAt ? 'Save changes' : 'Save category'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmação de exclusão */}
+      {deleteModal.show && (
+        <div className="modal-overlay">
+          <div className="modal confirm-delete-modal">
+            <button className="close-btn" onClick={handleCancelDelete}>X</button>
+            <div className="modal-icon">
+              <span style={{ fontSize: '50px', color: '#e74c3c' }}>⚠️</span>
+            </div>
+            <h2>Are you sure?</h2>
+            <p>
+              Deleting this category will remove all games associated.<br />
+              This action is not reversible.
+            </p>
+            <div className="modal-buttons">
+              <button onClick={handleCancelDelete} className="cancel-btn">No, cancel action</button>
+              <button onClick={handleConfirmDelete} className="delete-btn">Yes, delete this</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
