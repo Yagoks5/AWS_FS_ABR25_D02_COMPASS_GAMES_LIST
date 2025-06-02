@@ -143,10 +143,17 @@
 }
 
 .logout-btn:hover {
+  color: rgb(255, 255, 255);             /* cor do texto em hover */
+  border-color: #FD4760;      /* borda vermelha em hover */
+  background-color: rgba(255, 0, 0, 0.959); /* fundo levemente avermelhado em hover (opcional) */
+
+}
+
+/* .logout-btn:hover {
   background-color: var(--text-muted);
   color: var(--secondary-bg);
   border-color: var(--text-muted);
-}
+} */
 
 .dashboard-container.sidebar-collapsed .logout-btn span {
   display: none;
