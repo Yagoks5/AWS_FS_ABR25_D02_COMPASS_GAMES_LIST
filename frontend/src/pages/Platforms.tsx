@@ -43,12 +43,8 @@ const Platforms: FC = () => {
       <main className="main-content">
         <div className="platforms-header">
           <h1>Platforms</h1>
-          <button 
-            type="button"
-            className="add-platform-btn" 
-            onClick={() => setIsAddModalOpen(true)}
-          >
-            add new platform
+          <button className="add-platform-btn" onClick={() => setIsAddModalOpen(true)}>
+          add new platform
           </button>
         </div>
 

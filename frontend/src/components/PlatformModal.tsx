@@ -69,7 +69,7 @@ const PlatformModal: FC<PlatformModalProps> = props => {
             </label>
             <input
               id="year"
-              type="text"
+              type="date"
               value={formData.acquisitionYear}
               onChange={(e) => setFormData(prev => ({...prev, acquisitionYear: e.target.value}))}
               required
@@ -77,14 +77,13 @@ const PlatformModal: FC<PlatformModalProps> = props => {
           </div>
           <div className="form-group">
             <label htmlFor="image">
-              Image URL<span className="required">*</span>
+              Image URL
             </label>
             <input
               id="image"
               type="url"
               value={formData.imageUrl}
               onChange={(e) => setFormData(prev => ({...prev, imageUrl: e.target.value}))}
-              required
             />
           </div>
           <div className="modal-footer">
