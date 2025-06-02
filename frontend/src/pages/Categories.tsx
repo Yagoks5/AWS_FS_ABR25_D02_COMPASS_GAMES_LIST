@@ -7,6 +7,10 @@ import { HiOutlineCpuChip } from "react-icons/hi2";
 import { MdLogout } from "react-icons/md";
 import { IoIosMenu } from "react-icons/io";
 import { Link } from 'react-router-dom';
+import { RiAlertFill } from "react-icons/ri";
+import { GoPencil } from "react-icons/go";
+import { SlTrash } from "react-icons/sl";
+import { IoMdClose } from "react-icons/io";
 
 interface Category {
   name: string;
@@ -133,9 +137,9 @@ const Categories: React.FC = () => {
 
       <main className="main-content">
         <div className="categories-header">
-          <h1>Categories</h1>
+          <h1><BiCategory /> Categories</h1>
           <button className="add-category-btn" onClick={handleAddCategory}>
-            add new category
+            New category
           </button>
         </div>
 
@@ -155,17 +159,17 @@ const Categories: React.FC = () => {
                 <div className="column description">{category.description}</div>
                 <div className="column created">{category.createdAt}</div>
                 <div className="column updated">{category.updatedAt}</div>
-                <div className="column actions">
+                <div className="column-actions">
                   <button
                     className="action-btn edit"
                     title="Edit"
                     onClick={() => handleEditCategory(category)}
-                  >✏️</button>
+                  ><GoPencil /></button>
                   <button
                     className="action-btn delete"
                     title="Delete"
                     onClick={() => handleDeleteClick(category)}
-                  >🗑️</button>
+                  ><SlTrash /></button>
                 </div>
               </div>
             ))}
@@ -173,9 +177,9 @@ const Categories: React.FC = () => {
         </div>
 
         <div className="pagination">
-          <button className="pagination-btn" disabled>← Previous</button>
+          <button className="pagination-btn-previous">← Previous</button>
           <span className="current-page">1</span>
-          <button className="pagination-btn">Next →</button>
+          <button className="pagination-btn-next">Next →</button>
         </div>
       </main>
 
@@ -183,8 +187,8 @@ const Categories: React.FC = () => {
       {showModal && editingCategory && (
         <div className="modal-overlay">
           <div className="modal">
-            <button className="close-btn" onClick={handleCloseModal}>X</button>
-            <h2 className='title-new-category'>{editingCategory.createdAt ? 'Edit category' : 'New category'}</h2>
+            <button className="close-btn" onClick={handleCloseModal}><IoMdClose /></button>
+            <h2 className='title-new-edit-category'>{editingCategory.createdAt ? 'Edit category' : 'New category'}</h2>
 
             <label className="title-category">Title</label>
             <input
@@ -216,15 +220,15 @@ const Categories: React.FC = () => {
       {deleteModal.show && (
         <div className="modal-overlay">
           <div className="modal confirm-delete-modal">
-            <button className="close-btn" onClick={handleCancelDelete}>X</button>
-            <div className="modal-icon">
-              <span style={{ fontSize: '50px', color: '#e74c3c' }}>⚠️</span>
-            </div>
-            <h2>Are you sure?</h2>
-            <p>
+            <button className="close-btn" onClick={handleCancelDelete}><IoMdClose /></button>
+            <div className="modal-icon"><RiAlertFill /></div>
+            <div className="delete-text">
+              <h2>Are you sure?</h2>
+              <p>
               Deleting this category will remove all games associated.<br />
               This action is not reversible.
-            </p>
+              </p>
+            </div>
             <div className="modal-buttons">
               <button onClick={handleCancelDelete} className="cancel-btn">No, cancel action</button>
               <button onClick={handleConfirmDelete} className="delete-btn">Yes, delete this</button>
@@ -237,3 +241,4 @@ const Categories: React.FC = () => {
 };
 
 export default Categories;
+
