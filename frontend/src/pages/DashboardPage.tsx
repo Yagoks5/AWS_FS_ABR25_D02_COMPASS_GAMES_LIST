@@ -20,7 +20,6 @@ const DashboardPage: React.FC = () => {
   const [userStats, setUserStats] = useState<UserStats | null>(null);
 
   useEffect(() => {
-    setTimeout(() => {
       setUserStats({
         name: 'User',
         gamesCount: 0,
@@ -28,7 +27,6 @@ const DashboardPage: React.FC = () => {
         platformsCount: 0,
         favoritesCount: 0,
       });
-    }, 1000);
   }, []);
 
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
