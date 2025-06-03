@@ -1,4 +1,4 @@
-﻿import { type FC, useState, useEffect, useMemo } from 'react';
+import { type FC, useState, useEffect, useMemo } from 'react';
 import { type Platform, type PlatformFormData } from '../types/platform';
 import PlatformModal from '../components/PlatformModal';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -42,18 +42,13 @@ const Platforms: FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/login');
-  };
-
-  // Load all platforms on component mount
+  };  // Load all platforms on component mount
   useEffect(() => {
     const fetchPlatforms = async () => {
       await loadAllPlatforms();
     };
     fetchPlatforms();
-   
-  }, []);
-
-  // Calculate paginated and sorted platforms
+  }, []);  // Calculate paginated and sorted platforms
   const { paginatedPlatforms, totalPages } = useMemo(() => {
     // Apply sorting if needed
     const processedPlatforms = [...allPlatforms];
@@ -223,13 +218,13 @@ const Platforms: FC = () => {
         <div className="platforms-table">
           <div className="table-header">
             <div className="column title" onClick={() => handleSort('title')}>
-              Title {sortConfig?.key === 'title' && (sortConfig.direction === 'asc' ? '' : '')}
+              Title {sortConfig?.key === 'title' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
             <div className="column company" onClick={() => handleSort('company')}>
-              Company {sortConfig?.key === 'company' && (sortConfig.direction === 'asc' ? '' : '')}
+              Company {sortConfig?.key === 'company' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
             <div className="column year" onClick={() => handleSort('acquisitionYear')}>
-              Acquisition year {sortConfig?.key === 'acquisitionYear' && (sortConfig.direction === 'asc' ? '' : '')}
+              Acquisition year {sortConfig?.key === 'acquisitionYear' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
             <div className="column actions">Actions</div>
           </div>
@@ -360,7 +355,7 @@ const Platforms: FC = () => {
                   className="close-btn"
                   aria-label="Close modal"
                 >
-                  
+                  ×
                 </button>
               </div>
               
