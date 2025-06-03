@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import './Categories.css';
+import { AiOutlineHome } from "react-icons/ai";
+import { IoGameControllerOutline } from "react-icons/io5";
 import { BiCategory } from "react-icons/bi";
+import { HiOutlineCpuChip } from "react-icons/hi2";
+import { MdLogout } from "react-icons/md";
+import { IoIosMenu } from "react-icons/io";
+import { Link } from 'react-router-dom';
 import { RiAlertFill } from "react-icons/ri";
 import { GoPencil } from "react-icons/go";
 import { SlTrash } from "react-icons/sl";
 import { IoMdClose } from "react-icons/io";
-import Sidebar from '../components/Sidebar';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 interface Category {
   name: string;
@@ -15,6 +18,8 @@ interface Category {
   createdAt: string;
   updatedAt: string;
 }
+
+type SortKey = 'name' | 'description' | 'createdAt' | 'updatedAt';
 
 const Categories: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -24,16 +29,17 @@ const Categories: React.FC = () => {
     show: false,
     category: null,
   });
-  const { logout } = useAuth();
-  const navigate = useNavigate();
+
+  // Estado para a ordenação
+  const [sortConfig, setSortConfig] = useState<{ key: SortKey | null; direction: 'ascending' | 'descending' }>({
+    key: null,
+    direction: 'ascending',
+  });
 
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const handleLogout = () => alert('Logout functionality to be implemented!');
 
-  const categories: Category[] = [
+  const initialCategories: Category[] = [
     {
       name: "Racing",
       description: "Driving games",
@@ -57,8 +63,78 @@ const Categories: React.FC = () => {
       description: "",
       createdAt: "08/12/2021",
       updatedAt: "08/12/2021"
+    },
+    {
+        name: "Adventure",
+        description: "Explore worlds",
+        createdAt: "10/01/2022",
+        updatedAt: "15/03/2023"
+    },
+    {
+        name: "Puzzle",
+        description: "Mind-bending challenges",
+        createdAt: "05/05/2020",
+        updatedAt: "05/05/2020"
+    },
+    {
+        name: "Sports",
+        description: "Athletic simulations",
+        createdAt: "20/07/2023",
+        updatedAt: "20/07/2023"
     }
   ];
+
+  // Usar useMemo para memoizar as categorias ordenadas
+  const sortedCategories = useMemo(() => {
+    let sortableItems = [...initialCategories]; // Use initialCategories ou um estado para as categorias reais
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = a[sortConfig.key as SortKey];
+        const bValue = b[sortConfig.key as SortKey];
+
+        // Lidar com datas
+        if (sortConfig.key === 'createdAt' || sortConfig.key === 'updatedAt') {
+            const dateA = new Date(aValue.split('/').reverse().join('-'));
+            const dateB = new Date(bValue.split('/').reverse().join('-'));
+            if (dateA < dateB) {
+                return sortConfig.direction === 'ascending' ? -1 : 1;
+            }
+            if (dateA > dateB) {
+                return sortConfig.direction === 'ascending' ? 1 : -1;
+            }
+            return 0;
+        }
+
+        // Lidar com strings (case-insensitive)
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          if (aValue.toLowerCase() < bValue.toLowerCase()) {
+            return sortConfig.direction === 'ascending' ? -1 : 1;
+          }
+          if (aValue.toLowerCase() > bValue.toLowerCase()) {
+            return sortConfig.direction === 'ascending' ? 1 : -1;
+          }
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [initialCategories, sortConfig]); // Dependências do useMemo
+
+  const requestSort = (key: SortKey) => {
+    let direction: 'ascending' | 'descending' = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Função para exibir o ícone de ordenação
+  const getSortIndicator = (key: SortKey) => {
+    if (sortConfig.key === key) {
+      return sortConfig.direction === 'ascending' ? ' ↑' : ' ↓';
+    }
+    return ' ⇅'; // Ícone padrão para não ordenado ou para indicar clicável
+  };
 
   const handleAddCategory = () => {
     setEditingCategory({
@@ -104,13 +180,38 @@ const Categories: React.FC = () => {
     }
     setDeleteModal({ show: false, category: null });
   };
+
   return (
     <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <Sidebar 
-        isCollapsed={isSidebarCollapsed}
-        toggleSidebar={toggleSidebar}
-        onLogout={handleLogout}
-      />
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          {!isSidebarCollapsed && <div className="logo"></div>}
+          <button onClick={toggleSidebar} className="collapse-btn"><IoIosMenu /></button>
+        </div>
+
+        <nav className="sidebar-nav">
+          <ul>
+            <li>
+              <Link to="/dashboard"><AiOutlineHome />{!isSidebarCollapsed && <span>Home</span>}</Link>
+            </li>
+            <li>
+              <Link to="/games"><IoGameControllerOutline />{!isSidebarCollapsed && <span>Games</span>}</Link>
+            </li>
+            <li className="active">
+              <Link to="/categories"><BiCategory />{!isSidebarCollapsed && <span>Categories</span>}</Link>
+            </li>
+            <li>
+              <Link to="/platforms"><HiOutlineCpuChip />{!isSidebarCollapsed && <span>Platforms</span>}</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <div className="sidebar-footer">
+          <button onClick={handleLogout} className="logout-btn">
+            <MdLogout />{!isSidebarCollapsed && <span>Logout</span>}
+          </button>
+        </div>
+      </aside>
 
       <main className="main-content">
         <div className="categories-header">
@@ -122,15 +223,15 @@ const Categories: React.FC = () => {
 
         <div className="categories-table">
           <div className="table-header">
-            <div className="column name">Name ⇅</div>
-            <div className="column description">Description ⇅</div>
-            <div className="column created">Created at ⇅</div>
-            <div className="column updated">Updated at ⇅</div>
+            <div className="column name" onClick={() => requestSort('name')}>Name {getSortIndicator('name')}</div>
+            <div className="column description" onClick={() => requestSort('description')}>Description {getSortIndicator('description')}</div>
+            <div className="column created" onClick={() => requestSort('createdAt')}>Created at {getSortIndicator('createdAt')}</div>
+            <div className="column updated" onClick={() => requestSort('updatedAt')}>Updated at {getSortIndicator('updatedAt')}</div>
             <div className="column actions"></div>
           </div>
 
           <div className="table-content">
-            {categories.map((category, index) => (
+            {sortedCategories.map((category, index) => ( // Usar categories ordenadas
               <div className="table-row" key={index}>
                 <div className="column name">{category.name}</div>
                 <div className="column description">{category.description}</div>
@@ -218,4 +319,3 @@ const Categories: React.FC = () => {
 };
 
 export default Categories;
-
