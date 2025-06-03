@@ -25,6 +25,7 @@ const Categories: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [originalName, setOriginalName] = useState<string | null>(null);
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; category: Category | null }>({
     show: false,
     category: null,
@@ -143,11 +144,13 @@ const Categories: React.FC = () => {
       createdAt: '', // Empty createdAt indicates a new category
       updatedAt: ''
     });
+    setOriginalName
     setShowModal(true);
   };
 
   const handleEditCategory = (category: Category) => {
     setEditingCategory(category);
+    setOriginalName(category.name); // Store the original name for potential updates
     setShowModal(true);
   };
 
@@ -174,7 +177,7 @@ const Categories: React.FC = () => {
         setCategories((prevCategories) =>
           prevCategories.map((cat) =>
             // Assuming name is unique for simplicity, ideally use an ID
-            cat.name === editingCategory.name
+            cat.name === originalName
               ? { ...editingCategory, updatedAt: now }
               : cat,
           ),
@@ -184,6 +187,7 @@ const Categories: React.FC = () => {
     }
     setShowModal(false);
     setEditingCategory(null);
+    setOriginalName(null)
   };
 
   const handleDeleteClick = (category: Category) => {
