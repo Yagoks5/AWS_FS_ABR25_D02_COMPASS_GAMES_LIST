@@ -1,14 +1,16 @@
 export interface Platform {
-  id: string;
+  id: number;
   title: string;
-  owner: string;
-  acquisitionYear: string;
-  imageUrl: string;
+  company: string;
+  acquisitionYear: number;
+  imageUrl?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface PlatformFormData {
   title: string;
-  owner: string;
-  acquisitionYear: string;
-  imageUrl: string;
+  company: string;
+  acquisitionYear: number;
+  imageUrl?: string;
 }
