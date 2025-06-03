@@ -30,16 +30,8 @@ const Categories: React.FC = () => {
     category: null,
   });
 
-  // Estado para a ordenação
-  const [sortConfig, setSortConfig] = useState<{ key: SortKey | null; direction: 'ascending' | 'descending' }>({
-    key: null,
-    direction: 'ascending',
-  });
-
-  const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
-  const handleLogout = () => alert('Logout functionality to be implemented!');
-
-  const initialCategories: Category[] = [
+  // MODIFICATION: Convert initialCategories to a state variable
+  const [categories, setCategories] = useState<Category[]>([
     {
       name: "Racing",
       description: "Driving games",
@@ -82,11 +74,20 @@ const Categories: React.FC = () => {
         createdAt: "20/07/2023",
         updatedAt: "20/07/2023"
     }
-  ];
+  ]);
+
+  // Estado para a ordenação
+  const [sortConfig, setSortConfig] = useState<{ key: SortKey | null; direction: 'ascending' | 'descending' }>({
+    key: null,
+    direction: 'ascending',
+  });
+
+  const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
+  const handleLogout = () => alert('Logout functionality to be implemented!');
 
   // Usar useMemo para memoizar as categorias ordenadas
   const sortedCategories = useMemo(() => {
-    let sortableItems = [...initialCategories]; // Use initialCategories ou um estado para as categorias reais
+    let sortableItems = [...categories]; // Use the state variable 'categories'
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key as SortKey];
@@ -118,7 +119,7 @@ const Categories: React.FC = () => {
       });
     }
     return sortableItems;
-  }, [initialCategories, sortConfig]); // Dependências do useMemo
+  }, [categories, sortConfig]); // Dependências do useMemo should include 'categories'
 
   const requestSort = (key: SortKey) => {
     let direction: 'ascending' | 'descending' = 'ascending';
@@ -132,15 +133,14 @@ const Categories: React.FC = () => {
   const getSortIndicator = (key: SortKey) => {
     if (sortConfig.key === key) {
       return sortConfig.direction === 'ascending' ? ' ↑' : ' ↓';
-    }
-    return ' ⇅'; // Ícone padrão para não ordenado ou para indicar clicável
+    } // Ícone padrão para não ordenado ou para indicar clicável
   };
 
   const handleAddCategory = () => {
     setEditingCategory({
       name: '',
       description: '',
-      createdAt: '',
+      createdAt: '', // Empty createdAt indicates a new category
       updatedAt: ''
     });
     setShowModal(true);
@@ -156,10 +156,31 @@ const Categories: React.FC = () => {
     setEditingCategory(null);
   };
 
+  // MODIFICATION: Update handleSaveCategory to manage state
   const handleSaveCategory = () => {
     if (editingCategory) {
-      console.log('Categoria salva:', editingCategory);
-      // Aqui você pode enviar para API ou atualizar o estado de categories
+      const now = new Date().toLocaleDateString(); // Simple date string for example
+      if (!editingCategory.createdAt) {
+        // This is a new category
+        const newCategory: Category = {
+          ...editingCategory,
+          createdAt: now,
+          updatedAt: now,
+        };
+        setCategories((prevCategories) => [...prevCategories, newCategory]);
+        console.log('New category added to state:', newCategory);
+      } else {
+        // This is an existing category being edited
+        setCategories((prevCategories) =>
+          prevCategories.map((cat) =>
+            // Assuming name is unique for simplicity, ideally use an ID
+            cat.name === editingCategory.name
+              ? { ...editingCategory, updatedAt: now }
+              : cat,
+          ),
+        );
+        console.log('Category updated in state:', editingCategory);
+      }
     }
     setShowModal(false);
     setEditingCategory(null);
@@ -173,10 +194,17 @@ const Categories: React.FC = () => {
     setDeleteModal({ show: false, category: null });
   };
 
+  // MODIFICATION: Update handleConfirmDelete to manage state
   const handleConfirmDelete = () => {
     if (deleteModal.category) {
-      console.log('Categoria deletada:', deleteModal.category);
-      // Aqui você pode fazer a chamada para excluir na API ou remover do estado
+      // Frontend only deletion:
+      setCategories(
+        (prevCategories) =>
+          prevCategories.filter(
+            (cat) => cat.name !== deleteModal.category!.name,
+          ), // Again, assuming name is unique
+      );
+      console.log('Category deleted from state:', deleteModal.category);
     }
     setDeleteModal({ show: false, category: null });
   };
@@ -231,8 +259,8 @@ const Categories: React.FC = () => {
           </div>
 
           <div className="table-content">
-            {sortedCategories.map((category, index) => ( // Usar categories ordenadas
-              <div className="table-row" key={index}>
+            {sortedCategories.map((category, index) => (
+              <div className="table-row" key={category.name}> {/* Using name as key, ideally use a unique ID */}
                 <div className="column name">{category.name}</div>
                 <div className="column description">{category.description}</div>
                 <div className="column created">{category.createdAt}</div>
