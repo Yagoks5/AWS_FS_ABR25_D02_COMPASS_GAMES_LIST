@@ -1,30 +1,41 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthBackground from '../components/AuthBackground';
+import { useAuth } from '../contexts/AuthContext';
 import Logo from '../components/Logo';
 import { login } from '../services/api';
 import './LoginPage.css';
-import axios from 'axios';
 
 const LoginPage = () => {
-  const [email, setEmail]       = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError]       = useState('');
-  const navigate                 = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const { login: authLogin, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setError('');
 
     try {
-      await login(email, password);
-      navigate('/dashboard'); // Navigate to dashboard after successful login
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || 'An error occurred during login');
-      } else {
-        setError('An unexpected error occurred');
+      const response = await login(email, password);
+
+      if (response.success) {
+        authLogin(response.data.token, response.data.user);
+        navigate('/dashboard');
       }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Invalid email or password. Please try again.');
     }
   };
 
@@ -51,7 +62,7 @@ const LoginPage = () => {
                 id="email"
                 type="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 className="form-input"
                 required
@@ -66,16 +77,15 @@ const LoginPage = () => {
                 id="password"
                 type="password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className="form-input"
-                required
               />
-            </div>
 
-            <button type="submit" className="form-button">
-              LOGIN
-            </button>
+              <button type="submit" className="form-button">
+                LOGIN
+              </button>
+            </div>
           </form>
 
           <Link to="/register" className="register-link">
