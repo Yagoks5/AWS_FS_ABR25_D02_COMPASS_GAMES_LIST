@@ -77,7 +77,10 @@
   margin-top: -25%;
 }
 
-.sidebar-nav li a {
+.sidebar-nav li a,
+.sidebar-nav li a:any-link,
+.sidebar-nav li a[href],
+.sidebar-nav li a[href]:any-link {
   display: flex;
   align-items: center;
   padding: 15px 25px;
@@ -88,7 +91,8 @@
   white-space: nowrap;
 }
 
-.sidebar-nav li a svg {
+.sidebar-nav li a svg,
+.sidebar-nav li a:any-link svg {
   margin-right: 15px;
   min-width: 24px;
   width: 40px;
@@ -97,7 +101,12 @@
 
 /* Estilo ativo da navegação */
 .sidebar-nav li.active a,
-.sidebar-nav li a:hover {
+.sidebar-nav li.active a:any-link,
+.sidebar-nav li a:hover,
+.sidebar-nav li a:any-link:hover,
+.sidebar-nav li.active a[href],
+.sidebar-nav li.active a[href]:any-link,
+.sidebar-nav li a[href]:hover {
   background-color: var(--sidebar-active-color);
   color: #000000;
   border-radius: 0 var(--border-radius) var(--border-radius) 0;
@@ -111,10 +120,12 @@
 .dashboard-container.sidebar-collapsed .sidebar-nav li a span {
   display: none;
 }
+
 .dashboard-container.sidebar-collapsed .sidebar-nav li a {
   justify-content: center;
   padding: 15px 0;
 }
+
 .dashboard-container.sidebar-collapsed .sidebar-nav li a svg {
   margin-right: 0;
 }
@@ -143,9 +154,12 @@
 }
 
 .logout-btn:hover {
-  color: rgb(255, 255, 255);             /* cor do texto em hover */
-  border-color: #FD4760;      /* borda vermelha em hover */
-  background-color: rgba(255, 0, 0, 0.959); /* fundo levemente avermelhado em hover (opcional) */
+  color: rgb(255, 255, 255);
+  /* cor do texto em hover */
+  border-color: #FD4760;
+  /* borda vermelha em hover */
+  background-color: rgba(255, 0, 0, 0.959);
+  /* fundo levemente avermelhado em hover (opcional) */
 
 }
 
@@ -158,10 +172,12 @@
 .dashboard-container.sidebar-collapsed .logout-btn span {
   display: none;
 }
+
 .dashboard-container.sidebar-collapsed .logout-btn {
   justify-content: center;
   padding: 10px;
 }
+
 .dashboard-container.sidebar-collapsed .logout-btn svg {
   margin-right: 0;
 }

@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import './Games.css';
-import { AiOutlineHome } from "react-icons/ai";
-import { IoGameControllerOutline } from "react-icons/io5";
-import { BiCategory } from "react-icons/bi";
-import { HiOutlineCpuChip } from "react-icons/hi2";
-import { MdLogout } from "react-icons/md";
-import { IoIosMenu } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { BsEye, BsPencil, BsTrash } from 'react-icons/bs';
+import Sidebar from '../components/Sidebar';
 
 const Games: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -52,16 +47,6 @@ const Games: React.FC = () => {
     updatedAt?: string;
   }
 
-const [newGameData, setNewGameData] = useState<Partial<Game>>({
-  title: '',
-  description: '',
-  category: '',
-  image: '',
-  isFavorite: false,
-});
-
-
-  const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
   const handleLogout = () => alert('Logout functionality to be implemented!');
   const handleAddGame = () => alert('Add new game functionality to be implemented!');
 
@@ -117,30 +102,13 @@ const currentGames = filteredGames.slice(
 );
 
 
-
   return (
     <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          {!isSidebarCollapsed && <div className="logo"></div>}
-          <button onClick={toggleSidebar} className="collapse-btn"><IoIosMenu /></button>
-        </div>
-        
-        <nav className="sidebar-nav">
-          <ul>
-            <li><a href="/dashboard"><AiOutlineHome />{!isSidebarCollapsed && <span>Home</span>}</a></li>
-            <li className="active"><a href="/games"><IoGameControllerOutline />{!isSidebarCollapsed && <span>Games</span>}</a></li>
-            <li><a href="/categories"><BiCategory />{!isSidebarCollapsed && <span>Categories</span>}</a></li>
-            <li><a href="/platforms"><HiOutlineCpuChip />{!isSidebarCollapsed && <span>Platforms</span>}</a></li>
-          </ul>
-        </nav>
-
-        <div className="sidebar-footer">
-          <button onClick={handleLogout} className="logout-btn">
-            <MdLogout />{!isSidebarCollapsed && <span>Logout</span>}
-          </button>
-        </div>
-      </aside>
+      <Sidebar 
+        isCollapsed={isSidebarCollapsed}
+        toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
+        onLogout={handleLogout}
+      />
 
       <main className="main-content">
         <div className="games-header">

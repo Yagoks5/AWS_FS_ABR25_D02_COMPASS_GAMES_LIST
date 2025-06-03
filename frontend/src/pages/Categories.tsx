@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
 import './Categories.css';
-import { AiOutlineHome } from "react-icons/ai";
-import { IoGameControllerOutline } from "react-icons/io5";
 import { BiCategory } from "react-icons/bi";
-import { HiOutlineCpuChip } from "react-icons/hi2";
-import { MdLogout } from "react-icons/md";
-import { IoIosMenu } from "react-icons/io";
-import { Link } from 'react-router-dom';
 import { RiAlertFill } from "react-icons/ri";
 import { GoPencil } from "react-icons/go";
 import { SlTrash } from "react-icons/sl";
 import { IoMdClose } from "react-icons/io";
+import Sidebar from '../components/Sidebar';
 
 interface Category {
   name: string;
@@ -102,38 +97,13 @@ const Categories: React.FC = () => {
     }
     setDeleteModal({ show: false, category: null });
   };
-
   return (
     <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          {!isSidebarCollapsed && <div className="logo"></div>}
-          <button onClick={toggleSidebar} className="collapse-btn"><IoIosMenu /></button>
-        </div>
-
-        <nav className="sidebar-nav">
-          <ul>
-            <li>
-              <Link to="/dashboard"><AiOutlineHome />{!isSidebarCollapsed && <span>Home</span>}</Link>
-            </li>
-            <li>
-              <Link to="/games"><IoGameControllerOutline />{!isSidebarCollapsed && <span>Games</span>}</Link>
-            </li>
-            <li className="active">
-              <Link to="/categories"><BiCategory />{!isSidebarCollapsed && <span>Categories</span>}</Link>
-            </li>
-            <li>
-              <Link to="/platforms"><HiOutlineCpuChip />{!isSidebarCollapsed && <span>Platforms</span>}</Link>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="sidebar-footer">
-          <button onClick={handleLogout} className="logout-btn">
-            <MdLogout />{!isSidebarCollapsed && <span>Logout</span>}
-          </button>
-        </div>
-      </aside>
+      <Sidebar 
+        isCollapsed={isSidebarCollapsed}
+        toggleSidebar={toggleSidebar}
+        onLogout={handleLogout}
+      />
 
       <main className="main-content">
         <div className="categories-header">
