@@ -4,6 +4,8 @@ import PlatformModal from '../components/PlatformModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import Sidebar from '../components/Sidebar';
 import { BsEye, BsPencil, BsTrash } from 'react-icons/bs';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import './Platforms.css';
 
 const Platforms: FC = () => {
@@ -18,6 +20,13 @@ const Platforms: FC = () => {
     key: keyof Platform;
     direction: 'asc' | 'desc';
   } | null>(null);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const handleSort = (key: keyof Platform) => {
     const direction: 'asc' | 'desc' = 
@@ -31,13 +40,12 @@ const Platforms: FC = () => {
       return 0;
     }));
   };
-
   return (
     <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       <Sidebar 
         isCollapsed={isSidebarCollapsed}
         toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
-        onLogout={() => {/* Implement logout logic */}}
+        onLogout={handleLogout}
       />
       
       <main className="main-content">

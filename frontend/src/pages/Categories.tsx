@@ -6,6 +6,8 @@ import { GoPencil } from "react-icons/go";
 import { SlTrash } from "react-icons/sl";
 import { IoMdClose } from "react-icons/io";
 import Sidebar from '../components/Sidebar';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface Category {
   name: string;
@@ -22,9 +24,14 @@ const Categories: React.FC = () => {
     show: false,
     category: null,
   });
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
-  const handleLogout = () => alert('Logout functionality to be implemented!');
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const categories: Category[] = [
     {

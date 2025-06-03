@@ -5,6 +5,8 @@ import { IoGameControllerOutline } from 'react-icons/io5';
 import { HiOutlineCpuChip } from 'react-icons/hi2';
 import { BiCategory } from 'react-icons/bi';
 import { MdStarOutline } from 'react-icons/md';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
 
 interface UserStats {
@@ -18,6 +20,8 @@ interface UserStats {
 const DashboardPage: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setUserStats({
@@ -30,8 +34,10 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
-  const handleLogout = () =>
-    alert('Funcionalidade de Logout a ser implementada!');
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   const handleAddNew = (type: string) =>
     alert(`Adicionar novo ${type} - funcionalidade a ser implementada.`);
 

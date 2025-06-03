@@ -3,6 +3,8 @@ import './Games.css';
 import { IoSearchOutline } from "react-icons/io5";
 import { BsEye, BsPencil, BsTrash } from 'react-icons/bs';
 import Sidebar from '../components/Sidebar';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Games: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -13,6 +15,8 @@ const Games: React.FC = () => {
   const gamesPerPage = 10;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [gameToDelete, setGameToDelete] = useState<Game | null>(null);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [games, setGames] = useState([
     {
       id: 1,
@@ -46,8 +50,10 @@ const Games: React.FC = () => {
     createdAt?: string;
     updatedAt?: string;
   }
-
-  const handleLogout = () => alert('Logout functionality to be implemented!');
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   const handleAddGame = () => alert('Add new game functionality to be implemented!');
 
   const toggleFavorite = (id: number) => {
