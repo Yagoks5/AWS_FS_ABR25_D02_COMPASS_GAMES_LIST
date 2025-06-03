@@ -57,7 +57,7 @@ const LoginPage = () => {
             <div className="form-group">
               <label htmlFor="email" className="form-label">
                 Email
-              </label>
+              </label> 
               <input
                 id="email"
                 type="email"
