@@ -8,6 +8,7 @@ import { MdStarOutline } from 'react-icons/md';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
+import { useDashboardStats } from '../hooks/useDashboard';
 
 interface UserStats {
   name: string;
@@ -20,8 +21,9 @@ interface UserStats {
 const DashboardPage: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const { data: stats } = useDashboardStats();
 
   useEffect(() => {
     setUserStats({
@@ -34,10 +36,12 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
+
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
+
   const handleAddNew = (type: string) =>
     alert(`Adicionar novo ${type} - funcionalidade a ser implementada.`);
 
@@ -58,7 +62,8 @@ const DashboardPage: React.FC = () => {
       <main className="main-content">
         <header className="main-header">
           <h1>
-            Welcome, <span className="User-style">{userStats.name}</span>
+            Welcome,{' '}
+            <span className="User-style">{user?.fullName || 'User'}</span>
           </h1>
           <p>Choose one of options below.</p>
         </header>
@@ -69,7 +74,7 @@ const DashboardPage: React.FC = () => {
               <div className="stat-card-icon-display-games">
                 <IoGameControllerOutline />
               </div>
-              <h2 className="stat-card-value">{userStats.gamesCount}</h2>
+              <h2 className="stat-card-value">{stats?.totalGames}</h2>
             </div>
             <p className="stat-card-label">Games</p>
             <button
@@ -85,7 +90,7 @@ const DashboardPage: React.FC = () => {
               <div className="stat-card-icon-display-categories">
                 <BiCategory />
               </div>
-              <h2 className="stat-card-value">{userStats.categoriesCount}</h2>
+              <h2 className="stat-card-value">{stats?.totalCategories}</h2>
             </div>
             <p className="stat-card-label">Categories</p>
             <button
@@ -101,7 +106,7 @@ const DashboardPage: React.FC = () => {
               <div className="stat-card-icon-display-platforms">
                 <HiOutlineCpuChip />
               </div>
-              <h2 className="stat-card-value">{userStats.platformsCount}</h2>
+              <h2 className="stat-card-value">{stats?.totalPlatforms}</h2>
             </div>
             <p className="stat-card-label">Platforms</p>
             <button
@@ -118,7 +123,7 @@ const DashboardPage: React.FC = () => {
                 <MdStarOutline />
               </div>
               <h2 className="stat-card-value">
-                <span className="fav-num">{userStats.favoritesCount}</span>
+                <span className="fav-num">{stats?.totalFavorites}</span>
               </h2>
             </div>
             <p className="stat-card-label">Favorite Games</p>
