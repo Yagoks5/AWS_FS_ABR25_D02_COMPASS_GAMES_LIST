@@ -6,7 +6,7 @@ import Sidebar from '../components/Sidebar';
 import { BsEye, BsPencil, BsTrash } from 'react-icons/bs';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as platformAPI from '../services/api';
 import './Platforms.css';
 
@@ -33,16 +33,25 @@ const Platforms: FC = () => {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Platform;
     direction: 'asc' | 'desc';
-  } | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  } | null>(null);  const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
-  };  // Load all platforms on component mount
+  };
+
+  // Check for URL parameter to open add modal
+  useEffect(() => {
+    if (searchParams.get('addNew') === 'true') {
+      setIsAddModalOpen(true);
+      // Remove the parameter from URL after opening modal
+      setSearchParams({});
+    }
+  }, [searchParams, setSearchParams]);// Load all platforms on component mount
   useEffect(() => {
     const fetchPlatforms = async () => {
       await loadAllPlatforms();

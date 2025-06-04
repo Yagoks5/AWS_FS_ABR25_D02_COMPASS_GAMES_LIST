@@ -59,18 +59,23 @@ body {
 /* Grid de estatísticas */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 80vh;
+  min-height: 600px;
 }
 
 .stat-card {
   background-color: var(--secondary-bg);
   border-radius: var(--border-radius);
-  padding: var(--card-padding);
+  padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 170px;
+  min-height: 250px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -87,12 +92,15 @@ body {
 .stat-card-header {
   display: flex;
   align-items: center;
-  gap: 75%;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .stat-card-value {
   color: rgb(0, 255, 255);
-  margin-top: -7%;
+  font-size: 3.5em;
+  margin: 0;
+  font-weight: bold;
 }
 
 .fav-num {
@@ -100,22 +108,23 @@ body {
 }
 
 .stat-card-label {
-  margin: -5px 0px 0px 5px;
+  margin: 15px 0px 25px 0px;
   font-weight: 600;
+  font-size: 1.3em;
 }
 
 .stat-card-icon-display-games svg,
 .stat-card-icon-display-categories svg,
 .stat-card-icon-display-platforms svg {
   color: #00ffe1;
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
 }
 
 .stat-card-icon-display-favorites svg {
   color: rgb(251, 255, 0);
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
 }
 
 .stat-card-info h2 {
@@ -135,12 +144,13 @@ body {
   background-color: rgb(255, 255, 255);
   color: hsla(0, 0%, 0%, 0.5);
   border: 1px solid var(--text-muted);
-  padding: 8px 12px;
+  padding: 15px 25px;
   border-radius: var(--border-radius);
   cursor: pointer;
-  width: 112px;
-  height: 30px;
+  width: 160px;
+  height: 50px;
   font-weight: 500;
+  font-size: 1.2em;
   text-align: center;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   margin-top: auto;
@@ -153,6 +163,32 @@ body {
 }
 
 /* Responsivo */
+@media (max-width: 1024px) {
+  .stats-grid {
+    max-width: 1100px;
+    gap: 35px;
+    height: 75vh;
+    min-height: 550px;
+  }
+
+  .stat-card {
+    padding: 35px;
+    min-height: 220px;
+  }
+
+  .stat-card-value {
+    font-size: 3em;
+  }
+
+  .stat-card-icon-display-games svg,
+  .stat-card-icon-display-categories svg,
+  .stat-card-icon-display-platforms svg,
+  .stat-card-icon-display-favorites svg {
+    width: 60px;
+    height: 60px;
+  }
+}
+
 @media (max-width: 768px) {
   .main-content {
     margin-left: var(--sidebar-width-collapsed);
@@ -161,9 +197,78 @@ body {
 
   .stats-grid {
     grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+    max-width: 100%;
+    height: auto;
+    min-height: auto;
+    gap: 25px;
   }
 
   .main-header h1 {
     font-size: 2em;
+  }
+
+  .stat-card {
+    min-height: 180px;
+    padding: 30px;
+  }
+
+  .stat-card-value {
+    font-size: 2.8em;
+  }
+
+  .stat-card-label {
+    font-size: 1.2em;
+    margin: 12px 0px 20px 0px;
+  }
+
+  .stat-card-icon-display-games svg,
+  .stat-card-icon-display-categories svg,
+  .stat-card-icon-display-platforms svg,
+  .stat-card-icon-display-favorites svg {
+    width: 55px;
+    height: 55px;
+  }
+
+  .add-new-btn {
+    width: 150px;
+    height: 45px;
+    font-size: 1.1em;
+    padding: 12px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    gap: 20px;
+  }
+
+  .stat-card {
+    min-height: 160px;
+    padding: 25px;
+  }
+
+  .stat-card-value {
+    font-size: 2.4em;
+  }
+
+  .stat-card-label {
+    font-size: 1.1em;
+    margin: 10px 0px 18px 0px;
+  }
+
+  .stat-card-icon-display-games svg,
+  .stat-card-icon-display-categories svg,
+  .stat-card-icon-display-platforms svg,
+  .stat-card-icon-display-favorites svg {
+    width: 50px;
+    height: 50px;
+  }
+
+  .add-new-btn {
+    width: 130px;
+    height: 42px;
+    font-size: 1em;
+    padding: 10px 18px;
   }
 }

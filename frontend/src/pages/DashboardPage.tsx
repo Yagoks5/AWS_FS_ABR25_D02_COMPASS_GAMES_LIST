@@ -41,9 +41,13 @@ const DashboardPage: React.FC = () => {
     logout();
     navigate('/login');
   };
-
-  const handleAddNew = (type: string) =>
-    alert(`Adicionar novo ${type} - funcionalidade a ser implementada.`);
+  const handleAddNew = (type: string) => {
+    if (type === 'Platform') {
+      navigate('/platforms?addNew=true');
+    } else {
+      alert(`Add new ${type} - functionality to be implemented.`);
+    }
+  };
 
   if (!userStats) return <div>Carregando...</div>;
 

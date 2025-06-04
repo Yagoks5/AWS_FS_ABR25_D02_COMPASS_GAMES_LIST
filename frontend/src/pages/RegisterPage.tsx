@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthBackground from '../components/AuthBackground';
 import Logo from '../components/Logo';
-import { register } from '../services/api';
+import { register, login } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import './RegisterPage.css';
 
@@ -12,20 +13,35 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
       return;
     }
 
     try {
+      // Register the user
       await register(fullName, email, password, confirmPassword);
-      navigate('/login'); // Navigate to login after successful registration
+      
+      // Automatically log in after successful registration
+      const loginResponse = await login(email, password);
+      
+      if (loginResponse.success) {
+        authLogin(loginResponse.data.token, loginResponse.data.user);
+        navigate('/dashboard');
+      } else {
+        // If auto-login fails, redirect to login page
+        navigate('/login');
+      }
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(
@@ -35,6 +51,8 @@ const RegisterPage = () => {
       } else {
         setError('An unexpected error occurred');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,10 +129,8 @@ const RegisterPage = () => {
                 className="form-input"
                 required
               />
-            </div>
-
-            <button type="submit" className="form-button">
-              Create Account
+            </div>            <button type="submit" className="form-button" disabled={loading}>
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 
