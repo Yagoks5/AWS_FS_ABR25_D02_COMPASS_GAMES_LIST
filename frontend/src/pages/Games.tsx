@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import './Games.css';
-import { IoSearchOutline } from "react-icons/io5";
+import { IoSearchOutline } from 'react-icons/io5';
 import { BsEye, BsPencil, BsTrash, BsHeart, BsHeartFill } from 'react-icons/bs';
 import Sidebar from '../components/Sidebar';
 import GameModal from '../components/GameModal';
@@ -13,7 +13,7 @@ import { gameAPI } from '../services/gameService';
 import { categoryAPI } from '../services/categoryService';
 import { getAllPlatforms } from '../services/api';
 import { useInvalidateCache } from '../hooks/useInvalidateCache';
-import { FiPlus } from "react-icons/fi";
+import { FiPlus } from 'react-icons/fi';
 
 interface ApiError {
   response?: {
@@ -41,25 +41,31 @@ const Games: React.FC = () => {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  
+
   // Filter states
   const [searchText, setSearchText] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined);
-  const [selectedPlatformId, setSelectedPlatformId] = useState<number | undefined>(undefined);
-  const [selectedStatus, setSelectedStatus] = useState<GameStatus | undefined>(undefined);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<
+    number | undefined
+  >(undefined);
+  const [selectedPlatformId, setSelectedPlatformId] = useState<
+    number | undefined
+  >(undefined);
+  const [selectedStatus, setSelectedStatus] = useState<GameStatus | undefined>(
+    undefined,
+  );
   const [isFavoriteOnly, setIsFavoriteOnly] = useState(false);
-  
+
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  
+
   // Sorting
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Game;
@@ -68,19 +74,19 @@ const Games: React.FC = () => {
 
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();  // Load data on component mount
- useEffect(() => {
+  const [searchParams, setSearchParams] = useSearchParams(); // Load data on component mount
+  useEffect(() => {
     loadData();
-    
+
     if (searchParams.get('add') === 'true') {
       const shouldFavorite = searchParams.get('favorite') === 'true';
-      
-      setSearchParams(params => {
+
+      setSearchParams((params) => {
         params.delete('add');
         params.delete('favorite');
         return params;
       });
-      
+
       if (shouldFavorite) {
         setSelectedGame({ isFavorite: true } as Game);
         setIsAddModalOpen(true);
@@ -89,26 +95,28 @@ const Games: React.FC = () => {
         setIsAddModalOpen(true);
       }
     }
-     
   }, [searchParams, setSearchParams]);
 
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const [gamesResponse, categoriesResponse, platformsResponse] = await Promise.all([
-        gameAPI.getAllGames({}),
-        categoryAPI.getAllCategories(),
-        getAllPlatforms()
-      ]);
-      
+
+      const [gamesResponse, categoriesResponse, platformsResponse] =
+        await Promise.all([
+          gameAPI.getAllGames({}),
+          categoryAPI.getAllCategories(),
+          getAllPlatforms(),
+        ]);
+
       setAllGames(gamesResponse.data);
       setCategories(categoriesResponse.data);
       setPlatforms(platformsResponse.data);
     } catch (err) {
       const error = err as ApiError;
-      setError(error.response?.data?.message || error.message || 'Failed to load data');
+      setError(
+        error.response?.data?.message || error.message || 'Failed to load data',
+      );
     } finally {
       setLoading(false);
     }
@@ -139,34 +147,46 @@ const Games: React.FC = () => {
   };
   const confirmDelete = async () => {
     if (!selectedGame) return;
-    
+
     try {
       await gameAPI.deleteGame(selectedGame.id);
-      setAllGames(prev => prev.filter(game => game.id !== selectedGame.id));
+      setAllGames((prev) => prev.filter((game) => game.id !== selectedGame.id));
       invalidateGames(); // Invalidate games cache
       invalidateDashboard(); // Update dashboard counters
       setIsDeleteModalOpen(false);
       setSelectedGame(null);
     } catch (err) {
       const error = err as ApiError;
-      setError(error.response?.data?.message || error.message || 'Failed to delete game');
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          'Failed to delete game',
+      );
     }
-  };  const toggleFavorite = async (gameId: number) => {
+  };
+  const toggleFavorite = async (gameId: number) => {
     try {
-      const game = allGames.find(g => g.id === gameId);
+      const game = allGames.find((g) => g.id === gameId);
       if (!game) return;
-      
+
       await gameAPI.toggleFavorite(gameId, !game.isFavorite);
-      setAllGames(prev => prev.map(game =>
-        game.id === gameId ? { ...game, isFavorite: !game.isFavorite } : game
-      ));
+      setAllGames((prev) =>
+        prev.map((game) =>
+          game.id === gameId ? { ...game, isFavorite: !game.isFavorite } : game,
+        ),
+      );
       invalidateGames(); // Invalidate games cache
       invalidateDashboard(); // Update dashboard counters for favorites
     } catch (err) {
       const error = err as ApiError;
-      setError(error.response?.data?.message || error.message || 'Failed to update favorite');
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          'Failed to update favorite',
+      );
     }
-  };  const { invalidateGames, invalidateDashboard } = useInvalidateCache();
+  };
+  const { invalidateGames, invalidateDashboard } = useInvalidateCache();
 
   const handleGameSaved = () => {
     loadData(); // Reload data after save
@@ -179,7 +199,11 @@ const Games: React.FC = () => {
 
   const handleSort = (key: keyof Game) => {
     let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === 'asc'
+    ) {
       direction = 'desc';
     }
     setSortConfig({ key, direction });
@@ -187,15 +211,15 @@ const Games: React.FC = () => {
 
   const sortedGames = useMemo(() => {
     if (!sortConfig) return allGames;
-    
+
     return [...allGames].sort((a, b) => {
       const aValue = a[sortConfig.key];
       const bValue = b[sortConfig.key];
-      
+
       if (!aValue && !bValue) return 0;
       if (!aValue) return sortConfig.direction === 'asc' ? -1 : 1;
       if (!bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-      
+
       if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
       if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
       return 0;
@@ -203,19 +227,35 @@ const Games: React.FC = () => {
   }, [allGames, sortConfig]);
 
   const filteredGames = useMemo(() => {
-    return sortedGames.filter(game => {
-      const matchesSearch = !searchText || 
+    return sortedGames.filter((game) => {
+      const matchesSearch =
+        !searchText ||
         game.title.toLowerCase().includes(searchText.toLowerCase()) ||
         game.description?.toLowerCase().includes(searchText.toLowerCase());
-      
-      const matchesCategory = !selectedCategoryId || game.category.id === selectedCategoryId;
-      const matchesPlatform = !selectedPlatformId || game.platform?.id === selectedPlatformId;
+
+      const matchesCategory =
+        !selectedCategoryId || game.category.id === selectedCategoryId;
+      const matchesPlatform =
+        !selectedPlatformId || game.platform?.id === selectedPlatformId;
       const matchesStatus = !selectedStatus || game.status === selectedStatus;
       const matchesFavorite = !isFavoriteOnly || game.isFavorite;
-      
-      return matchesSearch && matchesCategory && matchesPlatform && matchesStatus && matchesFavorite;
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesPlatform &&
+        matchesStatus &&
+        matchesFavorite
+      );
     });
-  }, [sortedGames, searchText, selectedCategoryId, selectedPlatformId, selectedStatus, isFavoriteOnly]);
+  }, [
+    sortedGames,
+    searchText,
+    selectedCategoryId,
+    selectedPlatformId,
+    selectedStatus,
+    isFavoriteOnly,
+  ]);
 
   const paginatedGames = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -236,21 +276,30 @@ const Games: React.FC = () => {
     const delayedLoad = setTimeout(() => {
       loadData();
     }, 300);
-    
+
     return () => clearTimeout(delayedLoad);
-     
   }, [selectedCategoryId, selectedPlatformId, selectedStatus, isFavoriteOnly]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchText, selectedCategoryId, selectedPlatformId, selectedStatus, isFavoriteOnly]);
+  }, [
+    searchText,
+    selectedCategoryId,
+    selectedPlatformId,
+    selectedStatus,
+    isFavoriteOnly,
+  ]);
 
   if (loading) {
     return (
-      <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-        <Sidebar 
+      <div
+        className={`dashboard-container ${
+          isSidebarCollapsed ? 'sidebar-collapsed' : ''
+        }`}
+      >
+        <Sidebar
           isCollapsed={isSidebarCollapsed}
-          toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
+          toggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
           onLogout={handleLogout}
         />
         <main className="main-content">
@@ -261,25 +310,31 @@ const Games: React.FC = () => {
   }
 
   return (
-    <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <Sidebar 
+    <div
+      className={`dashboard-container ${
+        isSidebarCollapsed ? 'sidebar-collapsed' : ''
+      }`}
+    >
+      <Sidebar
         isCollapsed={isSidebarCollapsed}
-        toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
+        toggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
         onLogout={handleLogout}
       />
 
-      <main className="main-content">        <div className="games-header">
+      <main className="main-content">
+        {' '}
+        <div className="games-header">
           <h1>Games</h1>
-          <button className="add-game-btn" onClick={handleAddGame}><FiPlus /> New game</button>
+          <button className="add-game-btn" onClick={handleAddGame}>
+            <FiPlus /> New game
+          </button>
         </div>
-
         {error && (
           <div className="error-message">
             {error}
             <button onClick={() => setError(null)}>×</button>
           </div>
         )}
-
         <div className="games-stats-summary">
           <div className="stats-item">
             <span className="stats-label">Total Games:</span>
@@ -287,63 +342,82 @@ const Games: React.FC = () => {
           </div>
           <div className="stats-item">
             <span className="stats-label">Playing:</span>
-            <span className="stats-value">{allGames.filter(g => g.status === 'Playing').length}</span>
+            <span className="stats-value">
+              {allGames.filter((g) => g.status === 'Playing').length}
+            </span>
           </div>
           <div className="stats-item">
             <span className="stats-label">Completed:</span>
-            <span className="stats-value">{allGames.filter(g => g.status === 'Done').length}</span>
+            <span className="stats-value">
+              {allGames.filter((g) => g.status === 'Done').length}
+            </span>
           </div>
           <div className="stats-item">
             <span className="stats-label">Abandoned:</span>
-            <span className="stats-value">{allGames.filter(g => g.status === 'Abandoned').length}</span>
+            <span className="stats-value">
+              {allGames.filter((g) => g.status === 'Abandoned').length}
+            </span>
           </div>
           <div className="stats-item">
             <span className="stats-label">Favorites:</span>
-            <span className="stats-value">{allGames.filter(g => g.isFavorite).length}</span>
+            <span className="stats-value">
+              {allGames.filter((g) => g.isFavorite).length}
+            </span>
           </div>
         </div>
-
         <div className="games-filters">
           <div className="search-box">
             <IoSearchOutline />
-            <input 
-              type="text" 
-              placeholder="Search Game..." 
+            <input
+              type="text"
+              placeholder="Search Game..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
           </div>
 
           <div className="filter-group">
-            <select 
-              value={selectedCategoryId || ''} 
-              onChange={(e) => setSelectedCategoryId(e.target.value ? Number(e.target.value) : undefined)}
+            <select
+              value={selectedCategoryId || ''}
+              onChange={(e) =>
+                setSelectedCategoryId(
+                  e.target.value ? Number(e.target.value) : undefined,
+                )
+              }
               className="category-select"
             >
               <option value="">All Categories</option>
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
               ))}
             </select>
 
-            <select 
-              value={selectedPlatformId || ''} 
-              onChange={(e) => setSelectedPlatformId(e.target.value ? Number(e.target.value) : undefined)}
+            <select
+              value={selectedPlatformId || ''}
+              onChange={(e) =>
+                setSelectedPlatformId(
+                  e.target.value ? Number(e.target.value) : undefined,
+                )
+              }
               className="platform-select"
             >
               <option value="">All Platforms</option>
-              {platforms.map(platform => (
+              {platforms.map((platform) => (
                 <option key={platform.id} value={platform.id}>
                   {platform.title}
                 </option>
               ))}
             </select>
 
-            <select 
-              value={selectedStatus || ''} 
-              onChange={(e) => setSelectedStatus(e.target.value ? e.target.value as GameStatus : undefined)}
+            <select
+              value={selectedStatus || ''}
+              onChange={(e) =>
+                setSelectedStatus(
+                  e.target.value ? (e.target.value as GameStatus) : undefined,
+                )
+              }
               className="status-select"
             >
               <option value="">All Status</option>
@@ -353,7 +427,7 @@ const Games: React.FC = () => {
             </select>
 
             <label className="favorite-filter">
-              <input 
+              <input
                 type="checkbox"
                 checked={isFavoriteOnly}
                 onChange={(e) => setIsFavoriteOnly(e.target.checked)}
@@ -362,22 +436,35 @@ const Games: React.FC = () => {
             </label>
           </div>
 
-          <button className="clear-btn" onClick={handleClearFilters}>Clear</button>
+          <button className="clear-btn" onClick={handleClearFilters}>
+            Clear
+          </button>
         </div>
-
         <div className="games-table">
           <div className="table-header">
             <div className="column title" onClick={() => handleSort('title')}>
-              Title {sortConfig?.key === 'title' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              Title{' '}
+              {sortConfig?.key === 'title' &&
+                (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
             <div className="column description">Description</div>
-            <div className="column category" onClick={() => handleSort('category')}>
-              Category {sortConfig?.key === 'category' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            <div
+              className="column category"
+              onClick={() => handleSort('category')}
+            >
+              Category{' '}
+              {sortConfig?.key === 'category' &&
+                (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
             <div className="column platform">Platform</div>
             <div className="column status">Status</div>
-            <div className="column release-date" onClick={() => handleSort('createdAt')}>
-              Created {sortConfig?.key === 'createdAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            <div
+              className="column release-date"
+              onClick={() => handleSort('createdAt')}
+            >
+              Created{' '}
+              {sortConfig?.key === 'createdAt' &&
+                (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
             <div className="column favorite">Favorite</div>
             <div className="column actions">Actions</div>
@@ -390,35 +477,63 @@ const Games: React.FC = () => {
               paginatedGames.map((game) => (
                 <div className="table-row" key={game.id}>
                   <div className="column title">
-                    {game.imageUrl && <img src={game.imageUrl} alt={game.title} className="game-icon" />}
+                    {game.imageUrl && (
+                      <img
+                        src={game.imageUrl}
+                        alt={game.title}
+                        className="game-icon"
+                      />
+                    )}
                     {game.title}
                   </div>
-                  <div className="column description">{game.description || '-'}</div>
+                  <div className="column description">
+                    {game.description || '-'}
+                  </div>
                   <div className="column category">{game.category.name}</div>
-                  <div className="column platform">{game.platform?.title || 'N/A'}</div>
+                  <div className="column platform">
+                    {game.platform?.title || 'N/A'}
+                  </div>
                   <div className="column status">
-                    <span className={`status-badge status-${game.status?.toLowerCase()}`}>
+                    <span
+                      className={`status-badge status-${game.status?.toLowerCase()}`}
+                    >
                       {game.status || 'Playing'}
                     </span>
                   </div>
                   <div className="column release-date">
-                    {new Date(game.createdAt).toLocaleDateString("pt-BR")}
+                    {new Date(game.createdAt).toLocaleDateString('pt-BR')}
                   </div>
-                  <div 
-                    className="column favorite" 
+                  <div
+                    className="column favorite"
                     onClick={() => toggleFavorite(game.id)}
                     style={{ cursor: 'pointer' }}
                   >
-                    {game.isFavorite ? <BsHeartFill className="favorite-icon active" /> : <BsHeart className="favorite-icon" />}
+                    {game.isFavorite ? (
+                      <BsHeartFill className="favorite-icon active" />
+                    ) : (
+                      <BsHeart className="favorite-icon" />
+                    )}
                   </div>
                   <div className="column actions">
-                    <button className="action-btn view" onClick={() => handleViewGame(game)} title="View">
+                    <button
+                      className="action-btn view"
+                      onClick={() => handleViewGame(game)}
+                      title="View"
+                    >
                       <BsEye className="action-icon" />
                     </button>
-                    <button className="action-btn edit" onClick={() => handleEditGame(game)} title="Edit">
+                    <button
+                      className="action-btn edit"
+                      onClick={() => handleEditGame(game)}
+                      title="Edit"
+                    >
                       <BsPencil className="action-icon" />
                     </button>
-                    <button className="action-btn delete" onClick={() => handleDeleteGame(game)} title="Delete">
+                    <button
+                      className="action-btn delete"
+                      onClick={() => handleDeleteGame(game)}
+                      title="Delete"
+                    >
                       <BsTrash className="action-icon" />
                     </button>
                   </div>
@@ -427,24 +542,30 @@ const Games: React.FC = () => {
             )}
           </div>
         </div>
-
         {filteredGames.length > 0 && (
           <div className="pagination">
-            <button 
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1} className='pagination-btn-previous'
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="pagination-btn-previous"
             >
               Previous
             </button>
-            <span>Page {currentPage} of {totalPages}</span>
-            <button 
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages} className='pagination-btn-next'
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="pagination-btn-next"
             >
               Next
             </button>
           </div>
-        )}        {/* Add/Edit Modal */}
+        )}{' '}
+        {/* Add/Edit Modal */}
         {(isAddModalOpen || isEditModalOpen) && (
           <GameModal
             isOpen={isAddModalOpen || isEditModalOpen}
@@ -463,39 +584,79 @@ const Games: React.FC = () => {
                 handleGameSaved();
               } catch (err) {
                 const error = err as ApiError;
-                setError(error.response?.data?.message || error.message || 'Failed to save game');
+                setError(
+                  error.response?.data?.message ||
+                    error.message ||
+                    'Failed to save game',
+                );
               }
             }}
             mode={isAddModalOpen ? 'create' : 'edit'}
             game={selectedGame}
           />
         )}
-
         {/* View Modal */}
         {isViewModalOpen && selectedGame && (
           <div className="modal-overlay">
             <div className="modal-content view-modal">
-              <button className="close-modal" onClick={() => setIsViewModalOpen(false)}>✖</button>
+              <button
+                className="close-modal"
+                onClick={() => setIsViewModalOpen(false)}
+              >
+                ✖
+              </button>
               <h2>{selectedGame.title}</h2>
               {selectedGame.imageUrl && (
-                <img src={selectedGame.imageUrl} alt={selectedGame.title} className="modal-image" />
-              )}              <div className="game-details">
-                <p><strong>Description:</strong> {selectedGame.description || 'No description'}</p>
-                <p><strong>Category:</strong> {selectedGame.category.name}</p>
-                <p><strong>Platform:</strong> {selectedGame.platform?.title || 'No platform'}</p>
-                <p><strong>Status:</strong> {selectedGame.status || 'Playing'}</p>
+                <img
+                  src={selectedGame.imageUrl}
+                  alt={selectedGame.title}
+                  className="modal-image"
+                />
+              )}{' '}
+              <div className="game-details">
+                <p>
+                  <strong>Description:</strong>{' '}
+                  {selectedGame.description || 'No description'}
+                </p>
+                <p>
+                  <strong>Category:</strong> {selectedGame.category.name}
+                </p>
+                <p>
+                  <strong>Platform:</strong>{' '}
+                  {selectedGame.platform?.title || 'No platform'}
+                </p>
+                <p>
+                  <strong>Status:</strong> {selectedGame.status || 'Playing'}
+                </p>
                 {selectedGame.acquisitionDate && (
-                  <p><strong>Acquisition Date:</strong> {new Date(selectedGame.acquisitionDate).toLocaleDateString("pt-BR")}</p>
+                  <p>
+                    <strong>Acquisition Date:</strong>{' '}
+                    {new Date(selectedGame.acquisitionDate).toLocaleDateString(
+                      'pt-BR',
+                    )}
+                  </p>
                 )}
                 {selectedGame.finishDate && (
-                  <p><strong>Finish Date:</strong> {new Date(selectedGame.finishDate).toLocaleDateString("pt-BR")}</p>
+                  <p>
+                    <strong>Finish Date:</strong>{' '}
+                    {new Date(selectedGame.finishDate).toLocaleDateString(
+                      'pt-BR',
+                    )}
+                  </p>
                 )}
-                <p><strong>Created:</strong> {new Date(selectedGame.createdAt).toLocaleDateString("pt-BR")}</p>
-                <p><strong>Favorite:</strong> {selectedGame.isFavorite ? "Yes ❤️" : "No"}</p>
+                <p>
+                  <strong>Created:</strong>{' '}
+                  {new Date(selectedGame.createdAt).toLocaleDateString('pt-BR')}
+                </p>
+                <p>
+                  <strong>Favorite:</strong>{' '}
+                  {selectedGame.isFavorite ? 'Yes ❤️' : 'No'}
+                </p>
               </div>
             </div>
           </div>
-        )}        {/* Delete Confirmation Modal */}
+        )}{' '}
+        {/* Delete Confirmation Modal */}
         <ConfirmationModal
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
