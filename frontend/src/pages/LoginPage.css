@@ -47,10 +47,10 @@
   gap: 0.25rem;
 }
 
-.form-label {
+.form-group .form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: rgb(86, 91, 99);
+  color: rgb(255, 255, 255);
 }
 
 .form-group .form-input {
