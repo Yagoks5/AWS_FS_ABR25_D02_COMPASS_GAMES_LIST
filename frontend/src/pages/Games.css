@@ -49,6 +49,34 @@
 .games-header {
   display: flex;
   justify-content: space-between;
+}
+
+.games-stats-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  background-color: #252525;
+  border-radius: 8px;
+  padding: 16px 24px;
+  margin: 20px 0;
+}
+
+.games-stats-summary .stats-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+}
+
+.games-stats-summary .stats-label {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 5px;
+}
+
+.games-stats-summary .stats-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
   align-items: center;
   margin-bottom: 30px;
 }
@@ -199,6 +227,7 @@
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
+
   .table-header,
   .table-row {
     grid-template-columns: 2fr 2fr 1fr 1fr 0.5fr 0.8fr;
@@ -250,7 +279,7 @@
   width: 90%;
   max-width: 500px;
   position: relative;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
 .close-modal {
