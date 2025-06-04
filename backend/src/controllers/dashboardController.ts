@@ -9,7 +9,14 @@ export const getDashboardStats = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const dashboardData = await dashboardService.getDashboardStats(userId);
 
     res.status(200).json({
@@ -29,7 +36,14 @@ export const getGamesByStatus = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const gamesByStatus = await dashboardService.getGamesByStatus(userId);
 
     res.status(200).json({
@@ -49,7 +63,14 @@ export const getRecentGames = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 5;
     const recentGames = await dashboardService.getRecentGames(userId, limit);
 

@@ -1,10 +1,16 @@
-import { User } from './user.types';
+import 'express';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: User; // Optional user object for authenticated requests
-      sessionId?: string; // Optional session ID for tracking sessions
+      user: {
+        userId: number;
+        email: string;
+      };
+      session?: {
+        id: string;
+        expires: Date;
+      };
     }
   }
 }

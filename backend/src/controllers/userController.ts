@@ -9,7 +9,14 @@ export const getCurrentUser = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
 
     const user = await prisma.user.findFirst({
       where: { id: userId, isDeleted: false },
