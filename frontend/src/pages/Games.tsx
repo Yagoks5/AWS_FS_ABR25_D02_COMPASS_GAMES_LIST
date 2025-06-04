@@ -69,15 +69,25 @@ const Games: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();  // Load data on component mount
   useEffect(() => {
-    loadData();
-    
-    // Check for add modal query parameter
+    loadData();    // Check for add modal query parameter
     if (searchParams.get('add') === 'true') {
-      setIsAddModalOpen(true);
+      const shouldFavorite = searchParams.get('favorite') === 'true';
+      
+      // Clear search params
       setSearchParams(params => {
         params.delete('add');
+        params.delete('favorite');
         return params;
       });
+      
+      // Set appropriate game and open the modal
+      if (shouldFavorite) {
+        setSelectedGame({ isFavorite: true } as Game);
+        setIsAddModalOpen(true);
+      } else {
+        setSelectedGame(null);
+        setIsAddModalOpen(true);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, setSearchParams]);
@@ -112,7 +122,6 @@ const Games: React.FC = () => {
     logout();
     navigate('/login');
   };
-
   const handleAddGame = () => {
     setSelectedGame(null);
     setIsAddModalOpen(true);

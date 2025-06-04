@@ -73,21 +73,30 @@ const GameModal: React.FC<GameModalProps> = ({
       loadData();
     }
   }, [isOpen]);
-
   // Update form data when game changes
   useEffect(() => {
     if (game && mode !== 'create') {
-      setFormData({
-        title: game.title,
-        description: game.description || '',
-        imageUrl: game.imageUrl || '',
-        acquisitionDate: game.acquisitionDate.split('T')[0],
-        finishDate: game.finishDate ? game.finishDate.split('T')[0] : '',
-        status: game.status,
-        categoryId: game.category.id,
-        platformId: game.platform?.id || null,
-        isFavorite: game.isFavorite,
-      });
+      // For a complete game object with all properties
+      if (game.title) {
+        setFormData({
+          title: game.title,
+          description: game.description || '',
+          imageUrl: game.imageUrl || '',
+          acquisitionDate: game.acquisitionDate.split('T')[0],
+          finishDate: game.finishDate ? game.finishDate.split('T')[0] : '',
+          status: game.status,
+          categoryId: game.category.id,
+          platformId: game.platform?.id || null,
+          isFavorite: game.isFavorite,
+        });
+      } 
+      // Special case for partial game object (favorite flag only)
+      else if (game.isFavorite !== undefined) {
+        setFormData(current => ({
+          ...current,
+          isFavorite: game.isFavorite
+        }));
+      }
     } else if (mode === 'create') {
       setFormData({
         title: '',
@@ -98,7 +107,7 @@ const GameModal: React.FC<GameModalProps> = ({
         status: GameStatus.PLAYING,
         categoryId: 0,
         platformId: null,
-        isFavorite: false,
+        isFavorite: game?.isFavorite || false, // Use game.isFavorite if it exists
       });
     }
     setErrors({});

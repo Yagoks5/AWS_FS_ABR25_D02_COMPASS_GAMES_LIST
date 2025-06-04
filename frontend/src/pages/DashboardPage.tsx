@@ -47,6 +47,9 @@ const DashboardPage: React.FC = () => {
       navigate('/games?add=true');
     } else if (type === 'Category') {
       navigate('/categories?add=true');
+    } else if (type === 'Favorite') {
+      // For favorites, we redirect to the games page with a special parameter
+      navigate('/games?add=true&favorite=true');
     } else {
       alert(`Add new ${type} - functionality to be implemented.`);
     }
@@ -66,11 +69,10 @@ const DashboardPage: React.FC = () => {
         onLogout={handleLogout}
       />
 
-      <main className="main-content">
-        <header className="main-header">
+      <main className="main-content">        <header className="main-header">
           <h1>
             Welcome,{' '}
-            <span className="User-style">{user?.fullName || 'User'}</span>
+            <span className="User-style">{user?.fullName?.split(' ')[0] || 'User'}</span>
           </h1>
           <p>Choose one of options below.</p>
         </header>

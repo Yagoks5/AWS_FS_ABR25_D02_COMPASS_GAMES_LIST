@@ -43,10 +43,9 @@ const Platforms: FC = () => {
     logout();
     navigate('/login');
   };
-
   // Check for URL parameter to open add modal
   useEffect(() => {
-    if (searchParams.get('addNew') === 'true') {
+    if (searchParams.get('add') === 'true' || searchParams.get('addNew') === 'true') {
       setIsAddModalOpen(true);
       // Remove the parameter from URL after opening modal
       setSearchParams({});
