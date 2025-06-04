@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { Category, CategoryFormData } from '../services/categoryService';
 import { categoryAPI } from '../services/categoryService';
 import './CategoryModal.css';
+import { IoClose } from "react-icons/io5";
 
 interface CategoryModalProps {
   isOpen: boolean;
@@ -100,15 +101,15 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
   if (!isOpen) return null;
 
   const isReadonly = mode === 'view';
-  const title = mode === 'create' ? 'Add New Category' : mode === 'edit' ? 'Edit Category' : 'Category Details';
+  const title = mode === 'create' ? 'New Category' : mode === 'edit' ? 'Edit Category' : 'Category Details';
 
   return (
     <div className="modal-overlay">
       <div className="modal-content category-modal">
         <div className="modal-header">
           <h2>{title}</h2>
-          <button className="close-button" onClick={onClose} type="button">
-            ×
+          <button className="close-modal" onClick={onClose} type="button">
+            <IoClose />
           </button>
         </div>
 

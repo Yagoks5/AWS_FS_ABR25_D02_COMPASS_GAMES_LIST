@@ -157,6 +157,10 @@
   cursor: pointer;
 }
 
+.clear-btn:hover {
+ background-color: #f33;
+}
+
 /* Games Table */
 .games-table {
   background-color: var(--secondary-bg);
@@ -257,6 +261,39 @@
   .column.favorite {
     display: none;
   }
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.pagination-btn-previous {
+
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+}
+
+.pagination-btn-previous:hover {
+  background-color: #f33;
+}
+
+.pagination-btn-next {
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+}
+
+.pagination-btn-next:hover {
+  background-color: var(--sidebar-active-color);
+  color: #000;
 }
 
 .modal-overlay {

@@ -49,6 +49,7 @@
 .category-modal .form-group input,
 .category-modal .form-group textarea {
     padding: 12px;
+    resize: none;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: white;
@@ -109,27 +110,46 @@
 }
 
 .category-modal .btn-cancel {
-    background-color: #e0e0e0;
-    color: #333;
+    background-color: #d6d6d6;
+    color: #000000;
 }
 
 .category-modal .btn-cancel:hover {
-    background-color: #d0d0d0;
+    background-color: #f33;
+    color:#fff;
 }
 
 .category-modal .btn-submit {
-    background-color: var(--sidebar-active-color);
-    color: var(--primary-bg);
+    background-color: #d6d6d6;
+    color: #000000;
 }
 
 .category-modal .btn-submit:hover:not(:disabled) {
-    background-color: #00e6cc;
+    background-color: #00ffff;
 }
 
 .category-modal .btn-submit:disabled {
     background-color: #666;
     cursor: not-allowed;
 }
+
+
+.close-modal svg {
+  position: absolute;
+  color: rgb(201, 201, 201);
+  top: 3rem;
+  right: 2rem;
+  height: 30px;
+  width: 30px;
+}
+
+.close-modal svg:hover {
+  color: #f33;
+  top: 3rem;
+  right: 2rem;
+}
+
+
 
 /* Responsive design */
 @media (max-width: 768px) {

@@ -10,6 +10,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import type { Category } from '../services/categoryService';
 import { categoryAPI } from '../services/categoryService';
 import { useInvalidateCache } from '../hooks/useInvalidateCache';
+import { BiCategory } from "react-icons/bi";
+import { FiPlus } from "react-icons/fi";
+import { IoClose } from "react-icons/io5";
 
 interface ApiError {
   response?: {
@@ -203,8 +206,8 @@ const Categories: React.FC = () => {
       />
 
       <main className="main-content">        <div className="categories-header">
-          <h1>Categories</h1>
-          <button className="add-category-btn" onClick={handleAddCategory}>Add new category</button>
+          <div className="categories-header-title"><BiCategory /> <h1>Categories</h1></div>
+          <button className="add-category-btn" onClick={handleAddCategory}><FiPlus /> New category</button>
         </div>
 
         {error && (
@@ -290,14 +293,14 @@ const Categories: React.FC = () => {
           <div className="pagination">
             <button 
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
+              disabled={currentPage === 1} className='pagination-btn-previous'
             >
               Previous
             </button>
             <span>Page {currentPage} of {totalPages}</span>
             <button 
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages} className='pagination-btn-next'
             >
               Next
             </button>
@@ -323,7 +326,7 @@ const Categories: React.FC = () => {
         {isViewModalOpen && selectedCategory && (
           <div className="modal-overlay">
             <div className="modal-content view-modal">
-              <button className="close-modal" onClick={() => setIsViewModalOpen(false)}>✖</button>
+              <button className="close-modal" onClick={() => setIsViewModalOpen(false)}><IoClose /></button>
               <h2>{selectedCategory.name}</h2>
               <div className="category-details">
                 <p><strong>Description:</strong> {selectedCategory.description || 'No description'}</p>

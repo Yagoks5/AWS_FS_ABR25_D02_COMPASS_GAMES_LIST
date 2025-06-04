@@ -13,6 +13,7 @@ import { gameAPI } from '../services/gameService';
 import { categoryAPI } from '../services/categoryService';
 import { getAllPlatforms } from '../services/api';
 import { useInvalidateCache } from '../hooks/useInvalidateCache';
+import { FiPlus } from "react-icons/fi";
 
 interface ApiError {
   response?: {
@@ -274,7 +275,7 @@ const Games: React.FC = () => {
 
       <main className="main-content">        <div className="games-header">
           <h1>Games</h1>
-          <button className="add-game-btn" onClick={handleAddGame}>Add new game</button>
+          <button className="add-game-btn" onClick={handleAddGame}><FiPlus /> New game</button>
         </div>
 
         {error && (
@@ -436,14 +437,14 @@ const Games: React.FC = () => {
           <div className="pagination">
             <button 
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
+              disabled={currentPage === 1} className='pagination-btn-previous'
             >
               Previous
             </button>
             <span>Page {currentPage} of {totalPages}</span>
             <button 
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages} className='pagination-btn-next'
             >
               Next
             </button>
