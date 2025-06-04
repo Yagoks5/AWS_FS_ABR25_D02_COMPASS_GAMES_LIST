@@ -24,9 +24,7 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-
-    try {
+    setError('');    try {
       const response = await login(email, password);
 
       if (response.success) {
@@ -36,6 +34,8 @@ const LoginPage = () => {
     } catch (err) {
       console.error('Login error:', err);
       setError('Invalid email or password. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,10 +80,8 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className="form-input"
-              />
-
-              <button type="submit" className="form-button">
-                LOGIN
+              />              <button type="submit" className="form-button" disabled={loading}>
+                {loading ? 'LOGGING IN...' : 'LOGIN'}
               </button>
             </div>
           </form>

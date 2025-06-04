@@ -1,351 +1,348 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './Categories.css';
-import { AiOutlineHome } from "react-icons/ai";
-import { IoGameControllerOutline } from "react-icons/io5";
-import { BiCategory } from "react-icons/bi";
-import { HiOutlineCpuChip } from "react-icons/hi2";
-import { MdLogout } from "react-icons/md";
-import { IoIosMenu } from "react-icons/io";
-import { Link } from 'react-router-dom';
-import { RiAlertFill } from "react-icons/ri";
-import { GoPencil } from "react-icons/go";
-import { SlTrash } from "react-icons/sl";
-import { IoMdClose } from "react-icons/io";
+import { IoSearchOutline } from "react-icons/io5";
+import { BsEye, BsPencil, BsTrash } from 'react-icons/bs';
+import Sidebar from '../components/Sidebar';
+import CategoryModal from '../components/CategoryModal';
+import ConfirmationModal from '../components/ConfirmationModal';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import type { Category } from '../services/categoryService';
+import { categoryAPI } from '../services/categoryService';
+import { useInvalidateCache } from '../hooks/useInvalidateCache';
 
-interface Category {
-  name: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message?: string;
 }
-
-type SortKey = 'name' | 'description' | 'createdAt' | 'updatedAt';
 
 const Categories: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [originalName, setOriginalName] = useState<string | null>(null);
-  const [deleteModal, setDeleteModal] = useState<{ show: boolean; category: Category | null }>({
-    show: false,
-    category: null,
-  });
+  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Modal states
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  
+  // Filter states
+  const [searchText, setSearchText] = useState('');
+  
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  
+  // Sorting
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Category;
+    direction: 'asc' | 'desc';
+  } | null>(null);
 
-  // MODIFICATION: Convert initialCategories to a state variable
-  const [categories, setCategories] = useState<Category[]>([
-    {
-      name: "Racing",
-      description: "Driving games",
-      createdAt: "08/12/2021",
-      updatedAt: "08/12/2021"
-    },
-    {
-      name: "FPS",
-      description: "",
-      createdAt: "08/12/2021",
-      updatedAt: "08/12/2021"
-    },
-    {
-      name: "Fighting",
-      description: "",
-      createdAt: "08/12/2021",
-      updatedAt: "08/12/2021"
-    },
-    {
-      name: "MMO RPG",
-      description: "",
-      createdAt: "08/12/2021",
-      updatedAt: "08/12/2021"
-    },
-    {
-        name: "Adventure",
-        description: "Explore worlds",
-        createdAt: "10/01/2022",
-        updatedAt: "15/03/2023"
-    },
-    {
-        name: "Puzzle",
-        description: "Mind-bending challenges",
-        createdAt: "05/05/2020",
-        updatedAt: "05/05/2020"
-    },
-    {
-        name: "Sports",
-        description: "Athletic simulations",
-        createdAt: "20/07/2023",
-        updatedAt: "20/07/2023"
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Load data on component mount
+  useEffect(() => {
+    loadData();
+    
+    // Check for add modal query parameter
+    if (searchParams.get('add') === 'true') {
+      setIsAddModalOpen(true);
+      setSearchParams(params => {
+        params.delete('add');
+        return params;
+      });    }
+  }, [searchParams, setSearchParams]);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await categoryAPI.getAllCategories();
+      setAllCategories(response.data);
+    } catch (err) {
+      const error = err as ApiError;
+      setError(error.response?.data?.message || error.message || 'Failed to load categories');
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
-  // Estado para a ordenação
-  const [sortConfig, setSortConfig] = useState<{ key: SortKey | null; direction: 'ascending' | 'descending' }>({
-    key: null,
-    direction: 'ascending',
-  });
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
-  const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
-  const handleLogout = () => alert('Logout functionality to be implemented!');
+  const handleAddCategory = () => {
+    setSelectedCategory(null);
+    setIsAddModalOpen(true);
+  };
 
-  // Usar useMemo para memoizar as categorias ordenadas
-  const sortedCategories = useMemo(() => {
-    let sortableItems = [...categories]; // Use the state variable 'categories'
-    if (sortConfig.key !== null) {
-      sortableItems.sort((a, b) => {
-        const aValue = a[sortConfig.key as SortKey];
-        const bValue = b[sortConfig.key as SortKey];
+  const handleEditCategory = (category: Category) => {
+    setSelectedCategory(category);
+    setIsEditModalOpen(true);
+  };
 
-        // Lidar com datas
-        if (sortConfig.key === 'createdAt' || sortConfig.key === 'updatedAt') {
-            const dateA = new Date(aValue.split('/').reverse().join('-'));
-            const dateB = new Date(bValue.split('/').reverse().join('-'));
-            if (dateA < dateB) {
-                return sortConfig.direction === 'ascending' ? -1 : 1;
-            }
-            if (dateA > dateB) {
-                return sortConfig.direction === 'ascending' ? 1 : -1;
-            }
-            return 0;
-        }
+  const handleViewCategory = (category: Category) => {
+    setSelectedCategory(category);
+    setIsViewModalOpen(true);
+  };
 
-        // Lidar com strings (case-insensitive)
-        if (typeof aValue === 'string' && typeof bValue === 'string') {
-          if (aValue.toLowerCase() < bValue.toLowerCase()) {
-            return sortConfig.direction === 'ascending' ? -1 : 1;
-          }
-          if (aValue.toLowerCase() > bValue.toLowerCase()) {
-            return sortConfig.direction === 'ascending' ? 1 : -1;
-          }
-        }
-        return 0;
-      });
+  const handleDeleteCategory = (category: Category) => {
+    setSelectedCategory(category);
+    setIsDeleteModalOpen(true);
+  };
+  const confirmDelete = async () => {
+    if (!selectedCategory) return;
+    
+    try {
+      await categoryAPI.deleteCategory(selectedCategory.id);
+      setAllCategories(prev => prev.filter(category => category.id !== selectedCategory.id));
+      invalidateCategories(); // Invalidate categories cache
+      invalidateDashboard(); // Update dashboard counters
+      setIsDeleteModalOpen(false);
+      setSelectedCategory(null);
+    } catch (err) {
+      const error = err as ApiError;
+      setError(error.response?.data?.message || error.message || 'Failed to delete category');
     }
-    return sortableItems;
-  }, [categories, sortConfig]); // Dependências do useMemo should include 'categories'
+  };
+  const { invalidateCategories, invalidateDashboard } = useInvalidateCache();
 
-  const requestSort = (key: SortKey) => {
-    let direction: 'ascending' | 'descending' = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+  const handleCategorySaved = () => {
+    loadData(); // Reload data after save
+    invalidateCategories(); // Invalidate categories cache
+    invalidateDashboard(); // Update dashboard counters
+    setIsAddModalOpen(false);
+    setIsEditModalOpen(false);
+    setSelectedCategory(null);
+  };
+
+  const handleSort = (key: keyof Category) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
     }
     setSortConfig({ key, direction });
   };
 
-  // Função para exibir o ícone de ordenação
-  const getSortIndicator = (key: SortKey) => {
-    if (sortConfig.key === key) {
-      return sortConfig.direction === 'ascending' ? ' ↑' : ' ↓';
-    } // Ícone padrão para não ordenado ou para indicar clicável
-  };
-
-  const handleAddCategory = () => {
-    setEditingCategory({
-      name: '',
-      description: '',
-      createdAt: '', // Empty createdAt indicates a new category
-      updatedAt: ''
+  const sortedCategories = useMemo(() => {
+    if (!sortConfig) return allCategories;
+    
+    return [...allCategories].sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
+      
+      if (!aValue && !bValue) return 0;
+      if (!aValue) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (!bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+      
+      if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
     });
-    setOriginalName
-    setShowModal(true);
+  }, [allCategories, sortConfig]);
+
+  const filteredCategories = useMemo(() => {
+    return sortedCategories.filter(category => {
+      const matchesSearch = !searchText || 
+        category.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        category.description?.toLowerCase().includes(searchText.toLowerCase());
+      
+      return matchesSearch;
+    });
+  }, [sortedCategories, searchText]);
+
+  const paginatedCategories = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredCategories.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredCategories, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
+
+  const handleClearFilters = () => {
+    setSearchText('');
+    setCurrentPage(1);
   };
 
-  const handleEditCategory = (category: Category) => {
-    setEditingCategory(category);
-    setOriginalName(category.name); // Store the original name for potential updates
-    setShowModal(true);
-  };
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchText]);
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setEditingCategory(null);
-  };
-
-  // MODIFICATION: Update handleSaveCategory to manage state
-  const handleSaveCategory = () => {
-    if (editingCategory) {
-      const now = new Date().toLocaleDateString(); // Simple date string for example
-      if (!editingCategory.createdAt) {
-        // This is a new category
-        const newCategory: Category = {
-          ...editingCategory,
-          createdAt: now,
-          updatedAt: now,
-        };
-        setCategories((prevCategories) => [...prevCategories, newCategory]);
-        console.log('New category added to state:', newCategory);
-      } else {
-        // This is an existing category being edited
-        setCategories((prevCategories) =>
-          prevCategories.map((cat) =>
-            // Assuming name is unique for simplicity, ideally use an ID
-            cat.name === originalName
-              ? { ...editingCategory, updatedAt: now }
-              : cat,
-          ),
-        );
-        console.log('Category updated in state:', editingCategory);
-      }
-    }
-    setShowModal(false);
-    setEditingCategory(null);
-    setOriginalName(null)
-  };
-
-  const handleDeleteClick = (category: Category) => {
-    setDeleteModal({ show: true, category });
-  };
-
-  const handleCancelDelete = () => {
-    setDeleteModal({ show: false, category: null });
-  };
-
-  // MODIFICATION: Update handleConfirmDelete to manage state
-  const handleConfirmDelete = () => {
-    if (deleteModal.category) {
-      // Frontend only deletion:
-      setCategories(
-        (prevCategories) =>
-          prevCategories.filter(
-            (cat) => cat.name !== deleteModal.category!.name,
-          ), // Again, assuming name is unique
-      );
-      console.log('Category deleted from state:', deleteModal.category);
-    }
-    setDeleteModal({ show: false, category: null });
-  };
+  if (loading) {
+    return (
+      <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+        <Sidebar 
+          isCollapsed={isSidebarCollapsed}
+          toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
+          onLogout={handleLogout}
+        />
+        <main className="main-content">
+          <div className="loading">Loading categories...</div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          {!isSidebarCollapsed && <div className="logo"></div>}
-          <button onClick={toggleSidebar} className="collapse-btn"><IoIosMenu /></button>
+      <Sidebar 
+        isCollapsed={isSidebarCollapsed}
+        toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
+        onLogout={handleLogout}
+      />
+
+      <main className="main-content">        <div className="categories-header">
+          <h1>Categories</h1>
+          <button className="add-category-btn" onClick={handleAddCategory}>Add new category</button>
         </div>
 
-        <nav className="sidebar-nav">
-          <ul>
-            <li>
-              <Link to="/dashboard"><AiOutlineHome />{!isSidebarCollapsed && <span>Home</span>}</Link>
-            </li>
-            <li>
-              <Link to="/games"><IoGameControllerOutline />{!isSidebarCollapsed && <span>Games</span>}</Link>
-            </li>
-            <li className="active">
-              <Link to="/categories"><BiCategory />{!isSidebarCollapsed && <span>Categories</span>}</Link>
-            </li>
-            <li>
-              <Link to="/platforms"><HiOutlineCpuChip />{!isSidebarCollapsed && <span>Platforms</span>}</Link>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="sidebar-footer">
-          <button onClick={handleLogout} className="logout-btn">
-            <MdLogout />{!isSidebarCollapsed && <span>Logout</span>}
-          </button>
+        {error && (
+          <div className="error-message">
+            {error}
+            <button onClick={() => setError(null)}>×</button>
+          </div>
+        )}
+        
+        <div className="categories-stats-summary">
+          <div className="stats-item">
+            <span className="stats-label">Total Categories:</span>
+            <span className="stats-value">{allCategories.length}</span>
+          </div>
+          <div className="stats-item">
+            <span className="stats-label">Most Popular:</span>
+            <span className="stats-value">
+              {allCategories.length > 0 ? 
+                [...allCategories].sort((a, b) => 
+                  (b._count?.games || 0) - (a._count?.games || 0)
+                )[0]?.name || 'None' : 'None'}
+            </span>
+          </div>
         </div>
-      </aside>
 
-      <main className="main-content">
-        <div className="categories-header">
-          <h1><BiCategory /> Categories</h1>
-          <button className="add-category-btn" onClick={handleAddCategory}>
-            New category
-          </button>
+        <div className="categories-filters">
+          <div className="search-box">
+            <IoSearchOutline />
+            <input 
+              type="text" 
+              placeholder="Search Category..." 
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </div>
+
+          <button className="clear-btn" onClick={handleClearFilters}>Clear</button>
         </div>
 
         <div className="categories-table">
           <div className="table-header">
-            <div className="column name" onClick={() => requestSort('name')}>Name {getSortIndicator('name')}</div>
-            <div className="column description" onClick={() => requestSort('description')}>Description {getSortIndicator('description')}</div>
-            <div className="column created" onClick={() => requestSort('createdAt')}>Created at {getSortIndicator('createdAt')}</div>
-            <div className="column updated" onClick={() => requestSort('updatedAt')}>Updated at {getSortIndicator('updatedAt')}</div>
-            <div className="column actions"></div>
+            <div className="column name" onClick={() => handleSort('name')}>
+              Name {sortConfig?.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            </div>
+            <div className="column description">Description</div>
+            <div className="column games-count">Games</div>
+            <div className="column created-date" onClick={() => handleSort('createdAt')}>
+              Created {sortConfig?.key === 'createdAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            </div>
+            <div className="column actions">Actions</div>
           </div>
 
           <div className="table-content">
-            {sortedCategories.map((category, index) => (
-              <div className="table-row" key={category.name}> {/* Using name as key, ideally use a unique ID */}
-                <div className="column name">{category.name}</div>
-                <div className="column description">{category.description}</div>
-                <div className="column created">{category.createdAt}</div>
-                <div className="column updated">{category.updatedAt}</div>
-                <div className="column-actions">
-                  <button
-                    className="action-btn edit"
-                    title="Edit"
-                    onClick={() => handleEditCategory(category)}
-                  ><GoPencil /></button>
-                  <button
-                    className="action-btn delete"
-                    title="Delete"
-                    onClick={() => handleDeleteClick(category)}
-                  ><SlTrash /></button>
+            {paginatedCategories.length === 0 ? (
+              <div className="no-categories">No categories found</div>
+            ) : (
+              paginatedCategories.map((category) => (
+                <div className="table-row" key={category.id}>
+                  <div className="column name">{category.name}</div>
+                  <div className="column description">{category.description || '-'}</div>
+                  <div className="column games-count">{category._count?.games || 0}</div>
+                  <div className="column created-date">
+                    {new Date(category.createdAt).toLocaleDateString("pt-BR")}
+                  </div>
+                  <div className="column actions">
+                    <button className="action-btn view" onClick={() => handleViewCategory(category)} title="View">
+                      <BsEye className="action-icon" />
+                    </button>
+                    <button className="action-btn edit" onClick={() => handleEditCategory(category)} title="Edit">
+                      <BsPencil className="action-icon" />
+                    </button>
+                    <button className="action-btn delete" onClick={() => handleDeleteCategory(category)} title="Delete">
+                      <BsTrash className="action-icon" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
-        <div className="pagination">
-          <button className="pagination-btn-previous">← Previous</button>
-          <span className="current-page">1</span>
-          <button className="pagination-btn-next">Next →</button>
-        </div>
-      </main>
-
-      {/* Modal de edição/criação */}
-      {showModal && editingCategory && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <button className="close-btn" onClick={handleCloseModal}><IoMdClose /></button>
-            <h2 className='title-new-edit-category'>{editingCategory.createdAt ? 'Edit category' : 'New category'}</h2>
-
-            <label className="title-category">Title</label>
-            <input
-              className="title-category-input"
-              type="text"
-              value={editingCategory.name}
-              onChange={(e) =>
-                setEditingCategory({ ...editingCategory, name: e.target.value })
-              }
-            />
-
-            <label className="description-category-card">Description</label>
-            <textarea
-              className="description-category-textarea"
-              value={editingCategory.description}
-              onChange={(e) =>
-                setEditingCategory({ ...editingCategory, description: e.target.value })
-              }
-            ></textarea>
-
-            <button onClick={handleSaveCategory} className="save-btn">
-              {editingCategory.createdAt ? 'Save changes' : 'Save category'}
+        {filteredCategories.length > 0 && (
+          <div className="pagination">
+            <button 
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span>Page {currentPage} of {totalPages}</span>
+            <button 
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              Next
             </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Modal de confirmação de exclusão */}
-      {deleteModal.show && (
-        <div className="modal-overlay">
-          <div className="modal confirm-delete-modal">
-            <button className="close-btn" onClick={handleCancelDelete}><IoMdClose /></button>
-            <div className="modal-icon"><RiAlertFill /></div>
-            <div className="delete-text">
-              <h2>Are you sure?</h2>
-              <p>
-              Deleting this category will remove all games associated.<br />
-              This action is not reversible.
-              </p>
-            </div>
-            <div className="modal-buttons">
-              <button onClick={handleCancelDelete} className="cancel-btn">No, cancel action</button>
-              <button onClick={handleConfirmDelete} className="delete-btn">Yes, delete this</button>
+        {/* Add/Edit Modal */}
+        {(isAddModalOpen || isEditModalOpen) && (
+          <CategoryModal
+            isOpen={isAddModalOpen || isEditModalOpen}
+            onClose={() => {
+              setIsAddModalOpen(false);
+              setIsEditModalOpen(false);
+              setSelectedCategory(null);
+            }}
+            onSubmit={() => handleCategorySaved()}
+            mode={isAddModalOpen ? 'create' : 'edit'}
+            category={selectedCategory}
+          />
+        )}
+
+        {/* View Modal */}
+        {isViewModalOpen && selectedCategory && (
+          <div className="modal-overlay">
+            <div className="modal-content view-modal">
+              <button className="close-modal" onClick={() => setIsViewModalOpen(false)}>✖</button>
+              <h2>{selectedCategory.name}</h2>
+              <div className="category-details">
+                <p><strong>Description:</strong> {selectedCategory.description || 'No description'}</p>
+                <p><strong>Games Count:</strong> {selectedCategory._count?.games || 0}</p>
+                <p><strong>Created:</strong> {new Date(selectedCategory.createdAt).toLocaleDateString("pt-BR")}</p>
+                <p><strong>Updated:</strong> {new Date(selectedCategory.updatedAt).toLocaleDateString("pt-BR")}</p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={confirmDelete}
+          message={`Are you sure you want to delete "${selectedCategory?.name}"? This action cannot be undone.`}
+        />
+      </main>
     </div>
   );
 };

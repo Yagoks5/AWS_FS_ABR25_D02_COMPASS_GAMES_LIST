@@ -40,10 +40,13 @@ const DashboardPage: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/login');
-  };
-  const handleAddNew = (type: string) => {
+  };  const handleAddNew = (type: string) => {
     if (type === 'Platform') {
-      navigate('/platforms?addNew=true');
+      navigate('/platforms?add=true');
+    } else if (type === 'Game') {
+      navigate('/games?add=true');
+    } else if (type === 'Category') {
+      navigate('/categories?add=true');
     } else {
       alert(`Add new ${type} - functionality to be implemented.`);
     }
