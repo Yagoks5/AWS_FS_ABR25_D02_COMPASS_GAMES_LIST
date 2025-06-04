@@ -13,7 +13,14 @@ export const createPlatform = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const platformData: CreatePlatformData = req.body;
 
     const platform = await platformService.createPlatform(userId, platformData);
@@ -43,7 +50,14 @@ export const getPlatforms = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const { page, limit } = req.query;
 
     const result = await platformService.getPlatformsPaginated(
@@ -70,7 +84,14 @@ export const getPlatformById = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const platformId = parseInt(req.params.id, 10);
 
     if (isNaN(platformId)) {
@@ -115,7 +136,14 @@ export const updatePlatform = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const platformId = parseInt(req.params.id, 10);
     const updateData: UpdatePlatformData = req.body;
 
@@ -165,7 +193,15 @@ export const deletePlatform = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
+
     const platformId = parseInt(req.params.id, 10);
 
     if (isNaN(platformId)) {
@@ -209,7 +245,14 @@ export const getAllPlatforms = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
 
     const platforms = await platformService.getAllPlatformsForUser(userId);
 

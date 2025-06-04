@@ -20,7 +20,7 @@ export const authenticateJWT = async (
     const token = authHeader.split(' ')[1];
     const decoded = verifyToken(token);
 
-    (req as any).user = {
+    req.user = {
       userId: decoded.userId,
       email: decoded.email,
     };

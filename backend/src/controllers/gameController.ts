@@ -15,7 +15,14 @@ export const createGame = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const gameData: CreateGameData = req.body;
     const game = await gameService.createGame(userId, gameData);
     res.status(201).json({
@@ -39,7 +46,14 @@ export const getGames = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const { page, limit, search, categoryId, platformId, status, isFavorite } =
       req.query;
 
@@ -80,7 +94,14 @@ export const getGameById = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const gameId = parseInt(req.params.id, 10);
     if (isNaN(gameId)) {
       res.status(400).json({ success: false, message: 'Invalid game ID' });
@@ -110,7 +131,13 @@ export const updateGame = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res
+        .status(401)
+        .json({ success: false, message: 'User not authenticated' });
+      return;
+    }
     const gameId = parseInt(req.params.id, 10);
     if (isNaN(gameId)) {
       res.status(400).json({ success: false, message: 'Invalid game ID' });
@@ -141,7 +168,13 @@ export const deleteGame = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res
+        .status(401)
+        .json({ success: false, message: 'User not authenticated' });
+      return;
+    }
     const gameId = parseInt(req.params.id, 10);
     if (isNaN(gameId)) {
       res.status(400).json({ success: false, message: 'Invalid game ID' });

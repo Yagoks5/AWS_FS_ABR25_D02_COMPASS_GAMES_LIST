@@ -13,7 +13,14 @@ export const createCategory = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const categoryData: CreateCategoryData = req.body;
 
     const category = await categoryService.createCategory(userId, categoryData);
@@ -44,7 +51,14 @@ export const getCategories = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const { page, limit } = req.query;
 
     const result = await categoryService.getCategoriesPaginated(
@@ -71,7 +85,14 @@ export const getCategoryById = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const categoryId = parseInt(req.params.id, 10);
 
     if (isNaN(categoryId)) {
@@ -110,7 +131,14 @@ export const updateCategory = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const categoryId = parseInt(req.params.id, 10);
     const updateData: UpdateCategoryData = req.body;
 
@@ -154,7 +182,14 @@ export const deleteCategory = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
     const categoryId = parseInt(req.params.id, 10);
 
     if (isNaN(categoryId)) {
@@ -192,7 +227,14 @@ export const getAllCategories = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = req.user.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+      return;
+    }
 
     const categories = await categoryService.getAllCategoriesForUser(userId);
 
