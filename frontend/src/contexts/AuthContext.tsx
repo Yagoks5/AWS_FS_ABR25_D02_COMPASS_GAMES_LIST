@@ -6,6 +6,8 @@ import React, {
   type ReactNode,
 } from 'react';
 
+import { useQueryClient } from '@tanstack/react-query';
+
 interface User {
   id: number;
   fullName: string;
@@ -27,6 +29,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
+
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
@@ -41,6 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const savedToken = localStorage.getItem('authToken');
@@ -70,6 +74,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     localStorage.removeItem('authToken');
     localStorage.removeItem('authUser');
+    queryClient.clear();
   };
 
   const isAuthenticated = !!user && !!token;
