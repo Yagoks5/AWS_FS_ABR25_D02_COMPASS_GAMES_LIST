@@ -141,24 +141,150 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.platform-select {
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-select {
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .favorite-filter {
   display: flex;
   align-items: center;
   gap: 8px;
   color: var(--text-color);
+  cursor: pointer;
+  user-select: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+}
+
+.favorite-filter:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.favorite-filter input[type='checkbox'] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.favorite-filter input[type='checkbox']:checked {
+  background: #007bff;
+  border-color: #007bff;
+}
+
+.favorite-filter input[type='checkbox']:checked::after {
+  content: '✓';
+  position: absolute;
+  top: -2px;
+  left: 1px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.favorite-filter.toggle-style input[type='checkbox'] {
+  width: 40px;
+  height: 20px;
+  border-radius: 20px;
+  background: #333;
+  border: none;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.favorite-filter.toggle-style input[type='checkbox']:checked {
+  background: #007bff;
+}
+
+.favorite-filter.toggle-style input[type='checkbox']::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  top: 2px;
+  left: 2px;
+  transition: all 0.3s ease;
+}
+
+.favorite-filter.toggle-style input[type='checkbox']:checked::before {
+  transform: translateX(20px);
+}
+
+.favorite-filter.toggle-style input[type='checkbox']:checked::after {
+  display: none;
 }
 
 .clear-btn {
   padding: 10px 20px;
   border-radius: var(--border-radius);
-  background-color: transparent;
-  color: var(--text-muted);
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
   border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Hover suave e elegante */
 .clear-btn:hover {
- background-color: #f33;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Estado ativo (quando clicado) */
+.clear-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Efeito de ondinha ao clicar (opcional) */
+.clear-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.clear-btn:active::before {
+  width: 300px;
+  height: 300px;
 }
 
 /* Games Table */
@@ -166,13 +292,12 @@
   margin-bottom: 20px;
   background-color: #1c171f;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
- 
 }
 
 .table-header {
   width: 100%;
   display: grid;
-  
+
   padding: 15px 20px;
   background-color: #201624;
   transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
@@ -189,10 +314,9 @@
   grid-template-columns: 2fr 1fr 3fr 1fr 1fr 1fr 1fr 1fr;
 }
 
-
 .table-row {
-display: grid;
-  
+  display: grid;
+
   align-items: center;
   padding: 10px 20px;
   transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
@@ -200,7 +324,7 @@ display: grid;
 }
 
 .table-row:hover {
- background-color: #2e003a;
+  background-color: #2e003a;
   transform: translateY(-5px);
   box-shadow: 0 0 10px 0 #00ffe1;
 }
@@ -257,7 +381,6 @@ display: grid;
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
-
   .table-header,
   .table-row {
     grid-template-columns: 2fr 2fr 1fr 1fr 0.5fr 0.8fr;
@@ -289,7 +412,6 @@ display: grid;
   }
 }
 
-
 /* Pagination */
 .pagination {
   display: flex;
@@ -300,7 +422,6 @@ display: grid;
 }
 
 .pagination-btn-previous {
-
   color: #ffffff;
   padding: 10px 20px;
   border-radius: var(--border-radius);
@@ -357,8 +478,20 @@ display: grid;
 }
 
 .modal-image {
-  width: 100%;
+  width: 30%;
   height: auto;
   margin-top: 1rem;
   border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .favorite-filter {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+
+  .favorite-filter input[type='checkbox'] {
+    width: 14px;
+    height: 14px;
+  }
 }
