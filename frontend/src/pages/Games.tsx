@@ -69,19 +69,18 @@ const Games: React.FC = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();  // Load data on component mount
-  useEffect(() => {
-    loadData();    // Check for add modal query parameter
+ useEffect(() => {
+    loadData();
+    
     if (searchParams.get('add') === 'true') {
       const shouldFavorite = searchParams.get('favorite') === 'true';
       
-      // Clear search params
       setSearchParams(params => {
         params.delete('add');
         params.delete('favorite');
         return params;
       });
       
-      // Set appropriate game and open the modal
       if (shouldFavorite) {
         setSelectedGame({ isFavorite: true } as Game);
         setIsAddModalOpen(true);
@@ -90,20 +89,16 @@ const Games: React.FC = () => {
         setIsAddModalOpen(true);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [searchParams, setSearchParams]);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      setError(null);      const [gamesResponse, categoriesResponse, platformsResponse] = await Promise.all([
-        gameAPI.getAllGames({
-          search: searchText,
-          categoryId: selectedCategoryId,
-          platformId: selectedPlatformId,
-          status: selectedStatus,
-          isFavorite: isFavoriteOnly
-        }),
+      setError(null);
+      
+      const [gamesResponse, categoriesResponse, platformsResponse] = await Promise.all([
+        gameAPI.getAllGames({}),
         categoryAPI.getAllCategories(),
         getAllPlatforms()
       ]);
@@ -243,7 +238,7 @@ const Games: React.FC = () => {
     }, 300);
     
     return () => clearTimeout(delayedLoad);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [selectedCategoryId, selectedPlatformId, selectedStatus, isFavoriteOnly]);
 
   useEffect(() => {
