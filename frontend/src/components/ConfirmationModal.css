@@ -15,7 +15,7 @@
     background-color: white;
     border-radius: 8px;
     padding: 2.5rem;
-    width: 520px;
+    width: 600px;
     /* Increased by 30% from 400px */
     max-width: 90%;
     display: flex;
@@ -25,8 +25,10 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.confirmation-icon {
-    margin-bottom: 1rem;
+.confirmation-icon svg{
+    width: 150px;
+    height: 150px;
+    color: #f33;
 }
 
 .confirmation-title {
@@ -37,7 +39,7 @@
 }
 
 .confirmation-message {
-    color: #666;
+    color: #646464;
     margin: 0 0 1.5rem 0;
     font-size: 0.9rem;
     line-height: 1.4;
@@ -50,7 +52,7 @@
     justify-content: center;
 }
 
-.cancel-btn {
+.confirmation-buttons .cancel-btn {
     background-color: #e0e0e0;
     border: none;
     padding: 0.5rem 1rem;
@@ -60,8 +62,8 @@
     color: #666;
 }
 
-.delete-btn {
-    background-color: #FF4B55;
+.confirmation-buttons .delete-btn {
+    background-color: #f33;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
@@ -70,10 +72,10 @@
     color: white;
 }
 
-.cancel-btn:hover {
-    background-color: #d5d5d5;
+.confirmation-buttons .cancel-btn:hover {
+    background-color: #00ffff;
 }
 
-.delete-btn:hover {
-    background-color: #ff333f;
+.confirmation-buttons .delete-btn:hover {
+    background-color: #000;
 }
