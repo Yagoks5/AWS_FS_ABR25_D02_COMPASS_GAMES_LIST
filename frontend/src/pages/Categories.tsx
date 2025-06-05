@@ -12,7 +12,6 @@ import { categoryAPI } from '../services/categoryService';
 import { useInvalidateCache } from '../hooks/useInvalidateCache';
 import { BiCategory } from "react-icons/bi";
 import { FiPlus } from "react-icons/fi";
-import { IoClose } from "react-icons/io5";
 
 interface ApiError {
   response?: {
@@ -338,15 +337,54 @@ const Categories: React.FC = () => {
           />
         )}        {/* View Modal */}
         {isViewModalOpen && selectedCategory && (
-          <div className="categories-modal-overlay">
-            <div className="categories-modal-content view-modal">
-              <button className="categories-close-modal" onClick={() => setIsViewModalOpen(false)}><IoClose /></button>
-              <h2>{selectedCategory.name}</h2>
-              <div className="category-details">
-                <p><strong>Description:</strong> {selectedCategory.description || 'No description'}</p>
-                <p><strong>Games Count:</strong> {selectedCategory._count?.games || 0}</p>
-                <p><strong>Created:</strong> {new Date(selectedCategory.createdAt).toLocaleDateString("pt-BR")}</p>
-                <p><strong>Updated:</strong> {new Date(selectedCategory.updatedAt).toLocaleDateString("pt-BR")}</p>
+          <div className="modal-overlay">
+            <div className="modal-content view-modal-content">
+              <div className="view-modal-header">
+                <h2>Category Details</h2>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setIsViewModalOpen(false);
+                    setSelectedCategory(null);
+                  }} 
+                  className="close-btn"
+                  aria-label="Close modal"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="category-info">
+                <h3 className="category-title">{selectedCategory.name}</h3>
+                
+                <div className="category-detail-row">
+                  <span className="detail-label">Description:</span> 
+                  <span className="detail-value">{selectedCategory.description || 'No description'}</span>
+                </div>
+                <div className="category-detail-row">
+                  <span className="detail-label">Games Count:</span> 
+                  <span className="detail-value">{selectedCategory._count?.games || 0}</span>
+                </div>
+                <div className="category-detail-row">
+                  <span className="detail-label">Created:</span> 
+                  <span className="detail-value">{new Date(selectedCategory.createdAt).toLocaleDateString()}</span>
+                </div>
+                <div className="category-detail-row">
+                  <span className="detail-label">Updated:</span> 
+                  <span className="detail-value">{new Date(selectedCategory.updatedAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+              
+              <div className="view-modal-footer">
+                <button 
+                  className="close-view-btn"
+                  onClick={() => {
+                    setIsViewModalOpen(false);
+                    setSelectedCategory(null);
+                  }}
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
