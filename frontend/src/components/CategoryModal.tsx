@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import type { Category, CategoryFormData } from '../services/categoryService';
 import { categoryAPI } from '../services/categoryService';
 import './CategoryModal.css';
-import { IoClose } from "react-icons/io5";
+import { IoClose } from 'react-icons/io5';
+import { toast } from 'react-toastify';
 
 interface CategoryModalProps {
   isOpen: boolean;
@@ -58,7 +59,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (mode === 'view') return;
 
     if (validateForm()) {
@@ -71,12 +72,19 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
 
         if (mode === 'create') {
           await categoryAPI.createCategory(submitData);
+          toast.success('Category created successfully', { autoClose: 2500 });
         } else if (mode === 'edit' && category) {
           await categoryAPI.updateCategory(category.id, submitData);
-        }        onSubmit(); // Notify parent of successful save
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to save category';
-        setErrors({ submit: errorMessage });
+          toast.success('Category updated successfully', { autoClose: 3000 });
+        }
+        onSubmit(); // Notify parent of successful save
+      } catch (error: any) {
+        const responseData = error.response?.data;
+        toast.error(
+          responseData?.message ||
+            'An error occurred while saving the category',
+          { autoClose: 3000 },
+        );
       } finally {
         setLoading(false);
       }
@@ -84,14 +92,14 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
   };
 
   const handleChange = (field: keyof CategoryFormData, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         [field]: '',
       }));
@@ -101,7 +109,12 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
   if (!isOpen) return null;
 
   const isReadonly = mode === 'view';
-  const title = mode === 'create' ? 'New Category' : mode === 'edit' ? 'Edit Category' : 'Category Details';
+  const title =
+    mode === 'create'
+      ? 'New Category'
+      : mode === 'edit'
+      ? 'Edit Category'
+      : 'Category Details';
 
   return (
     <div className="modal-overlay">
@@ -125,8 +138,11 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
               disabled={isReadonly}
               placeholder="Enter category name"
             />
-            {errors.name && <span className="error-message">{errors.name}</span>}
-          </div>          <div className="form-group">
+            {errors.name && (
+              <span className="error-message">{errors.name}</span>
+            )}
+          </div>{' '}
+          <div className="form-group">
             <label htmlFor="description">Description</label>
             <textarea
               id="description"
@@ -137,14 +153,10 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
               rows={4}
             />
           </div>
-
           {/* Display submit errors */}
           {errors.submit && (
-            <div className="error-message submit-error">
-              {errors.submit}
-            </div>
+            <div className="error-message submit-error">{errors.submit}</div>
           )}
-
           {/* Show game count in view mode */}
           {isReadonly && category?._count && (
             <div className="form-group">
@@ -157,7 +169,6 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
               />
             </div>
           )}
-
           {/* Show creation/update dates in view mode */}
           {isReadonly && category && (
             <div className="form-row">
@@ -181,18 +192,20 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
               </div>
             </div>
           )}
-
           {!isReadonly && (
             <div className="modal-actions">
               <button type="button" onClick={onClose} className="btn-cancel">
                 Cancel
               </button>
               <button type="submit" className="btn-submit" disabled={loading}>
-                {loading ? 'Saving...' : mode === 'create' ? 'Create Category' : 'Update Category'}
+                {loading
+                  ? 'Saving...'
+                  : mode === 'create'
+                  ? 'Create Category'
+                  : 'Update Category'}
               </button>
             </div>
           )}
-
           {isReadonly && (
             <div className="modal-actions">
               <button type="button" onClick={onClose} className="btn-cancel">
