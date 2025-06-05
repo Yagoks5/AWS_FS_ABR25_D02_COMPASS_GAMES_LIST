@@ -364,9 +364,8 @@ const Games: React.FC = () => {
               {allGames.filter((g) => g.isFavorite).length}
             </span>
           </div>
-        </div>
-        <div className="games-filters">
-          <div className="search-box">
+        </div>        <div className="games-filters">
+          <div className="games-search-box">
             <IoSearchOutline />
             <input
               type="text"
@@ -439,44 +438,42 @@ const Games: React.FC = () => {
           <button className="clear-btn" onClick={handleClearFilters}>
             Clear
           </button>
-        </div>
-        <div className="games-table">
-          <div className="table-header">
-            <div className="column title" onClick={() => handleSort('title')}>
+        </div>        <div className="games-table">
+          <div className="games-table-header">
+            <div className="games-column title" onClick={() => handleSort('title')}>
               Title{' '}
               {sortConfig?.key === 'title' &&
                 (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
-            <div className="column description">Description</div>
+            <div className="games-column description">Description</div>
             <div
-              className="column category"
+              className="games-column category"
               onClick={() => handleSort('category')}
             >
               Category{' '}
               {sortConfig?.key === 'category' &&
                 (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
-            <div className="column platform">Platform</div>
-            <div className="column status">Status</div>
+            <div className="games-column platform">Platform</div>
+            <div className="games-column status">Status</div>
             <div
-              className="column release-date"
+              className="games-column release-date"
               onClick={() => handleSort('createdAt')}
             >
               Created{' '}
               {sortConfig?.key === 'createdAt' &&
                 (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
-            <div className="column favorite">Favorite</div>
-            <div className="column actions">Actions</div>
+            <div className="games-column favorite">Favorite</div>
+            <div className="games-column actions">Actions</div>
           </div>
 
-          <div className="table-content">
-            {paginatedGames.length === 0 ? (
+          <div className="table-content">            {paginatedGames.length === 0 ? (
               <div className="no-games">No games found</div>
             ) : (
               paginatedGames.map((game) => (
-                <div className="table-row" key={game.id}>
-                  <div className="column title">
+                <div className="games-table-row" key={game.id}>
+                  <div className="games-column title">
                     {game.imageUrl && (
                       <img
                         src={game.imageUrl}
@@ -486,14 +483,14 @@ const Games: React.FC = () => {
                     )}
                     {game.title}
                   </div>
-                  <div className="column description">
+                  <div className="games-column description">
                     {game.description || '-'}
                   </div>
-                  <div className="column category">{game.category.name}</div>
-                  <div className="column platform">
+                  <div className="games-column category">{game.category.name}</div>
+                  <div className="games-column platform">
                     {game.platform?.title || 'N/A'}
                   </div>
-                  <div className="column status">
+                  <div className="games-column status">
                     <span
                       className={`status-badge status-${game.status?.toLowerCase()}`}
                     >
@@ -502,9 +499,8 @@ const Games: React.FC = () => {
                   </div>
                   <div className="column release-date">
                     {new Date(game.createdAt).toLocaleDateString('pt-BR')}
-                  </div>
-                  <div
-                    className="column favorite"
+                  </div>                  <div
+                    className="games-column favorite"
                     onClick={() => toggleFavorite(game.id)}
                     style={{ cursor: 'pointer' }}
                   >
@@ -514,23 +510,23 @@ const Games: React.FC = () => {
                       <BsHeart className="favorite-icon" />
                     )}
                   </div>
-                  <div className="column actions">
+                  <div className="games-column actions">
                     <button
-                      className="action-btn view"
+                      className="games-action-btn view"
                       onClick={() => handleViewGame(game)}
                       title="View"
                     >
                       <BsEye className="action-icon" />
                     </button>
                     <button
-                      className="action-btn edit"
+                      className="games-action-btn edit"
                       onClick={() => handleEditGame(game)}
                       title="Edit"
                     >
                       <BsPencil className="action-icon" />
                     </button>
                     <button
-                      className="action-btn delete"
+                      className="games-action-btn delete"
                       onClick={() => handleDeleteGame(game)}
                       title="Delete"
                     >
@@ -543,11 +539,10 @@ const Games: React.FC = () => {
           </div>
         </div>
         {filteredGames.length > 0 && (
-          <div className="pagination">
-            <button
+          <div className="pagination">            <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="pagination-btn-previous"
+              className="games-pagination-btn-previous"
             >
               Previous
             </button>
@@ -559,7 +554,7 @@ const Games: React.FC = () => {
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages))
               }
               disabled={currentPage === totalPages}
-              className="pagination-btn-next"
+              className="games-pagination-btn-next"
             >
               Next
             </button>

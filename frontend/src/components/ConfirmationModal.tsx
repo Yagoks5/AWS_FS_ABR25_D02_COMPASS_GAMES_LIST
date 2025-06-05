@@ -7,13 +7,15 @@ interface ConfirmationModalProps {
   onClose: () => void;
   onConfirm: () => void;
   message: string;
+  errorMessage?: string | null;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  message
+  message,
+  errorMessage
 }) => {
   if (!isOpen) return null;
 
@@ -25,6 +27,13 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         </div>
         <h2 className="confirmation-title">Are you sure?</h2>
         <p className="confirmation-message">{message}</p>
+        
+        {errorMessage && (
+          <div className="modal-error-message">
+            {errorMessage}
+          </div>
+        )}
+        
         <div className="confirmation-buttons">
           <button onClick={onClose} className="cancel-btn">No, cancel action</button>
           <button onClick={onConfirm} className="delete-btn">Yes, delete this</button>

@@ -28,6 +28,7 @@ const Categories: React.FC = () => {
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteModalError, setDeleteModalError] = useState<string | null>(null);
   
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -100,13 +101,23 @@ const Categories: React.FC = () => {
     setSelectedCategory(category);
     setIsViewModalOpen(true);
   };
-
   const handleDeleteCategory = (category: Category) => {
     setSelectedCategory(category);
     setIsDeleteModalOpen(true);
+    // Clear any previous error messages when opening the modal
+    setDeleteModalError(null);
   };
+  
   const confirmDelete = async () => {
     if (!selectedCategory) return;
+    
+    // Check if category has associated games
+    if (selectedCategory._count?.games && selectedCategory._count.games > 0) {
+      const errorMsg = `Cannot delete this category because it is being used by ${selectedCategory._count.games} game${selectedCategory._count.games > 1 ? 's' : ''}.`;
+      setDeleteModalError(errorMsg);
+      // Keep the modal open to show the error
+      return;
+    }
     
     try {
       await categoryAPI.deleteCategory(selectedCategory.id);
@@ -114,10 +125,11 @@ const Categories: React.FC = () => {
       invalidateCategories(); // Invalidate categories cache
       invalidateDashboard(); // Update dashboard counters
       setIsDeleteModalOpen(false);
+      setDeleteModalError(null);
       setSelectedCategory(null);
     } catch (err) {
       const error = err as ApiError;
-      setError(error.response?.data?.message || error.message || 'Failed to delete category');
+      setDeleteModalError(error.response?.data?.message || error.message || 'Failed to delete category');
     }
   };
   const { invalidateCategories, invalidateDashboard } = useInvalidateCache();
@@ -223,18 +235,20 @@ const Categories: React.FC = () => {
             <span className="stats-value">{allCategories.length}</span>
           </div>
           <div className="stats-item">
-            <span className="stats-label">Most Popular:</span>
-            <span className="stats-value">
+            <span className="stats-label">Most Popular:</span>            <span className="stats-value">
               {allCategories.length > 0 ? 
-                [...allCategories].sort((a, b) => 
-                  (b._count?.games || 0) - (a._count?.games || 0)
-                )[0]?.name || 'None' : 'None'}
+                (() => {
+                  const sorted = [...allCategories].sort((a, b) => 
+                    (b._count?.games || 0) - (a._count?.games || 0)
+                  );
+                  // Only show categories that have at least one game
+                  const mostPopular = sorted.find(cat => (cat._count?.games || 0) > 0);
+                  return mostPopular ? mostPopular.name : 'None';
+                })() : 'None'}
             </span>
           </div>
-        </div>
-
-        <div className="categories-filters">
-          <div className="search-box">
+        </div>        <div className="categories-filters">
+          <div className="categories-search-box">
             <IoSearchOutline />
             <input 
               type="text" 
@@ -244,42 +258,38 @@ const Categories: React.FC = () => {
             />
           </div>
 
-          <button className="clear-btn" onClick={handleClearFilters}>Clear</button>
-        </div>
-
-        <div className="categories-table">
-          <div className="table-header">
-            <div className="column name" onClick={() => handleSort('name')}>
+          <button className="categories-clear-btn" onClick={handleClearFilters}>Clear</button>
+        </div>        <div className="categories-table">
+          <div className="categories-table-header">
+            <div className="categories-column name" onClick={() => handleSort('name')}>
               Name {sortConfig?.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
-            <div className="column description">Description</div>
-            <div className="column games-count">Games</div>
-            <div className="column created-date" onClick={() => handleSort('createdAt')}>
+            <div className="categories-column description">Description</div>
+            <div className="categories-column games-count">Games</div>
+            <div className="categories-column created-date" onClick={() => handleSort('createdAt')}>
               Created {sortConfig?.key === 'createdAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
-            <div className="column actions">Actions</div>
-          </div>
-
-          <div className="table-content">
+            <div className="categories-column actions">Actions</div>
+          </div>          <div className="categories-table-content">
             {paginatedCategories.length === 0 ? (
               <div className="no-categories">No categories found</div>
             ) : (
               paginatedCategories.map((category) => (
-                <div className="table-row" key={category.id}>
-                  <div className="column name">{category.name}</div>
-                  <div className="column description">{category.description || '-'}</div>
-                  <div className="column games-count">{category._count?.games || 0}</div>
-                  <div className="column created-date">
+                <div className="categories-table-row" key={category.id}>
+                  <div className="categories-column name">{category.name}</div>
+                  <div className="categories-column description">{category.description || '-'}</div>
+                  <div className="categories-column games-count">{category._count?.games || 0}</div>
+                  <div className="categories-column created-date">
                     {new Date(category.createdAt).toLocaleDateString("pt-BR")}
                   </div>
-                  <div className="column actions">
-                    <button className="action-btn view" onClick={() => handleViewCategory(category)} title="View">
+                  <div className="categories-column actions">
+                    <button className="categories-action-btn view" onClick={() => handleViewCategory(category)} title="View">
                       <BsEye className="action-icon" />
                     </button>
-                    <button className="action-btn edit" onClick={() => handleEditCategory(category)} title="Edit">
+                    <button className="categories-action-btn edit" onClick={() => handleEditCategory(category)} title="Edit">
                       <BsPencil className="action-icon" />
                     </button>
-                    <button className="action-btn delete" onClick={() => handleDeleteCategory(category)} title="Delete">
+                    <button className="categories-action-btn delete" onClick={() => handleDeleteCategory(category)} title="Delete">
                       <BsTrash className="action-icon" />
                     </button>
                   </div>
@@ -287,20 +297,17 @@ const Categories: React.FC = () => {
               ))
             )}
           </div>
-        </div>
-
-        {filteredCategories.length > 0 && (
-          <div className="pagination">
+        </div>        {filteredCategories.length > 0 && (
+          <div className="categories-pagination">
             <button 
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1} className='pagination-btn-previous'
+              disabled={currentPage === 1} className='categories-pagination-btn-previous'
             >
               Previous
-            </button>
-            <span>Page {currentPage} of {totalPages}</span>
+            </button>            <span>Page {currentPage} of {totalPages}</span>
             <button 
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages} className='pagination-btn-next'
+              disabled={currentPage === totalPages} className='categories-pagination-btn-next'
             >
               Next
             </button>
@@ -320,13 +327,11 @@ const Categories: React.FC = () => {
             mode={isAddModalOpen ? 'create' : 'edit'}
             category={selectedCategory}
           />
-        )}
-
-        {/* View Modal */}
+        )}        {/* View Modal */}
         {isViewModalOpen && selectedCategory && (
-          <div className="modal-overlay">
-            <div className="modal-content view-modal">
-              <button className="close-modal" onClick={() => setIsViewModalOpen(false)}><IoClose /></button>
+          <div className="categories-modal-overlay">
+            <div className="categories-modal-content view-modal">
+              <button className="categories-close-modal" onClick={() => setIsViewModalOpen(false)}><IoClose /></button>
               <h2>{selectedCategory.name}</h2>
               <div className="category-details">
                 <p><strong>Description:</strong> {selectedCategory.description || 'No description'}</p>
@@ -344,6 +349,7 @@ const Categories: React.FC = () => {
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={confirmDelete}
           message={`Are you sure you want to delete "${selectedCategory?.name}"? This action cannot be undone.`}
+          errorMessage={deleteModalError}
         />
       </main>
     </div>

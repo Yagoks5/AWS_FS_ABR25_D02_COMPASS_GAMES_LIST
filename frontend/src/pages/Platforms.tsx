@@ -1,3 +1,4 @@
+// filepath: g:\AWS_FS_ABR25_D02_COMPASS_GAMES_LIST\frontend\src\pages\Platforms.tsx
 import { type FC, useState, useEffect, useMemo } from 'react';
 import { type Platform, type PlatformFormData } from '../types/platform';
 import PlatformModal from '../components/PlatformModal';
@@ -5,10 +6,18 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import Sidebar from '../components/Sidebar';
 import { BsEye, BsPencil, BsTrash } from 'react-icons/bs';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { IoSearchOutline, IoClose } from "react-icons/io5";
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as platformAPI from '../services/api';
 import './Platforms.css';
+
+// Extended platform interface with games count
+interface ExtendedPlatform extends Platform {
+  _count?: {
+    games?: number;
+  };
+}
 
 // Define a type for API error handling
 type ApiError = {
@@ -22,18 +31,22 @@ type ApiError = {
 
 const Platforms: FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [allPlatforms, setAllPlatforms] = useState<Platform[]>([]);
+  const [allPlatforms, setAllPlatforms] = useState<ExtendedPlatform[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
+  const [selectedPlatform, setSelectedPlatform] = useState<ExtendedPlatform | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [sortConfig, setSortConfig] = useState<{
+  const [error, setError] = useState<string | null>(null);  const [sortConfig, setSortConfig] = useState<{
     key: keyof Platform;
     direction: 'asc' | 'desc';
-  } | null>(null);  const [currentPage, setCurrentPage] = useState(1);
+  } | null>(null);
+  
+  // Filter states
+  const [searchText, setSearchText] = useState('');
+  
+  const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -56,11 +69,27 @@ const Platforms: FC = () => {
       await loadAllPlatforms();
     };
     fetchPlatforms();
-  }, []);  // Calculate paginated and sorted platforms
+  }, []);
+
+  // Reset page when search text changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchText]);
+
+  // Calculate paginated and sorted platforms
   const { paginatedPlatforms, totalPages } = useMemo(() => {
-    // Apply sorting if needed
-    const processedPlatforms = [...allPlatforms];
+    // Apply search filter first
+    let processedPlatforms = [...allPlatforms];
     
+    if (searchText.trim()) {
+      const searchLower = searchText.toLowerCase();
+      processedPlatforms = processedPlatforms.filter(platform =>
+        platform.title.toLowerCase().includes(searchLower) ||
+        platform.company.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Apply sorting if needed
     if (sortConfig) {
       const { key, direction } = sortConfig;
       
@@ -99,7 +128,7 @@ const Platforms: FC = () => {
       paginatedPlatforms: paginated, 
       totalPages: total 
     };
-  }, [allPlatforms, sortConfig, currentPage, itemsPerPage]);
+  }, [allPlatforms, searchText, sortConfig, currentPage, itemsPerPage]);
 
   const loadAllPlatforms = async () => {
     try {
@@ -171,7 +200,7 @@ const Platforms: FC = () => {
         // If current page is now empty (except for the last page), go to previous page
         const totalPages = Math.ceil((allPlatforms.length - 1) / itemsPerPage);
         if (currentPage > totalPages && currentPage > 1) {
-          setCurrentPage(Math.max(1, totalPages));
+          setCurrentPage(currentPage - 1);
         }
       } else {
         setError(response.message || 'Failed to delete platform');
@@ -182,20 +211,19 @@ const Platforms: FC = () => {
       setError(errorResp.response?.data?.message || errorResp.message || 'Failed to delete platform');
     }
   };
-
+  
   const handleSort = (key: keyof Platform) => {
     // Toggle sort direction or set new sort key
-    const direction: 'asc' | 'desc' = 
+    const direction: 'asc' | 'desc' =
       sortConfig?.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
-    
     setSortConfig({ key, direction });
     setCurrentPage(1); // Reset to first page when sorting
   };
-
+  
   if (loading) {
     return (
       <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-        <Sidebar 
+        <Sidebar
           isCollapsed={isSidebarCollapsed}
           toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
           onLogout={handleLogout}
@@ -209,32 +237,74 @@ const Platforms: FC = () => {
 
   return (
     <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <Sidebar 
+      <Sidebar
         isCollapsed={isSidebarCollapsed}
         toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
         onLogout={handleLogout}
       />
       
-      <main className="main-content">
+      <main className="main-content">        
         <div className="platforms-header">
           <h1>Platforms</h1>
           <button className="add-platform-btn" onClick={() => setIsAddModalOpen(true)}>
             Add new platform
           </button>
         </div>
+        
+        <div className="platforms-stats-summary">
+          <div className="stats-item">
+            <span className="stats-label">Total Platforms:</span>
+            <span className="stats-value">{allPlatforms.length}</span>
+          </div>
+          <div className="stats-item">
+            <span className="stats-label">Most Popular:</span>            
+            <span className="stats-value">
+              {allPlatforms.length > 0 ? 
+                (() => {
+                  const sorted = [...allPlatforms]
+                    .sort((a, b) => (b._count?.games || 0) - (a._count?.games || 0));
+                  // Only show platforms that have at least one game
+                  const mostPopular = sorted.find(platform => (platform._count?.games || 0) > 0);
+                  return mostPopular ? mostPopular.title : 'None';
+                })() : 'None'}
+            </span>
+          </div>        
+        </div>
+
+        <div className="platforms-filters">
+          <div className="platforms-search-box">
+            <IoSearchOutline />
+            <input 
+              type="text" 
+              placeholder="Search Platform..." 
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+            {searchText && (
+              <button 
+                type="button"
+                className="clear-search" 
+                onClick={() => setSearchText('')}
+                title="Clear search"
+              >
+                <IoClose />
+              </button>
+            )}
+          </div>
+        </div>
 
         <div className="platforms-table">
-          <div className="table-header">
-            <div className="column title" onClick={() => handleSort('title')}>
+          <div className="platforms-table-header">
+            <div className="platforms-column title" onClick={() => handleSort('title')}>
               Title {sortConfig?.key === 'title' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
-            <div className="column company" onClick={() => handleSort('company')}>
+            <div className="platforms-column company" onClick={() => handleSort('company')}>
               Company {sortConfig?.key === 'company' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
-            <div className="column year" onClick={() => handleSort('acquisitionYear')}>
+            <div className="platforms-column year" onClick={() => handleSort('acquisitionYear')}>
               Acquisition year {sortConfig?.key === 'acquisitionYear' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
-            <div className="column actions">Actions</div>
+            <div className="platforms-column actions">Actions</div>
           </div>
 
           <div className="table-content">
@@ -244,19 +314,19 @@ const Platforms: FC = () => {
               </div>
             ) : (
               paginatedPlatforms.map((platform) => (
-                <div className="table-row" key={platform.id}>
-                  <div className="column title">
+                <div className="platforms-table-row" key={platform.id}>
+                  <div className="platforms-column title">
                     {platform.imageUrl && (
                       <img src={platform.imageUrl} alt={platform.title} className="platform-icon" />
                     )}
                     <span>{platform.title}</span>
                   </div>
-                  <div className="column company">{platform.company}</div>
-                  <div className="column year">{platform.acquisitionYear}</div>
-                  <div className="column actions">
+                  <div className="platforms-column company">{platform.company}</div>
+                  <div className="platforms-column year">{platform.acquisitionYear}</div>
+                  <div className="platforms-column actions">
                     <button 
                       type="button"
-                      className="action-btn view" 
+                      className="platforms-action-btn view" 
                       title="View"
                       onClick={() => {
                         setSelectedPlatform(platform);
@@ -267,7 +337,7 @@ const Platforms: FC = () => {
                     </button>
                     <button 
                       type="button"
-                      className="action-btn edit" 
+                      className="platforms-action-btn edit" 
                       title="Edit"
                       onClick={() => {
                         setSelectedPlatform(platform);
@@ -278,7 +348,7 @@ const Platforms: FC = () => {
                     </button>
                     <button 
                       type="button"
-                      className="action-btn delete" 
+                      className="platforms-action-btn delete" 
                       title="Delete"
                       onClick={() => {
                         setSelectedPlatform(platform);
@@ -292,29 +362,26 @@ const Platforms: FC = () => {
               ))
             )}
           </div>
-          
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="pagination-controls">
-              <button 
-                className="pagination-btn" 
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                <FiChevronLeft /> Previous
-              </button>
-              <div className="pagination-info">
-                Page {currentPage} of {totalPages}
-              </div>
-              <button 
-                className="pagination-btn" 
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Next <FiChevronRight />
-              </button>
+            {/* Pagination Controls */}
+          <div className="platforms-pagination-controls">
+            <button 
+              className="platforms-pagination-btn" 
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              <FiChevronLeft /> Previous
+            </button>
+            <div className="platforms-pagination-info">
+              Page {currentPage} of {totalPages || 1}
             </div>
-          )}
+            <button 
+              className="platforms-pagination-btn" 
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages || totalPages <= 1}
+            >
+              Next <FiChevronRight />
+            </button>
+          </div>
         </div>
         
         {/* Modals */}

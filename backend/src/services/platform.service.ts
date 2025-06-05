@@ -240,8 +240,7 @@ export class PlatformService {
       },
     });
   }
-
-  async getAllPlatformsForUser(userId: number): Promise<PlatformResponse[]> {
+  async getAllPlatformsForUser(userId: number): Promise<PlatformWithGameCount[]> {
     const platforms = await this.prisma.platform.findMany({
       where: {
         userId,
@@ -255,6 +254,15 @@ export class PlatformService {
         imageUrl: true,
         createdAt: true,
         updatedAt: true,
+        _count: {
+          select: {
+            games: {
+              where: {
+                isDeleted: false,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         title: 'asc', // Order alphabetically for dropdowns/selections

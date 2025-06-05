@@ -35,7 +35,7 @@
   margin-bottom: 30px;
 }
 
-.categories-header-title{
+.categories-header-title {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -114,12 +114,44 @@
   transition: background-color 0.5s ease, color 0.5s ease;
 }
 
+.categories-search-box {
+  flex: 1;
+  position: relative;
+  max-width: 400px;
+}
+
+.categories-search-box input {
+  width: 100%;
+  padding: 10px 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  background-color: #252525;
+  color: #fff;
+}
+
+.categories-search-box svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+}
+
 .categories-filters input:hover {
   background-color: #2e003a;
 }
 
-.categories-filters .clear-btn:hover {
- background-color: #f33;
+.categories-clear-btn {
+  padding: 8px 16px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.categories-filters .categories-clear-btn:hover {
+  background-color: #f33;
 }
 
 /* Categories table */
@@ -129,7 +161,7 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.categories-table .table-header {
+.categories-table .categories-table-header {
   width: 100%;
   display: grid;
   background-color: #201624;
@@ -137,13 +169,13 @@
   transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
-.categories-table .table-header:hover {
+.categories-table .categories-table-header:hover {
   background-color: #2e003a;
   transform: translateY(-5px);
   box-shadow: 0 0 10px 0 #00ffe1;
 }
 
-.categories-table .table-content .table-row:hover {
+.categories-table .categories-table-content .categories-table-row:hover {
   background-color: #2e003a;
   transform: scale(1.05);
   transform: translateY(-5px);
@@ -151,7 +183,7 @@
 
 }
 
-.categories-table .table-content .table-row {
+.categories-table .categories-table-content .categories-table-row {
   display: grid;
   grid-template-columns: 2fr 3fr 2fr 2fr 1fr;
   align-items: center;
@@ -159,7 +191,7 @@
   transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
-.categories-table .table-content .table-row .column {
+.categories-table .categories-table-content .categories-table-row .categories-column {
   padding: 5px 10px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -168,31 +200,31 @@
   min-width: 100px;
 }
 
-.column-actions {
+.categories-column-actions {
   display: flex;
   justify-content: center;
   flex: 1;
   gap: 10px;
 }
 
-.action-btn {
+.categories-action-btn {
   padding: 5px;
   opacity: 0.7;
   transition: opacity 0.2s;
 }
 
-.action-btn svg {
+.categories-action-btn svg {
   width: 100%;
   height: 20px;
 }
 
-.delete svg:hover {
+.categories-action-btn.delete svg:hover {
   color: #f33;
 }
 
 
 /* Pagination */
-.pagination {
+.categories-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -200,26 +232,25 @@
   margin-top: 30px;
 }
 
-.pagination-btn-previous {
-
+.categories-pagination-btn-previous {
   color: #ffffff;
   padding: 10px 20px;
   border-radius: var(--border-radius);
   font-weight: 500;
 }
 
-.pagination-btn-previous:hover {
+.categories-pagination-btn-previous:hover {
   background-color: #f33;
 }
 
-.pagination-btn-next {
+.categories-pagination-btn-next {
   color: #ffffff;
   padding: 10px 20px;
   border-radius: var(--border-radius);
   font-weight: 500;
 }
 
-.pagination-btn-next:hover {
+.categories-pagination-btn-next:hover {
   background-color: var(--sidebar-active-color);
   color: #000;
 }
@@ -237,21 +268,21 @@
 /* Responsive design */
 @media (max-width: 1024px) {
 
-  .table-header,
-  .table-content .table-row {
+  .categories-table-header,
+  .categories-table-content .categories-table-row {
     grid-template-columns: 2fr 2fr 1fr 1fr 80px;
   }
 }
 
 @media (max-width: 768px) {
 
-  .table-header,
-  .table-content .table-row {
+  .categories-table-header,
+  .categories-table-content .categories-table-row {
     grid-template-columns: 2fr 2fr 80px;
   }
 
-  .column.created,
-  .column.updated {
+  .categories-column.created,
+  .categories-column.updated {
     display: none;
   }
 
@@ -262,7 +293,7 @@
   }
 }
 
-.modal-overlay {
+.categories-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -274,7 +305,7 @@
   align-items: center;
 }
 
-.modal {
+.categories-modal {
   background: #fff;
   padding: 2rem;
   border-radius: 10px;
@@ -285,13 +316,13 @@
   flex-flow: column;
 }
 
-.modal-icon svg {
+.categories-modal-icon svg {
   height: 180px;
   width: 100%;
   color: rgba(255, 0, 0, 0.959);
 }
 
-.close-modal svg {
+.categories-close-modal svg {
   position: absolute;
   color: rgb(201, 201, 201);
   top: 0.6rem;
@@ -300,7 +331,7 @@
   width: 30px;
 }
 
-.close-modal svg:hover {
+.categories-close-modal svg:hover {
   position: absolute;
   color: #f33;
   top: 0.6rem;
@@ -309,7 +340,7 @@
   width: 30px;
 }
 
-.save-btn {
+.categories-save-btn {
   background-color: #00f0f0;
   margin-top: 1rem;
   margin-bottom: 0;
@@ -323,69 +354,69 @@
   cursor: pointer;
 }
 
-.modal .save-btn:hover {
+.categories-modal .categories-save-btn:hover {
   background-color: #2e003a;
   color: white;
 }
 
-.confirm-delete-modal {
+.categories-confirm-delete-modal {
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
 }
 
-.modal-buttons {
+.categories-modal-buttons {
   display: flex;
   gap: 1rem;
 }
 
-.modal-buttons .cancel-btn,
-.delete-btn {
+.categories-modal-buttons .categories-cancel-btn,
+.categories-delete-btn {
   padding: 0.5rem 1.2rem;
   border-radius: 6px;
   border: solid 1px #949393;
   font-size: 1rem;
 }
 
-.cancel-btn:hover {
+.categories-cancel-btn:hover {
   background-color: #00f0f0;
   border: none;
   color: #201624;
 }
 
-.delete-btn {
+.categories-delete-btn {
   background-color: #f33;
   color: #fff;
 }
 
-.delete-btn:hover {
+.categories-delete-btn:hover {
   background-color: rgb(0, 0, 0);
   border: #fff;
 }
 
-.title-new-edit-category {
+.categories-title-new-edit-category {
   color: #201624;
   margin-bottom: 1rem;
 }
 
-.title-category {
+.categories-title-category {
   color: #201624;
 }
 
-.title-category-input {
+.categories-title-category-input {
   height: 37px;
   padding-left: 0.5rem;
   color: #7a7a7a;
   font-family: Arial;
 }
 
-.description-category-card {
+.categories-description-category-card {
   color: #201624;
   margin-top: 1rem;
 }
 
-.description-category-textarea {
+.categories-description-category-textarea {
   height: 154px;
   color: #7a7a7a;
   padding-top: 0.5rem;
@@ -394,7 +425,7 @@
   resize: none;
 }
 
-.delete-text {
+.categories-delete-text {
   color: #201624;
   margin-bottom: 2rem;
 }

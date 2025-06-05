@@ -234,8 +234,7 @@ export class CategoryService {
       },
     });
   }
-
-  async getAllCategoriesForUser(userId: number): Promise<CategoryResponse[]> {
+  async getAllCategoriesForUser(userId: number): Promise<CategoryWithGameCount[]> {
     const categories = await this.prisma.category.findMany({
       where: {
         userId,
@@ -247,6 +246,15 @@ export class CategoryService {
         description: true,
         createdAt: true,
         updatedAt: true,
+        _count: {
+          select: {
+            games: {
+              where: {
+                isDeleted: false,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         name: 'asc',

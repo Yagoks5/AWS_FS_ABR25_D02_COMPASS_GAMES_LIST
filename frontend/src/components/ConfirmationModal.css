@@ -25,7 +25,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.confirmation-icon svg{
+.confirmation-icon svg {
     width: 150px;
     height: 150px;
     color: #f33;
@@ -78,4 +78,16 @@
 
 .confirmation-buttons .delete-btn:hover {
     background-color: #000;
+}
+
+.modal-error-message {
+    background-color: #ffeded;
+    color: #e53935;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    border: 1px solid #f5c6c6;
 }
