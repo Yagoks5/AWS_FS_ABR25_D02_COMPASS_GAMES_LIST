@@ -5,6 +5,7 @@ import type { Category } from '../services/categoryService';
 import { categoryAPI } from '../services/categoryService';
 import { getAllPlatforms } from '../services/api';
 import './GameModal.css';
+import { MagicMotion } from 'react-magic-motion';
 
 interface GameModalProps {
   isOpen: boolean;
