@@ -5,8 +5,8 @@ import PlatformModal from '../components/PlatformModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import Sidebar from '../components/Sidebar';
 import { BsEye, BsPencil, BsTrash } from 'react-icons/bs';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { IoSearchOutline, IoClose } from "react-icons/io5";
+import { FiPlus } from 'react-icons/fi';
+import { IoSearchOutline } from "react-icons/io5";
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as platformAPI from '../services/api';
@@ -245,9 +245,8 @@ const Platforms: FC = () => {
       
       <main className="main-content">        
         <div className="platforms-header">
-          <h1>Platforms</h1>
-          <button className="add-platform-btn" onClick={() => setIsAddModalOpen(true)}>
-            Add new platform
+          <h1>Platforms</h1>          <button className="add-platform-btn" onClick={() => setIsAddModalOpen(true)}>
+            <FiPlus /> New platform
           </button>
         </div>
         
@@ -269,9 +268,7 @@ const Platforms: FC = () => {
                 })() : 'None'}
             </span>
           </div>        
-        </div>
-
-        <div className="platforms-filters">
+        </div>        <div className="platforms-filters">
           <div className="platforms-search-box">
             <IoSearchOutline />
             <input 
@@ -280,17 +277,11 @@ const Platforms: FC = () => {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
-            {searchText && (
-              <button 
-                type="button"
-                className="clear-search" 
-                onClick={() => setSearchText('')}
-                title="Clear search"
-              >
-                <IoClose />
-              </button>
-            )}
           </div>
+          <button className="platforms-clear-btn" onClick={() => {
+            setSearchText('');
+            setCurrentPage(1);
+          }}>Clear</button>
         </div>
 
         <div className="platforms-table">
@@ -362,24 +353,23 @@ const Platforms: FC = () => {
               ))
             )}
           </div>
-            {/* Pagination Controls */}
-          <div className="platforms-pagination-controls">
+            {/* Pagination Controls */}          <div className="platforms-pagination">
             <button 
-              className="platforms-pagination-btn" 
+              className="platforms-pagination-btn-previous" 
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
-              <FiChevronLeft /> Previous
+              Previous
             </button>
-            <div className="platforms-pagination-info">
+            <span className="current-page">
               Page {currentPage} of {totalPages || 1}
-            </div>
+            </span>
             <button 
-              className="platforms-pagination-btn" 
+              className="platforms-pagination-btn-next" 
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages || totalPages <= 1}
             >
-              Next <FiChevronRight />
+              Next
             </button>
           </div>
         </div>

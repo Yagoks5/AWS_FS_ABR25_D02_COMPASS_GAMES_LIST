@@ -364,8 +364,7 @@ const Games: React.FC = () => {
               {allGames.filter((g) => g.isFavorite).length}
             </span>
           </div>
-        </div>        <div className="games-filters">
-          <div className="games-search-box">
+        </div>        <div className="games-filters">          <div className="games-search-box">
             <IoSearchOutline />
             <input
               type="text"
@@ -373,6 +372,15 @@ const Games: React.FC = () => {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
+            {searchText && (
+              <button 
+                className="clear-search" 
+                onClick={() => setSearchText('')}
+                title="Clear search"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           <div className="filter-group">
@@ -537,29 +545,27 @@ const Games: React.FC = () => {
               ))
             )}
           </div>
-        </div>
-        {filteredGames.length > 0 && (
-          <div className="pagination">            <button
+        </div>        <div className="games-pagination">
+            <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="games-pagination-btn-previous"
             >
               Previous
             </button>
-            <span>
-              Page {currentPage} of {totalPages}
+            <span className="current-page">
+              Page {currentPage} of {totalPages || 1}
             </span>
             <button
               onClick={() =>
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages))
               }
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages <= 1}
               className="games-pagination-btn-next"
             >
               Next
             </button>
           </div>
-        )}{' '}
         {/* Add/Edit Modal */}
         {(isAddModalOpen || isEditModalOpen) && (
           <GameModal

@@ -247,8 +247,7 @@ const Categories: React.FC = () => {
                 })() : 'None'}
             </span>
           </div>
-        </div>        <div className="categories-filters">
-          <div className="categories-search-box">
+        </div>        <div className="categories-filters">          <div className="categories-search-box">
             <IoSearchOutline />
             <input 
               type="text" 
@@ -256,6 +255,15 @@ const Categories: React.FC = () => {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
+            {searchText && (
+              <button 
+                className="clear-search" 
+                onClick={() => setSearchText('')}
+                title="Clear search"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           <button className="categories-clear-btn" onClick={handleClearFilters}>Clear</button>
@@ -297,22 +305,23 @@ const Categories: React.FC = () => {
               ))
             )}
           </div>
-        </div>        {filteredCategories.length > 0 && (
-          <div className="categories-pagination">
-            <button 
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1} className='categories-pagination-btn-previous'
-            >
-              Previous
-            </button>            <span>Page {currentPage} of {totalPages}</span>
-            <button 
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages} className='categories-pagination-btn-next'
-            >
-              Next
-            </button>
-          </div>
-        )}
+        </div>        <div className="categories-pagination">
+          <button 
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1} 
+            className='categories-pagination-btn-previous'
+          >
+            Previous
+          </button>
+          <span className="current-page">Page {currentPage} of {totalPages || 1}</span>
+          <button 
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages || totalPages <= 1} 
+            className='categories-pagination-btn-next'
+          >
+            Next
+          </button>
+        </div>
 
         {/* Add/Edit Modal */}
         {(isAddModalOpen || isEditModalOpen) && (

@@ -88,13 +88,29 @@
 }
 
 .add-game-btn {
-  background-color: var(--sidebar-active-color);
-  color: #000000;
+  background-color: #00ffe1;
+  color: #222;
   border: none;
-  padding: 10px 20px;
-  border-radius: var(--border-radius);
-  cursor: pointer;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
   font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.add-game-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.add-game-btn:hover,
+.add-game-btn:focus {
+  background-color: #00ccb2;
+  color: #111;
 }
 
 .games-filters {
@@ -117,6 +133,12 @@
   border-radius: var(--border-radius);
   background-color: var(--secondary-bg);
   color: var(--text-color);
+  font-size: 14px;
+}
+
+.games-search-box input:focus {
+  outline: none;
+  border-color: #00ffe1;
 }
 
 .games-search-box svg {
@@ -124,7 +146,30 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-muted);
+  color: #aaa;
+  font-size: 16px;
+}
+
+.games-search-box .clear-search {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.games-search-box .clear-search:hover {
+  color: #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
 }
 
 .filter-group {
@@ -291,6 +336,9 @@
 .games-table {
   margin-bottom: 20px;
   background-color: #1c171f;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -305,9 +353,7 @@
 }
 
 .games-table-header:hover {
-  background-color: #2e003a;
-  transform: translateY(-5px);
-  box-shadow: 0 0 10px 0 #00ffe1;
+  background-color: #201624;
 }
 
 .games-table-row {
@@ -321,8 +367,8 @@
 
 .games-table-row:hover {
   background-color: #2e003a;
-  transform: translateY(-5px);
-  box-shadow: 0 0 10px 0 #00ffe1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 255, 225, 0.2);
 }
 
 .games-column {
@@ -349,22 +395,28 @@
 
 .games-column.actions {
   display: flex;
-  justify-content: center;
-  flex: 1;
+  justify-content: flex-start;
+  padding-left: 20px;
   gap: 10px;
 }
 
 .games-action-btn {
   background: none;
   border: none;
+  color: #19c6b6;
+  opacity: 0.85;
+  font-size: 1.25rem;
   cursor: pointer;
-  padding: 5px;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+  transition: color 0.2s, opacity 0.2s;
 }
 
 .games-action-btn:hover {
+  color: #14a68a;
   opacity: 1;
+}
+
+.games-action-btn.delete:hover {
+  color: #f33;
 }
 
 /* Responsive adjustments */
@@ -402,35 +454,45 @@
 }
 
 /* Pagination */
-.pagination {
+.games-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  margin-top: 30px;
+  margin-top: 20px;
+  padding: 10px 0;
 }
 
-.games-pagination-btn-previous {
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: var(--border-radius);
-  font-weight: 500;
-}
-
-.games-pagination-btn-previous:hover {
-  background-color: #f33;
-}
-
+.games-pagination-btn-previous,
 .games-pagination-btn-next {
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: var(--border-radius);
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background-color: var(--secondary-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-color);
+  transition: all 0.2s ease;
 }
 
-.games-pagination-btn-next:hover {
-  background-color: var(--sidebar-active-color);
-  color: #000;
+.games-pagination-btn-previous:hover:not(:disabled),
+.games-pagination-btn-next:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.games-pagination-btn-previous:disabled,
+.games-pagination-btn-next:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.current-page {
+  margin: 0 15px;
+  font-size: 14px;
 }
 
 .modal-overlay {
