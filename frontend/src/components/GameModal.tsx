@@ -5,6 +5,7 @@ import type { Category } from '../services/categoryService';
 import { categoryAPI } from '../services/categoryService';
 import { getAllPlatforms } from '../services/api';
 import './GameModal.css';
+import { IoClose } from 'react-icons/io5';
 
 interface GameModalProps {
   isOpen: boolean;
@@ -57,7 +58,7 @@ const GameModal: React.FC<GameModalProps> = ({
           categoryAPI.getAllCategories(),
           getAllPlatforms(),
         ]);
-        
+
         if (categoriesResponse.success) {
           setCategories(categoriesResponse.data);
         }
@@ -89,12 +90,12 @@ const GameModal: React.FC<GameModalProps> = ({
           platformId: game.platform?.id || null,
           isFavorite: game.isFavorite,
         });
-      } 
+      }
       // Special case for partial game object (favorite flag only)
       else if (game.isFavorite !== undefined) {
-        setFormData(current => ({
+        setFormData((current) => ({
           ...current,
-          isFavorite: game.isFavorite
+          isFavorite: game.isFavorite,
         }));
       }
     } else if (mode === 'create') {
@@ -130,15 +131,21 @@ const GameModal: React.FC<GameModalProps> = ({
       newErrors.acquisitionDate = 'Acquisition date is required';
     }
 
-    if ((formData.status === GameStatus.DONE || formData.status === GameStatus.ABANDONED) && !formData.finishDate) {
-      newErrors.finishDate = 'Finish date is required for Done or Abandoned status';
+    if (
+      (formData.status === GameStatus.DONE ||
+        formData.status === GameStatus.ABANDONED) &&
+      !formData.finishDate
+    ) {
+      newErrors.finishDate =
+        'Finish date is required for Done or Abandoned status';
     }
 
     if (formData.finishDate && formData.acquisitionDate) {
       const acquisitionDate = new Date(formData.acquisitionDate);
       const finishDate = new Date(formData.finishDate);
       if (finishDate < acquisitionDate) {
-        newErrors.finishDate = 'Finish date cannot be earlier than acquisition date';
+        newErrors.finishDate =
+          'Finish date cannot be earlier than acquisition date';
       }
     }
 
@@ -148,7 +155,7 @@ const GameModal: React.FC<GameModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (mode === 'view') return;
 
     if (validateForm()) {
@@ -157,21 +164,27 @@ const GameModal: React.FC<GameModalProps> = ({
         title: formData.title.trim(),
         description: formData.description?.trim() || undefined,
         imageUrl: formData.imageUrl?.trim() || undefined,
-        finishDate: formData.status === GameStatus.PLAYING ? undefined : formData.finishDate || undefined,
+        finishDate:
+          formData.status === GameStatus.PLAYING
+            ? undefined
+            : formData.finishDate || undefined,
       };
       onSubmit(submitData);
     }
   };
 
-  const handleChange = (field: keyof GameFormData, value: string | number | boolean | null) => {
-    setFormData(prev => ({
+  const handleChange = (
+    field: keyof GameFormData,
+    value: string | number | boolean | null,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         [field]: '',
       }));
@@ -179,7 +192,7 @@ const GameModal: React.FC<GameModalProps> = ({
 
     // Auto-clear finish date when status is Playing
     if (field === 'status' && value === GameStatus.PLAYING) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         status: value,
         finishDate: '',
@@ -190,7 +203,12 @@ const GameModal: React.FC<GameModalProps> = ({
   if (!isOpen) return null;
 
   const isReadonly = mode === 'view';
-  const title = mode === 'create' ? 'Add New Game' : mode === 'edit' ? 'Edit Game' : 'Game Details';
+  const title =
+    mode === 'create'
+      ? 'Add New Game'
+      : mode === 'edit'
+      ? 'Edit Game'
+      : 'Game Details';
 
   return (
     <div className="modal-overlay">
@@ -198,7 +216,7 @@ const GameModal: React.FC<GameModalProps> = ({
         <div className="modal-header">
           <h2>{title}</h2>
           <button className="close-button" onClick={onClose} type="button">
-            ×
+            <IoClose />
           </button>
         </div>
 
@@ -215,7 +233,9 @@ const GameModal: React.FC<GameModalProps> = ({
                 disabled={isReadonly}
                 placeholder="Enter game title"
               />
-              {errors.title && <span className="error-message">{errors.title}</span>}
+              {errors.title && (
+                <span className="error-message">{errors.title}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -223,7 +243,9 @@ const GameModal: React.FC<GameModalProps> = ({
               <select
                 id="status"
                 value={formData.status}
-                onChange={(e) => handleChange('status', e.target.value as GameStatus)}
+                onChange={(e) =>
+                  handleChange('status', e.target.value as GameStatus)
+                }
                 disabled={isReadonly}
               >
                 <option value={GameStatus.PLAYING}>Playing</option>
@@ -251,7 +273,9 @@ const GameModal: React.FC<GameModalProps> = ({
               <select
                 id="categoryId"
                 value={formData.categoryId}
-                onChange={(e) => handleChange('categoryId', parseInt(e.target.value, 10))}
+                onChange={(e) =>
+                  handleChange('categoryId', parseInt(e.target.value, 10))
+                }
                 className={errors.categoryId ? 'error' : ''}
                 disabled={isReadonly}
               >
@@ -262,7 +286,9 @@ const GameModal: React.FC<GameModalProps> = ({
                   </option>
                 ))}
               </select>
-              {errors.categoryId && <span className="error-message">{errors.categoryId}</span>}
+              {errors.categoryId && (
+                <span className="error-message">{errors.categoryId}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -270,7 +296,12 @@ const GameModal: React.FC<GameModalProps> = ({
               <select
                 id="platformId"
                 value={formData.platformId || ''}
-                onChange={(e) => handleChange('platformId', e.target.value ? parseInt(e.target.value, 10) : null)}
+                onChange={(e) =>
+                  handleChange(
+                    'platformId',
+                    e.target.value ? parseInt(e.target.value, 10) : null,
+                  )
+                }
                 disabled={isReadonly}
               >
                 <option value="">Select a platform (optional)</option>
@@ -302,16 +333,26 @@ const GameModal: React.FC<GameModalProps> = ({
                 id="acquisitionDate"
                 type="date"
                 value={formData.acquisitionDate}
-                onChange={(e) => handleChange('acquisitionDate', e.target.value)}
+                onChange={(e) =>
+                  handleChange('acquisitionDate', e.target.value)
+                }
                 className={errors.acquisitionDate ? 'error' : ''}
                 disabled={isReadonly}
               />
-              {errors.acquisitionDate && <span className="error-message">{errors.acquisitionDate}</span>}
+              {errors.acquisitionDate && (
+                <span className="error-message">{errors.acquisitionDate}</span>
+              )}
             </div>
 
             {formData.status !== GameStatus.PLAYING && (
               <div className="form-group">
-                <label htmlFor="finishDate">Finish Date {(formData.status === GameStatus.DONE || formData.status === GameStatus.ABANDONED) ? '*' : ''}</label>
+                <label htmlFor="finishDate">
+                  Finish Date{' '}
+                  {formData.status === GameStatus.DONE ||
+                  formData.status === GameStatus.ABANDONED
+                    ? '*'
+                    : ''}
+                </label>
                 <input
                   id="finishDate"
                   type="date"
@@ -320,7 +361,9 @@ const GameModal: React.FC<GameModalProps> = ({
                   className={errors.finishDate ? 'error' : ''}
                   disabled={isReadonly}
                 />
-                {errors.finishDate && <span className="error-message">{errors.finishDate}</span>}
+                {errors.finishDate && (
+                  <span className="error-message">{errors.finishDate}</span>
+                )}
               </div>
             )}
           </div>
@@ -343,7 +386,11 @@ const GameModal: React.FC<GameModalProps> = ({
                 Cancel
               </button>
               <button type="submit" className="btn-submit" disabled={loading}>
-                {loading ? 'Saving...' : mode === 'create' ? 'Create Game' : 'Update Game'}
+                {loading
+                  ? 'Saving...'
+                  : mode === 'create'
+                  ? 'Create Game'
+                  : 'Update Game'}
               </button>
             </div>
           )}

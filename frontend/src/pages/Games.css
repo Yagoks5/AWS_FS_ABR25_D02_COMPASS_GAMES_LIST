@@ -97,9 +97,11 @@
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 8px;
+  height: 34px;
 }
 
 .add-game-btn svg {
@@ -421,7 +423,6 @@
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
-
   .games-table-header,
   .games-table-row {
     grid-template-columns: 2fr 2fr 1fr 1fr 0.5fr 0.8fr;
