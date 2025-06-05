@@ -83,6 +83,8 @@ export const validateGameData = (
     return;
   }
 
+  const now = new Date();
+
   if (!acquisitionDate) {
     res.status(400).json({
       success: false,
@@ -90,14 +92,22 @@ export const validateGameData = (
     });
     return;
   }
-  if (isNaN(new Date(acquisitionDate).getTime())) {
+  const acquisitionDateObj = new Date(acquisitionDate);
+  if (isNaN(acquisitionDateObj.getTime())) {
     res.status(400).json({
       success: false,
       message: 'Invalid acquisition date format.',
     });
     return;
   }
-  req.body.acquisitionDate = new Date(acquisitionDate);
+  if (acquisitionDateObj > now) {
+    res.status(400).json({
+      success: false,
+      message: 'Acquisition date cannot be in the future.',
+    });
+    return;
+  }
+  req.body.acquisitionDate = acquisitionDateObj;
 
   if (status === GameStatus.DONE || status === GameStatus.ABANDONED) {
     if (!finishDate) {
@@ -107,22 +117,29 @@ export const validateGameData = (
       });
       return;
     }
-    if (isNaN(new Date(finishDate).getTime())) {
+    const finishDateObj = new Date(finishDate);
+    if (isNaN(finishDateObj.getTime())) {
       res.status(400).json({
         success: false,
         message: 'Invalid finish date format.',
       });
       return;
     }
-    req.body.finishDate = new Date(finishDate);
-
-    if (req.body.finishDate < req.body.acquisitionDate) {
+    if (finishDateObj < acquisitionDateObj) {
       res.status(400).json({
         success: false,
         message: 'Finish date cannot be earlier than acquisition date.',
       });
       return;
     }
+    if (finishDateObj > now) {
+      res.status(400).json({
+        success: false,
+        message: 'Finish date cannot be in the future.',
+      });
+      return;
+    }
+    req.body.finishDate = finishDateObj;
   } else {
     if (finishDate) {
       res.status(400).json({

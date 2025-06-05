@@ -6,6 +6,7 @@ import { categoryAPI } from '../services/categoryService';
 import { getAllPlatforms } from '../services/api';
 import './GameModal.css';
 import { IoClose } from 'react-icons/io5';
+import { toast } from 'react-toastify';
 
 interface GameModalProps {
   isOpen: boolean;
@@ -117,6 +118,9 @@ const GameModal: React.FC<GameModalProps> = ({
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
 
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+
     if (!formData.title.trim()) {
       newErrors.title = 'Title is required';
     } else if (formData.title.trim().length < 3) {
@@ -129,6 +133,8 @@ const GameModal: React.FC<GameModalProps> = ({
 
     if (!formData.acquisitionDate) {
       newErrors.acquisitionDate = 'Acquisition date is required';
+    } else if (formData.acquisitionDate > todayStr) {
+      newErrors.acquisitionDate = 'Acquisition date cannot be in the future';
     }
 
     if (
@@ -143,9 +149,13 @@ const GameModal: React.FC<GameModalProps> = ({
     if (formData.finishDate && formData.acquisitionDate) {
       const acquisitionDate = new Date(formData.acquisitionDate);
       const finishDate = new Date(formData.finishDate);
+
       if (finishDate < acquisitionDate) {
         newErrors.finishDate =
           'Finish date cannot be earlier than acquisition date';
+      }
+      if (formData.finishDate > todayStr) {
+        newErrors.finishDate = 'Finish date cannot be in the future';
       }
     }
 
