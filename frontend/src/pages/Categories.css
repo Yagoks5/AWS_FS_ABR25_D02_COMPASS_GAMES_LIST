@@ -1,6 +1,4 @@
 /* Import global variables */
-@import url('./Games.css');
-
 :root {
   --primary-bg: #181818;
   --secondary-bg: #201624;
@@ -60,6 +58,7 @@
 .categories-stats-summary {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-around;
   gap: 20px;
   background-color: #252525;
   border-radius: 8px;
@@ -69,6 +68,7 @@
 
 .categories-stats-summary .stats-item {
   display: flex;
+  align-items: center;
   flex-direction: column;
   min-width: 100px;
 }
@@ -480,120 +480,4 @@
 .categories-delete-text {
   color: #201624;
   margin-bottom: 2rem;
-}
-
-/* Modal styling for category view to match platform view modal */
-.view-modal-content {
-  padding: 0;
-  max-width: 600px;
-  overflow: hidden;
-  background-color: white;
-}
-
-.view-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #eee;
-  background-color: white;
-}
-
-.view-modal-header h2 {
-  font-size: 1.5rem;
-  margin: 0;
-  color: #111;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #999;
-  cursor: pointer;
-  padding: 0;
-}
-
-.category-info {
-  width: 100%;
-  padding: 24px;
-  text-align: left;
-  background-color: white;
-  color: #333;
-}
-
-.category-title {
-  font-size: 1.5rem;
-  margin: 0 0 16px 0;
-  text-align: center;
-  color: #333;
-}
-
-.category-detail-row {
-  display: flex;
-  margin-bottom: 8px;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.detail-label {
-  font-weight: bold;
-  width: 130px;
-}
-
-.view-modal-footer {
-  border-top: 1px solid #eee;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: flex-end;
-  background-color: white;
-}
-
-.close-view-btn {
-  background-color: #f0f0f0;
-  color: #333;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 18px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.close-view-btn:hover {
-  background-color: #e0e0e0;
-}
-
-.modal-content {
-  background-color: rgb(26, 23, 23);
-  padding: 2rem;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.close-modal {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: 1.2rem;
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
 }
