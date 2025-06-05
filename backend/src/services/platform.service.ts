@@ -18,15 +18,22 @@ export class PlatformService {
     userId: number,
     platformData: CreatePlatformData,
   ): Promise<PlatformResponse> {
-    const existingPlatform = await this.prisma.platform.findFirst({
+    const userPlatforms = await this.prisma.platform.findMany({
       where: {
-        title: platformData.title,
         userId,
         isDeleted: false,
       },
+      select: {
+        title: true,
+      },
     });
 
-    if (existingPlatform) {
+    const titleExists = userPlatforms.some(
+      (platform) =>
+        platform.title.toLowerCase() === platformData.title.toLowerCase(),
+    );
+
+    if (titleExists) {
       throw new Error('A platform with this title already exists.');
     }
 
@@ -86,7 +93,7 @@ export class PlatformService {
           },
         },
         orderBy: {
-          createdAt: 'desc', // Default order by most recent
+          createdAt: 'desc',
         },
         skip,
         take,
@@ -162,18 +169,26 @@ export class PlatformService {
     }
 
     if (updateData.title && updateData.title !== existingPlatform.title) {
-      const duplicatePlatform = await this.prisma.platform.findFirst({
+      // ✅ CORREÇÃO: Buscar outras plataformas e fazer validação case-insensitive
+      const otherPlatforms = await this.prisma.platform.findMany({
         where: {
-          title: updateData.title,
           userId,
           isDeleted: false,
           id: {
             not: platformId,
           },
         },
+        select: {
+          title: true,
+        },
       });
 
-      if (duplicatePlatform) {
+      const titleExists = otherPlatforms.some(
+        (platform) =>
+          platform.title.toLowerCase() === updateData.title!.toLowerCase(),
+      );
+
+      if (titleExists) {
         throw new Error('A platform with this title already exists.');
       }
     }
@@ -265,7 +280,7 @@ export class PlatformService {
         },
       },
       orderBy: {
-        title: 'asc', // Order alphabetically for dropdowns/selections
+        title: 'asc',
       },
     });
 
