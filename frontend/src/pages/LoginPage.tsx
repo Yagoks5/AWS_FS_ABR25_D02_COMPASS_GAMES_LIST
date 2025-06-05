@@ -4,13 +4,13 @@ import AuthBackground from '../components/AuthBackground';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from '../components/Logo';
 import { login } from '../services/api';
+import { toast } from 'react-toastify';
 import './LoginPage.css';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const { login: authLogin, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -24,16 +24,40 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');    try {
+
+    if (!email.trim() || !password.trim()) {
+      toast.error('All fields are required');
+      setLoading(false);
+      return;
+    }
+
+    try {
       const response = await login(email, password);
 
       if (response.success) {
+        toast.success(`Welcome back, ${response.data.user.fullName}!`);
+
         authLogin(response.data.token, response.data.user);
-        navigate('/dashboard');
+
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1000);
       }
     } catch (err) {
-      console.error('Login error:', err);
-      setError('Invalid email or password. Please try again.');
+      if (err instanceof Error) {
+        if (
+          err.message.includes('Network Error') ||
+          err.message.includes('fetch')
+        ) {
+          toast.error(
+            'Connection error. Please check your internet connection.',
+          );
+        } else {
+          toast.error('Invalid email or password. Please try again.');
+        }
+      } else {
+        toast.error('Invalid email or password. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -51,13 +75,11 @@ const LoginPage = () => {
             </p>
           </div>
 
-          {error && <div className="error-message">{error}</div>}
-
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
               <label htmlFor="email" className="form-label">
                 Email
-              </label> 
+              </label>
               <input
                 id="email"
                 type="email"
@@ -65,7 +87,8 @@ const LoginPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 className="form-input"
-                required
+                // required
+                disabled={loading}
               />
             </div>
 
@@ -80,7 +103,11 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className="form-input"
-              />              <button type="submit" className="form-button" disabled={loading}>
+                // required
+                disabled={loading}
+              />
+
+              <button type="submit" className="form-button" disabled={loading}>
                 {loading ? 'LOGGING IN...' : 'LOGIN'}
               </button>
             </div>

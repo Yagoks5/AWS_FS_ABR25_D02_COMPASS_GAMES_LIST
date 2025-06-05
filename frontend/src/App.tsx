@@ -11,6 +11,7 @@ import Platforms from './pages/Platforms';
 import './App.css';
 import { queryClient } from './lib/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -67,6 +68,19 @@ function App() {
           />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+          toastClassName="custom-toast"
+        ></ToastContainer>
       </AuthProvider>
     </QueryClientProvider>
   );
