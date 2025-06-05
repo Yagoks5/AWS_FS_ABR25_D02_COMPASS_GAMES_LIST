@@ -19,15 +19,22 @@ export class CategoryService {
     userId: number,
     categoryData: CreateCategoryData,
   ): Promise<CategoryResponse> {
-    const existingCategory = await this.prisma.category.findFirst({
+    const userCategories = await this.prisma.category.findMany({
       where: {
-        name: categoryData.name,
         userId,
         isDeleted: false,
       },
+      select: {
+        name: true,
+      },
     });
 
-    if (existingCategory) {
+    const nameExists = userCategories.some(
+      (category) =>
+        category.name.toLowerCase() === categoryData.name.toLowerCase(),
+    );
+
+    if (nameExists) {
       throw new Error('A category with this name already exists.');
     }
 
@@ -158,18 +165,25 @@ export class CategoryService {
     }
 
     if (updateData.name && updateData.name !== existingCategory.name) {
-      const duplicateCategory = await this.prisma.category.findFirst({
+      const otherCategories = await this.prisma.category.findMany({
         where: {
-          name: updateData.name,
           userId,
           isDeleted: false,
           id: {
             not: categoryId,
           },
         },
+        select: {
+          name: true,
+        },
       });
 
-      if (duplicateCategory) {
+      const nameExists = otherCategories.some(
+        (category) =>
+          category.name.toLowerCase() === updateData.name!.toLowerCase(),
+      );
+
+      if (nameExists) {
         throw new Error('A category with this name already exists.');
       }
     }

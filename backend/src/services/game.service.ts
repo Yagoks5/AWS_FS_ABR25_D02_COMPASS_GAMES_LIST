@@ -18,6 +18,24 @@ export class GameService {
     userId: number,
     gameData: CreateGameData,
   ): Promise<GameResponse> {
+    const userGames = await this.prisma.game.findMany({
+      where: {
+        userId,
+        isDeleted: false,
+      },
+      select: {
+        title: true,
+      },
+    });
+
+    const titleExists = userGames.some(
+      (game) => game.title.toLowerCase() === gameData.title.toLowerCase(),
+    );
+
+    if (titleExists) {
+      throw new Error('A game with this title already exists.');
+    }
+
     const category = await this.prisma.category.findFirst({
       where: { id: gameData.categoryId, userId, isDeleted: false },
     });
@@ -91,11 +109,31 @@ export class GameService {
     } = getPaginationParams(page, limit || 10);
 
     const whereClause: any = { userId, isDeleted: false };
+
+    let searchMatchingIds: number[] | undefined;
     if (filters.search) {
-      whereClause.OR = [
-        { title: { contains: filters.search, mode: 'insensitive' } },
-        { description: { contains: filters.search, mode: 'insensitive' } },
-      ];
+      const searchLower = filters.search.toLowerCase();
+      const allUserGames = await this.prisma.game.findMany({
+        where: { userId, isDeleted: false },
+        select: { id: true, title: true, description: true },
+      });
+
+      searchMatchingIds = allUserGames
+        .filter(
+          (game) =>
+            game.title.toLowerCase().includes(searchLower) ||
+            (game.description &&
+              game.description.toLowerCase().includes(searchLower)),
+        )
+        .map((game) => game.id);
+
+      if (searchMatchingIds.length === 0) {
+        return createPaginationResult([], 0, currentPage, currentLimit);
+      }
+    }
+
+    if (searchMatchingIds) {
+      whereClause.id = { in: searchMatchingIds };
     }
     if (filters.categoryId) {
       whereClause.categoryId = filters.categoryId;
@@ -190,6 +228,7 @@ export class GameService {
         throw new Error('Category not found or access denied.');
       }
     }
+
     if (updateData.platformId !== undefined) {
       if (updateData.platformId !== null) {
         const platform = await this.prisma.platform.findFirst({
@@ -198,6 +237,30 @@ export class GameService {
         if (!platform) {
           throw new Error('Platform not found or access denied.');
         }
+      }
+    }
+
+    if (updateData.title && updateData.title !== game.title) {
+      const otherGames = await this.prisma.game.findMany({
+        where: {
+          userId,
+          isDeleted: false,
+          id: {
+            not: gameId,
+          },
+        },
+        select: {
+          title: true,
+        },
+      });
+
+      const titleExists = otherGames.some(
+        (existingGame) =>
+          existingGame.title.toLowerCase() === updateData.title!.toLowerCase(),
+      );
+
+      if (titleExists) {
+        throw new Error('A game with this title already exists.');
       }
     }
 
@@ -216,7 +279,6 @@ export class GameService {
       currentStatus === GameStatus.Abandoned
     ) {
       if (updateData.finishDate === undefined && game.finishDate === null) {
-        // If not provided and was null
         throw new Error(
           'Finish date is required for Done or Abandoned status.',
         );
