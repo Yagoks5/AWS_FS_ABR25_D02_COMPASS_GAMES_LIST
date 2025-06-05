@@ -182,6 +182,15 @@ const Games: React.FC = () => {
     }
   }, [searchParams, setSearchParams]);
 
+  const formatDateIso = (dateString: string | undefined | null) => {
+    if (!dateString) return '';
+    if (dateString.length >= 10) {
+      const [year, month, day] = dateString.split('T')[0].split('-');
+      return `${day}/${month}/${year}`;
+    }
+    return dateString;
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -506,7 +515,9 @@ const Games: React.FC = () => {
             <div className="games-column actions">Actions</div>
           </div>
 
-          <div className="table-content">          {paginatedGames.length === 0 ? (
+          <div className="table-content">
+            {' '}
+            {paginatedGames.length === 0 ? (
               <div className="empty-state">
                 <p>No games found. Create your first game!</p>
               </div>
@@ -634,28 +645,29 @@ const Games: React.FC = () => {
             mode={isAddModalOpen ? 'create' : 'edit'}
             game={selectedGame}
           />
-        )}        {/* View Modal */}
+        )}{' '}
+        {/* View Modal */}
         {isViewModalOpen && selectedGame && (
           <div className="modal-overlay">
             <div className="modal-content view-modal-content">
               <div className="view-modal-header">
                 <h2>Game Details</h2>
-                <button 
+                <button
                   type="button"
                   onClick={() => {
                     setIsViewModalOpen(false);
                     setSelectedGame(null);
-                  }} 
+                  }}
                   className="close-btn"
                   aria-label="Close modal"
                 >
                   ×
                 </button>
               </div>
-              
+
               <div className="game-info">
                 <h3 className="game-title">{selectedGame.title}</h3>
-                
+
                 {selectedGame.imageUrl && (
                   <div className="game-image-container">
                     <img
@@ -665,47 +677,65 @@ const Games: React.FC = () => {
                     />
                   </div>
                 )}
-                
+
                 <div className="game-detail-row">
-                  <span className="detail-label">Description:</span> 
-                  <span className="detail-value">{selectedGame.description || 'No description'}</span>
+                  <span className="detail-label">Description:</span>
+                  <span className="detail-value">
+                    {selectedGame.description || 'No description'}
+                  </span>
                 </div>
                 <div className="game-detail-row">
-                  <span className="detail-label">Category:</span> 
-                  <span className="detail-value">{selectedGame.category.name}</span>
+                  <span className="detail-label">Category:</span>
+                  <span className="detail-value">
+                    {selectedGame.category.name}
+                  </span>
                 </div>
                 <div className="game-detail-row">
-                  <span className="detail-label">Platform:</span> 
-                  <span className="detail-value">{selectedGame.platform?.title || 'No platform'}</span>
+                  <span className="detail-label">Platform:</span>
+                  <span className="detail-value">
+                    {selectedGame.platform?.title || 'No platform'}
+                  </span>
                 </div>
                 <div className="game-detail-row">
-                  <span className="detail-label">Status:</span> 
-                  <span className="detail-value">{selectedGame.status || 'Playing'}</span>
+                  <span className="detail-label">Status:</span>
+                  <span className="detail-value">
+                    {selectedGame.status || 'Playing'}
+                  </span>
                 </div>
                 {selectedGame.acquisitionDate && (
                   <div className="game-detail-row">
-                    <span className="detail-label">Acquisition Date:</span> 
-                    <span className="detail-value">{new Date(selectedGame.acquisitionDate).toLocaleDateString()}</span>
+                    <span className="detail-label">Acquisition Date:</span>
+                    <span className="detail-value">
+                      {formatDateIso(selectedGame.acquisitionDate)}
+                    </span>
                   </div>
                 )}
                 {selectedGame.finishDate && (
                   <div className="game-detail-row">
-                    <span className="detail-label">Finish Date:</span> 
-                    <span className="detail-value">{new Date(selectedGame.finishDate).toLocaleDateString()}</span>
+                    <span className="detail-label">Finish Date:</span>
+                    <span className="detail-value">
+                      <span className="detail-value">
+                        {formatDateIso(selectedGame.finishDate)}
+                      </span>
+                    </span>
                   </div>
                 )}
                 <div className="game-detail-row">
-                  <span className="detail-label">Created:</span> 
-                  <span className="detail-value">{new Date(selectedGame.createdAt).toLocaleDateString()}</span>
+                  <span className="detail-label">Created:</span>
+                  <span className="detail-value">
+                    {new Date(selectedGame.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
                 <div className="game-detail-row">
-                  <span className="detail-label">Favorite:</span> 
-                  <span className="detail-value">{selectedGame.isFavorite ? 'Yes ❤️' : 'No'}</span>
+                  <span className="detail-label">Favorite:</span>
+                  <span className="detail-value">
+                    {selectedGame.isFavorite ? 'Yes ❤️' : 'No'}
+                  </span>
                 </div>
               </div>
-              
+
               <div className="view-modal-footer">
-                <button 
+                <button
                   className="close-view-btn"
                   onClick={() => {
                     setIsViewModalOpen(false);
