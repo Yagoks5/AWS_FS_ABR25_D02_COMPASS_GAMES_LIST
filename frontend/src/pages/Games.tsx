@@ -14,6 +14,7 @@ import { getAllPlatforms } from '../services/api';
 import { useInvalidateCache } from '../hooks/useInvalidateCache';
 import { FiPlus } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 
 interface ApiError {
   response?: {
@@ -71,26 +72,31 @@ const Games: React.FC = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   // Use React Query to fetch data
   const { invalidateGames, invalidateDashboard } = useInvalidateCache();
-  
+
   // Create a filter object for React Query
   const filters: GameFilters = useMemo(() => {
     const result: GameFilters = {};
-    if (selectedCategoryId !== undefined) result.categoryId = selectedCategoryId;
-    if (selectedPlatformId !== undefined) result.platformId = selectedPlatformId;
+    if (selectedCategoryId !== undefined)
+      result.categoryId = selectedCategoryId;
+    if (selectedPlatformId !== undefined)
+      result.platformId = selectedPlatformId;
     if (selectedStatus !== undefined) result.status = selectedStatus;
     if (isFavoriteOnly) result.isFavorite = isFavoriteOnly;
     if (searchText) result.search = searchText;
     return result;
-  }, [selectedCategoryId, selectedPlatformId, selectedStatus, isFavoriteOnly, searchText]);
-  
+  }, [
+    selectedCategoryId,
+    selectedPlatformId,
+    selectedStatus,
+    isFavoriteOnly,
+    searchText,
+  ]);
+
   // Fetch games data with React Query - will automatically re-fetch when filters change
-  const { 
-    data: gamesData,
-    isLoading: isLoadingGames
-  } = useQuery({
+  const { data: gamesData, isLoading: isLoadingGames } = useQuery({
     queryKey: ['games', filters],
     queryFn: async () => {
       try {
@@ -98,17 +104,18 @@ const Games: React.FC = () => {
         return response.data;
       } catch (err) {
         const error = err as ApiError;
-        setError(error.response?.data?.message || error.message || 'Failed to load games');
+        setError(
+          error.response?.data?.message ||
+            error.message ||
+            'Failed to load games',
+        );
         throw error;
       }
     },
   });
 
   // Fetch categories data with React Query
-  const { 
-    data: categoriesData,
-    isLoading: isLoadingCategories
-  } = useQuery({
+  const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
       try {
@@ -116,17 +123,18 @@ const Games: React.FC = () => {
         return response.data;
       } catch (err) {
         const error = err as ApiError;
-        setError(error.response?.data?.message || error.message || 'Failed to load categories');
+        setError(
+          error.response?.data?.message ||
+            error.message ||
+            'Failed to load categories',
+        );
         throw error;
       }
     },
   });
 
   // Fetch platforms data with React Query
-  const { 
-    data: platformsData,
-    isLoading: isLoadingPlatforms 
-  } = useQuery({
+  const { data: platformsData, isLoading: isLoadingPlatforms } = useQuery({
     queryKey: ['platforms'],
     queryFn: async () => {
       try {
@@ -134,14 +142,21 @@ const Games: React.FC = () => {
         return response.data;
       } catch (err) {
         const error = err as ApiError;
-        setError(error.response?.data?.message || error.message || 'Failed to load platforms');
+        setError(
+          error.response?.data?.message ||
+            error.message ||
+            'Failed to load platforms',
+        );
         throw error;
       }
     },
-  });  // Extract data from React Query results
+  }); // Extract data from React Query results
   const allGames = useMemo(() => gamesData || [], [gamesData]);
   const categories = useMemo(() => categoriesData || [], [categoriesData]);
-  const platforms: Platform[] = useMemo(() => platformsData || [], [platformsData]);
+  const platforms: Platform[] = useMemo(
+    () => platformsData || [],
+    [platformsData],
+  );
 
   // Determine if anything is loading
   const loading = isLoadingGames || isLoadingCategories || isLoadingPlatforms;
@@ -199,13 +214,11 @@ const Games: React.FC = () => {
       invalidateDashboard(); // Update dashboard counters
       setIsDeleteModalOpen(false);
       setSelectedGame(null);
+      toast.success(`${selectedGame.title} deleted successfully!`);
     } catch (err) {
       const error = err as ApiError;
-      setError(
-        error.response?.data?.message ||
-          error.message ||
-          'Failed to delete game',
-      );
+      const errorMessage = error.response?.data?.message || error.message;
+      toast.error(errorMessage);
     }
   };
   const toggleFavorite = async (gameId: number) => {
@@ -218,11 +231,8 @@ const Games: React.FC = () => {
       invalidateDashboard(); // Update dashboard counters for favorites
     } catch (err) {
       const error = err as ApiError;
-      setError(
-        error.response?.data?.message ||
-          error.message ||
-          'Failed to update favorite',
-      );
+      const message = error.response?.data?.message || error.message;
+      toast.error(message);
     }
   };
   const handleGameSaved = () => {
@@ -267,11 +277,13 @@ const Games: React.FC = () => {
     // Since we're already filtering on the server for categories, platforms, status, and favorites,
     // we only need to apply search filter on the client side when it changes
     if (!searchText) return sortedGames;
-    
+
     return sortedGames.filter((game) => {
       const matchesSearch =
         game.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        (game.description?.toLowerCase() || '').includes(searchText.toLowerCase());
+        (game.description?.toLowerCase() || '').includes(
+          searchText.toLowerCase(),
+        );
       return matchesSearch;
     });
   }, [sortedGames, searchText]);
@@ -295,7 +307,13 @@ const Games: React.FC = () => {
   // Reset pagination when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchText, selectedCategoryId, selectedPlatformId, selectedStatus, isFavoriteOnly]);
+  }, [
+    searchText,
+    selectedCategoryId,
+    selectedPlatformId,
+    selectedStatus,
+    isFavoriteOnly,
+  ]);
 
   if (loading) {
     return (
@@ -329,7 +347,6 @@ const Games: React.FC = () => {
       />
 
       <main className="main-content">
-        {' '}
         <div className="games-header">
           <h1>Games</h1>
           <button className="add-game-btn" onClick={handleAddGame}>
@@ -372,7 +389,6 @@ const Games: React.FC = () => {
             </span>
           </div>
         </div>
-        
         <div className="games-filters">
           <div className="games-search-box">
             <IoSearchOutline />
@@ -383,8 +399,8 @@ const Games: React.FC = () => {
               onChange={(e) => setSearchText(e.target.value)}
             />
             {searchText && (
-              <button 
-                className="clear-search" 
+              <button
+                className="clear-search"
                 onClick={() => setSearchText('')}
                 title="Clear search"
               >
@@ -457,10 +473,12 @@ const Games: React.FC = () => {
             Clear
           </button>
         </div>
-        
         <div className="games-table">
           <div className="games-table-header">
-            <div className="games-column title" onClick={() => handleSort('title')}>
+            <div
+              className="games-column title"
+              onClick={() => handleSort('title')}
+            >
               Title{' '}
               {sortConfig?.key === 'title' &&
                 (sortConfig.direction === 'asc' ? '↑' : '↓')}
@@ -507,7 +525,9 @@ const Games: React.FC = () => {
                   <div className="games-column description">
                     {game.description || '-'}
                   </div>
-                  <div className="games-column category">{game.category.name}</div>
+                  <div className="games-column category">
+                    {game.category.name}
+                  </div>
                   <div className="games-column platform">
                     {game.platform?.title || 'N/A'}
                   </div>
@@ -560,29 +580,27 @@ const Games: React.FC = () => {
             )}
           </div>
         </div>
-        
         <div className="games-pagination">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="games-pagination-btn-previous"
-            >
-              Previous
-            </button>
-            <span className="current-page">
-              Page {currentPage} of {totalPages || 1}
-            </span>
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages || totalPages <= 1}
-              className="games-pagination-btn-next"
-            >
-              Next
-            </button>
-          </div>
-          
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="games-pagination-btn-previous"
+          >
+            Previous
+          </button>
+          <span className="current-page">
+            Page {currentPage} of {totalPages || 1}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages || totalPages <= 1}
+            className="games-pagination-btn-next"
+          >
+            Next
+          </button>
+        </div>
         {/* Add/Edit Modal */}
         {(isAddModalOpen || isEditModalOpen) && (
           <GameModal
@@ -600,20 +618,22 @@ const Games: React.FC = () => {
                   await gameAPI.updateGame(selectedGame.id, gameData);
                 }
                 handleGameSaved();
+                toast.success(
+                  isAddModalOpen
+                    ? 'Game added successfully!'
+                    : 'Game updated successfully!',
+                );
               } catch (err) {
                 const error = err as ApiError;
-                setError(
-                  error.response?.data?.message ||
-                    error.message ||
-                    'Failed to save game',
-                );
+                const message = error.response?.data?.message || error.message;
+
+                toast.error(message || 'Failed to save game');
               }
             }}
             mode={isAddModalOpen ? 'create' : 'edit'}
             game={selectedGame}
           />
         )}
-        
         {/* View Modal */}
         {isViewModalOpen && selectedGame && (
           <div className="modal-overlay">
@@ -675,7 +695,6 @@ const Games: React.FC = () => {
             </div>
           </div>
         )}
-        
         {/* Delete Confirmation Modal */}
         <ConfirmationModal
           isOpen={isDeleteModalOpen}
