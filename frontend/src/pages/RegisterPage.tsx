@@ -4,6 +4,7 @@ import AuthBackground from '../components/AuthBackground';
 import Logo from '../components/Logo';
 import { register, login } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import './RegisterPage.css';
 
@@ -23,7 +24,14 @@ const RegisterPage = () => {
     setLoading(true);
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      toast.error('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    // Validação adicional de campos obrigatórios
+    if (!fullName.trim() || !email.trim() || !password.trim()) {
+      toast.error('All fields are required');
       setLoading(false);
       return;
     }
@@ -31,25 +39,28 @@ const RegisterPage = () => {
     try {
       // Register the user
       await register(fullName, email, password, confirmPassword);
-      
+
       // Automatically log in after successful registration
       const loginResponse = await login(email, password);
-      
+
       if (loginResponse.success) {
         authLogin(loginResponse.data.token, loginResponse.data.user);
+        toast.success(`Welcome, ${loginResponse.data.user.fullName!}`);
         navigate('/dashboard');
       } else {
         // If auto-login fails, redirect to login page
+        toast.info('Please log in with your new account');
+
         navigate('/login');
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setError(
+        const errorMessage =
           err.response?.data?.message ||
-            'An error occurred during registration',
-        );
+          'An error occurred during registration';
+        toast.error(errorMessage);
       } else {
-        setError('An unexpected error occurred');
+        toast.error('An unexpected error occurred. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -82,10 +93,9 @@ const RegisterPage = () => {
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Full Name"
                 className="form-input"
-                required
+                // required
               />
             </div>
-
             <div className="form-group">
               <label htmlFor="email" className="form-label">
                 Email
@@ -97,10 +107,9 @@ const RegisterPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 className="form-input"
-                required
+                // required
               />
             </div>
-
             <div className="form-group">
               <label htmlFor="password" className="form-label">
                 Password
@@ -112,10 +121,9 @@ const RegisterPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className="form-input"
-                required
+                // required
               />
             </div>
-
             <div className="form-group">
               <label htmlFor="confirmPassword" className="form-label">
                 Confirm Password
@@ -127,9 +135,10 @@ const RegisterPage = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm your password"
                 className="form-input"
-                required
+                // required
               />
-            </div>            <button type="submit" className="form-button" disabled={loading}>
+            </div>{' '}
+            <button type="submit" className="form-button" disabled={loading}>
               {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
