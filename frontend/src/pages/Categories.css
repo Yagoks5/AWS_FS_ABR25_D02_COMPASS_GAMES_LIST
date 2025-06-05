@@ -314,7 +314,26 @@
 .current-page {
   margin: 0 15px;
   font-size: 14px;
+  font-size: 14px;
   color: var(--text-color);
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: var(--border-radius);
+  min-height: 200px;
+}
+
+.empty-state p {
+  color: #aaa;
+  font-size: 16px;
+  margin: 0;
 }
 
 /* Responsive design */
@@ -480,4 +499,31 @@
 .categories-delete-text {
   color: #201624;
   margin-bottom: 2rem;
+}
+
+.clear-btn {
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.clear-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.clear-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }

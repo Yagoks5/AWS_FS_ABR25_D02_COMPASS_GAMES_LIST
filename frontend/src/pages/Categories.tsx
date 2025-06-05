@@ -263,10 +263,8 @@ const Categories: React.FC = () => {
                 ✕
               </button>
             )}
-          </div>
-
-          <button className="categories-clear-btn" onClick={handleClearFilters}>Clear</button>
-        </div>        <div className="categories-table">
+          </div>          <button className="clear-btn" onClick={handleClearFilters}>Clear</button>
+        </div><div className="categories-table">
           <div className="categories-table-header">
             <div className="categories-column name" onClick={() => handleSort('name')}>
               Name {sortConfig?.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
@@ -277,9 +275,10 @@ const Categories: React.FC = () => {
               Created {sortConfig?.key === 'createdAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </div>
             <div className="categories-column actions">Actions</div>
-          </div>          <div className="categories-table-content">
-            {paginatedCategories.length === 0 ? (
-              <div className="no-categories">No categories found</div>
+          </div>          <div className="categories-table-content">            {paginatedCategories.length === 0 ? (
+              <div className="empty-state">
+                <p>No categories found. Create your first category!</p>
+              </div>
             ) : (
               paginatedCategories.map((category) => (
                 <div className="categories-table-row" key={category.id}>

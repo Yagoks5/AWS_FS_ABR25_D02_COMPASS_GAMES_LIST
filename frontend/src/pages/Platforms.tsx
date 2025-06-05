@@ -277,8 +277,7 @@ const Platforms: FC = () => {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
-          </div>
-          <button className="platforms-clear-btn" onClick={() => {
+          </div>          <button className="clear-btn" onClick={() => {
             setSearchText('');
             setCurrentPage(1);
           }}>Clear</button>

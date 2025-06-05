@@ -506,9 +506,10 @@ const Games: React.FC = () => {
             <div className="games-column actions">Actions</div>
           </div>
 
-          <div className="table-content">
-            {paginatedGames.length === 0 ? (
-              <div className="no-games">No games found</div>
+          <div className="table-content">          {paginatedGames.length === 0 ? (
+              <div className="empty-state">
+                <p>No games found. Create your first game!</p>
+              </div>
             ) : (
               paginatedGames.map((game) => (
                 <div className="games-table-row" key={game.id}>
@@ -633,64 +634,86 @@ const Games: React.FC = () => {
             mode={isAddModalOpen ? 'create' : 'edit'}
             game={selectedGame}
           />
-        )}
-        {/* View Modal */}
+        )}        {/* View Modal */}
         {isViewModalOpen && selectedGame && (
           <div className="modal-overlay">
-            <div className="modal-content view-modal">
-              <button
-                className="close-modal"
-                onClick={() => setIsViewModalOpen(false)}
-              >
-                ✖
-              </button>
-              <h2>{selectedGame.title}</h2>
-              {selectedGame.imageUrl && (
-                <img
-                  src={selectedGame.imageUrl}
-                  alt={selectedGame.title}
-                  className="modal-image"
-                />
-              )}{' '}
-              <div className="game-details">
-                <p>
-                  <strong>Description:</strong>{' '}
-                  {selectedGame.description || 'No description'}
-                </p>
-                <p>
-                  <strong>Category:</strong> {selectedGame.category.name}
-                </p>
-                <p>
-                  <strong>Platform:</strong>{' '}
-                  {selectedGame.platform?.title || 'No platform'}
-                </p>
-                <p>
-                  <strong>Status:</strong> {selectedGame.status || 'Playing'}
-                </p>
+            <div className="modal-content view-modal-content">
+              <div className="view-modal-header">
+                <h2>Game Details</h2>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setIsViewModalOpen(false);
+                    setSelectedGame(null);
+                  }} 
+                  className="close-btn"
+                  aria-label="Close modal"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="game-info">
+                <h3 className="game-title">{selectedGame.title}</h3>
+                
+                {selectedGame.imageUrl && (
+                  <div className="game-image-container">
+                    <img
+                      src={selectedGame.imageUrl}
+                      alt={selectedGame.title}
+                      className="game-detail-image"
+                    />
+                  </div>
+                )}
+                
+                <div className="game-detail-row">
+                  <span className="detail-label">Description:</span> 
+                  <span className="detail-value">{selectedGame.description || 'No description'}</span>
+                </div>
+                <div className="game-detail-row">
+                  <span className="detail-label">Category:</span> 
+                  <span className="detail-value">{selectedGame.category.name}</span>
+                </div>
+                <div className="game-detail-row">
+                  <span className="detail-label">Platform:</span> 
+                  <span className="detail-value">{selectedGame.platform?.title || 'No platform'}</span>
+                </div>
+                <div className="game-detail-row">
+                  <span className="detail-label">Status:</span> 
+                  <span className="detail-value">{selectedGame.status || 'Playing'}</span>
+                </div>
                 {selectedGame.acquisitionDate && (
-                  <p>
-                    <strong>Acquisition Date:</strong>{' '}
-                    {new Date(selectedGame.acquisitionDate).toLocaleDateString(
-                      'pt-BR',
-                    )}
-                  </p>
+                  <div className="game-detail-row">
+                    <span className="detail-label">Acquisition Date:</span> 
+                    <span className="detail-value">{new Date(selectedGame.acquisitionDate).toLocaleDateString()}</span>
+                  </div>
                 )}
                 {selectedGame.finishDate && (
-                  <p>
-                    <strong>Finish Date:</strong>{' '}
-                    {new Date(selectedGame.finishDate).toLocaleDateString(
-                      'pt-BR',
-                    )}
-                  </p>
+                  <div className="game-detail-row">
+                    <span className="detail-label">Finish Date:</span> 
+                    <span className="detail-value">{new Date(selectedGame.finishDate).toLocaleDateString()}</span>
+                  </div>
                 )}
-                <p>
-                  <strong>Created:</strong>{' '}
-                  {new Date(selectedGame.createdAt).toLocaleDateString('pt-BR')}
-                </p>
-                <p>
-                  <strong>Favorite:</strong>{' '}
-                  {selectedGame.isFavorite ? 'Yes ❤️' : 'No'}
-                </p>
+                <div className="game-detail-row">
+                  <span className="detail-label">Created:</span> 
+                  <span className="detail-value">{new Date(selectedGame.createdAt).toLocaleDateString()}</span>
+                </div>
+                <div className="game-detail-row">
+                  <span className="detail-label">Favorite:</span> 
+                  <span className="detail-value">{selectedGame.isFavorite ? 'Yes ❤️' : 'No'}</span>
+                </div>
+              </div>
+              
+              <div className="view-modal-footer">
+                <button 
+                  className="close-view-btn"
+                  onClick={() => {
+                    setIsViewModalOpen(false);
+                    setSelectedGame(null);
+                  }}
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>

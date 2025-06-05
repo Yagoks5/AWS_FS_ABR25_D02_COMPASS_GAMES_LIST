@@ -495,6 +495,7 @@
 .current-page {
   margin: 0 15px;
   font-size: 14px;
+  font-size: 14px;
 }
 
 .modal-overlay {
@@ -537,14 +538,106 @@
   border-radius: 8px;
 }
 
-@media (max-width: 768px) {
-  .favorite-filter {
-    padding: 6px 10px;
-    font-size: 14px;
-  }
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: var(--border-radius);
+  min-height: 200px;
+}
 
-  .favorite-filter input[type='checkbox'] {
-    width: 14px;
-    height: 14px;
-  }
+.empty-state p {
+  color: #aaa;
+  font-size: 16px;
+  margin: 0;
+}
+
+.view-modal-content {
+  padding: 0;
+  max-width: 600px;
+  overflow: hidden;
+}
+
+.view-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.view-modal-header h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #111;
+}
+
+.game-info {
+  width: 100%;
+  padding: 24px;
+  text-align: left;
+}
+
+.game-title {
+  font-size: 1.5rem;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.game-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.game-detail-image {
+  max-width: 300px;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.game-detail-row {
+  display: flex;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.detail-label {
+  font-weight: bold;
+  width: 130px;
+}
+
+.view-modal-footer {
+  border-top: 1px solid #eee;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-view-btn {
+  background-color: #f0f0f0;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.close-view-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 24px;
+  cursor: pointer;
 }

@@ -464,3 +464,20 @@
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: var(--border-radius);
+  min-height: 200px;
+}
+
+.empty-state p {
+  color: #aaa;
+  font-size: 16px;
+  margin: 0;
+}
