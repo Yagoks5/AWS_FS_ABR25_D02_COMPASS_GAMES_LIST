@@ -1,170 +1,185 @@
 /* Game Modal Styles */
 .game-modal {
-    width: 90vw;
-    max-width: 700px;
-    max-height: 90vh;
-    overflow-y: auto;
-    color: #333;
-    background-color: white;
+  width: 90vw;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: #333;
+  background-color: white;
 }
 
 .game-modal .modal-header {
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #ddd;
-    padding: 15px 20px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  padding: 15px 20px;
 }
 
 .game-modal .modal-header h2 {
-    margin: 0;
-    color: #333;
-    font-size: 1.4rem;
+  margin: 0;
+  color: #333;
+  font-size: 1.4rem;
 }
 
 .game-modal .modal-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
 }
 
 .game-modal .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
 .game-modal .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
 }
 
 .game-modal .form-group label {
-    font-weight: 600;
-    color: #333;
-    font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
 }
 
 .game-modal .form-group input,
 .game-modal .form-group select,
 .game-modal .form-group textarea {
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
-    color: #333;
-    font-size: 14px;
-    transition: border-color 0.2s ease;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  color: #333;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
 }
 
 .game-modal .form-group input:focus,
 .game-modal .form-group select:focus,
 .game-modal .form-group textarea:focus {
-    outline: none;
-    border-color: #2dd4bf;
-    box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.2);
+  outline: none;
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.2);
 }
 
 .game-modal .form-group input:disabled,
 .game-modal .form-group select:disabled,
 .game-modal .form-group textarea:disabled {
-    background-color: #333;
-    cursor: not-allowed;
-    opacity: 0.7;
+  background-color: #333;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .game-modal .form-group input.error,
 .game-modal .form-group select.error {
-    border-color: #ff4444;
+  border-color: #ff4444;
 }
 
 .game-modal .error-message {
-    color: #ff4444;
-    font-size: 12px;
-    margin-top: 4px;
+  color: #ff4444;
+  font-size: 12px;
+  margin-top: 4px;
 }
 
 .game-modal .checkbox-group {
-    flex-direction: row;
-    align-items: center;
+  flex-direction: row;
+  align-items: center;
 }
 
 .game-modal .checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: normal;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: normal;
+  cursor: pointer;
 }
 
-.game-modal .checkbox-label input[type="checkbox"] {
-    width: auto;
-    margin: 0;
+.game-modal .checkbox-label input[type='checkbox'] {
+  width: auto;
+  margin: 0;
 }
 
 .game-modal .modal-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #ddd;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
 }
 
 .game-modal .btn-cancel,
 .game-modal .btn-submit {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .game-modal .btn-cancel {
-    background-color: #e0e0e0;
-    color: #333;
+  background-color: #d6d6d6;
+  color: #000000;
 }
 
 .game-modal .btn-cancel:hover {
-    background-color: #d0d0d0;
+  background-color: #f33;
 }
 
 .game-modal .btn-submit {
-    background-color: #2dd4bf;
-    color: #fff;
+  background-color: #d6d6d6;
+  color: #000000;
 }
 
 .game-modal .btn-submit:hover:not(:disabled) {
-    background-color: #20baa7;
+  background-color: #00ffff;
 }
 
 .game-modal .btn-submit:disabled {
-    background-color: #cccccc;
-    color: #888;
-    cursor: not-allowed;
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+.close-button svg {
+  position: absolute;
+  color: rgb(201, 201, 201);
+
+  top: 3.6rem;
+  right: 3rem;
+  height: 30px;
+  width: 30px;
+}
+
+.close-button svg:hover {
+  color: #f33;
+  top: 3.6rem;
+  right: 3rem;
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
-    .game-modal {
-        width: 95vw;
-        margin: 20px auto;
-    }
+  .game-modal {
+    width: 95vw;
+    margin: 20px auto;
+  }
 
-    .game-modal .form-row {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
+  .game-modal .form-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
 
-    .game-modal .modal-actions {
-        flex-direction: column;
-    }
+  .game-modal .modal-actions {
+    flex-direction: column;
+  }
 
-    .game-modal .btn-cancel,
-    .game-modal .btn-submit {
-        width: 100%;
-    }
+  .game-modal .btn-cancel,
+  .game-modal .btn-submit {
+    width: 100%;
+  }
 }
