@@ -15,7 +15,6 @@ import { useInvalidateCache } from '../hooks/useInvalidateCache';
 import { FiPlus } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
 
-
 interface ApiError {
   response?: {
     data?: {
@@ -561,7 +560,7 @@ const Games: React.FC = () => {
             )}
           </div>
         </div>
-
+        
         <div className="games-pagination">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

@@ -1,17 +1,12 @@
 :root {
   --sidebar-width: 260px;
   --sidebar-width-collapsed: 80px;
-  --sidebar-bg: var(--secondary-bg);
-  --sidebar-hover-bg: rgba(58, 141, 141, 0.534);
-  --sidebar-active-bg: var(--sidebar-active-color);
-  --sidebar-border-radius: 0.5rem;
-  --transition-speed: 0.3s;
 }
 
 /* Sidebar principal */
 .sidebar {
   width: var(--sidebar-width);
-  background-color: var(--sidebar-bg);
+  background-color: var(--secondary-bg);
   padding: 20px 0;
   display: flex;
   flex-direction: column;
@@ -20,9 +15,8 @@
   left: 0;
   top: 0;
   bottom: 0;
-  transition: width var(--transition-speed) ease-in-out, background-color var(--transition-speed) ease;
+  transition: width 0.3s ease-in-out;
   overflow-x: hidden;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   z-index: 100;
 }
 
@@ -64,70 +58,72 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color var(--transition-speed) ease;
 }
 
 .collapse-btn svg {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
 }
 
 .collapse-btn:hover {
-  color: var(--sidebar-active-bg);
+  color: var(--sidebar-active-color);
 }
 
 /* Navegação da Sidebar */
-.sidebar-nav {
-  flex-grow: 1;
-}
-
 .sidebar-nav ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  margin-top: -25%;
 }
 
-.sidebar-nav li a {
+.sidebar-nav li a,
+.sidebar-nav li a:any-link,
+.sidebar-nav li a[href],
+.sidebar-nav li a[href]:any-link {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
-  margin-bottom: 10px;
+  padding: 15px 25px;
+  margin-bottom: 30px;
   text-decoration: none;
   color: var(--text-muted);
-  border-radius: var(--sidebar-border-radius);
-  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
 }
 
-.sidebar-nav li a svg {
+.sidebar-nav li a svg,
+.sidebar-nav li a:any-link svg {
   margin-right: 15px;
   min-width: 24px;
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
+  width: 40px;
+  height: 30px;
 }
 
-.sidebar-nav li a:hover {
-  background-color: var(--sidebar-hover-bg);
-  color: var(--text-color);
-}
-
-.sidebar-nav li.active a {
-  background-color: var(--sidebar-active-bg);
+/* Estilo ativo da navegação */
+.sidebar-nav li.active a,
+.sidebar-nav li.active a:any-link,
+.sidebar-nav li a:hover,
+.sidebar-nav li a:any-link:hover,
+.sidebar-nav li.active a[href],
+.sidebar-nav li.active a[href]:any-link,
+.sidebar-nav li a[href]:hover {
+  background-color: var(--sidebar-active-color);
   color: #000000;
-  font-weight: 600;
-  border-radius: var(--sidebar-border-radius);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
   margin-left: 5px;
 }
 
-/* Ajustes quando a Sidebar está colapsada */
+.sidebar-nav li.active a {
+  font-weight: bold;
+}
+
 .dashboard-container.sidebar-collapsed .sidebar-nav li a span {
   display: none;
 }
 
 .dashboard-container.sidebar-collapsed .sidebar-nav li a {
   justify-content: center;
-  padding: 12px 0;
+  padding: 15px 0;
 }
 
 .dashboard-container.sidebar-collapsed .sidebar-nav li a svg {
@@ -136,8 +132,7 @@
 
 /* Rodapé da Sidebar */
 .sidebar-footer {
-  padding: 10px 20px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0 20px;
 }
 
 .logout-btn {
@@ -147,10 +142,10 @@
   border: 1px solid var(--text-muted);
   color: var(--text-muted);
   padding: 10px 15px;
-  border-radius: var(--sidebar-border-radius);
+  border-radius: var(--border-radius);
   cursor: pointer;
   width: 100%;
-  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   white-space: nowrap;
 }
 
@@ -159,12 +154,21 @@
 }
 
 .logout-btn:hover {
-  color: #ffffff;
+  color: rgb(255, 255, 255);
+  /* cor do texto em hover */
   border-color: #FD4760;
-  background-color: rgba(253, 71, 96, 0.9);
+  /* borda vermelha em hover */
+  background-color: rgba(255, 0, 0, 0.959);
+  /* fundo levemente avermelhado em hover (opcional) */
+
 }
 
-/* Ajustes quando a Sidebar está colapsada */
+/* .logout-btn:hover {
+  background-color: var(--text-muted);
+  color: var(--secondary-bg);
+  border-color: var(--text-muted);
+} */
+
 .dashboard-container.sidebar-collapsed .logout-btn span {
   display: none;
 }
@@ -178,7 +182,7 @@
   margin-right: 0;
 }
 
-/* Responsividade */
+/* Sidebar responsiva */
 @media (max-width: 768px) {
   .sidebar {
     width: var(--sidebar-width-collapsed);
@@ -196,7 +200,7 @@
 
   .sidebar-nav li a {
     justify-content: center;
-    padding: 12px 0;
+    padding: 15px 0;
   }
 
   .sidebar-nav li a svg {
