@@ -28,7 +28,18 @@ const Categories: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteModalError, setDeleteModalError] = useState<string | null>(null);
-  
+
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -39,15 +50,14 @@ const Categories: React.FC = () => {
   
   const [searchText, setSearchText] = useState('');
   
-  
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(15);
   
   
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Category;
     direction: 'asc' | 'desc';
-  } | null>(null);
+  }>({ key: 'createdAt', direction: 'desc' });
 
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -264,38 +274,42 @@ const Categories: React.FC = () => {
               </button>
             )}
           </div>          <button className="clear-btn" onClick={handleClearFilters}>Clear</button>
-        </div><div className="categories-table">
-          <div className="categories-table-header">
+        </div><div className="categories-table">          <div className="categories-table-header">
             <div className="categories-column name" onClick={() => handleSort('name')}>
-            <span className = "categories-table-header-title">Name  {sortConfig?.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</span>
+              <span className="categories-table-header-title">Name  {sortConfig?.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</span>
             </div>
             <div className="categories-column description">Description</div>
             <div className="categories-column games-count">Games</div>
             <div className="categories-column created-date" onClick={() => handleSort('createdAt')}>
-              <span className = "categories-table-header-title"> Created {sortConfig?.key === 'createdAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</span>
+              <span className="categories-table-header-title">Created At {sortConfig?.key === 'createdAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</span>
+            </div>
+            <div className="categories-column updated-date" onClick={() => handleSort('updatedAt')}>
+              <span className="categories-table-header-title">Modified At {sortConfig?.key === 'updatedAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</span>
             </div>
             <div className="categories-column actions">Actions</div>
-          </div>          <div className="categories-table-content">            {paginatedCategories.length === 0 ? (
+          </div><div className="categories-table-content">            {paginatedCategories.length === 0 ? (
               <div className="empty-state">
                 <p>No categories found. Create your first category!</p>
               </div>
             ) : (
-              paginatedCategories.map((category) => (
-                <div className="categories-table-row" key={category.id}>
+              paginatedCategories.map((category) => (                <div className="categories-table-row" key={category.id}>
                   <div className="categories-column name">{category.name}</div>
                   <div className="categories-column description">{category.description || '-'}</div>
                   <div className="categories-column games-count">{category._count?.games || 0}</div>
                   <div className="categories-column created-date">
-                    {new Date(category.createdAt).toLocaleDateString("pt-BR")}
+                    {formatDateTime(category.createdAt)}
+                  </div>
+                  <div className="categories-column updated-date">
+                    {formatDateTime(category.updatedAt)}
                   </div>
                   <div className="categories-column actions">
-                    <button className="categories-action-btn view" onClick={() => handleViewCategory(category)} title="View">
+                    <button type="button" className="categories-action-btn view" onClick={() => handleViewCategory(category)} title="View">
                       <BsEye className="action-icon" />
                     </button>
-                    <button className="categories-action-btn edit" onClick={() => handleEditCategory(category)} title="Edit">
+                    <button type="button" className="categories-action-btn edit" onClick={() => handleEditCategory(category)} title="Edit">
                       <BsPencil className="action-icon" />
                     </button>
-                    <button className="categories-action-btn delete" onClick={() => handleDeleteCategory(category)} title="Delete">
+                    <button type="button" className="categories-action-btn delete" onClick={() => handleDeleteCategory(category)} title="Delete">
                       <BsTrash className="action-icon" />
                     </button>
                   </div>
@@ -363,14 +377,13 @@ const Categories: React.FC = () => {
                 <div className="category-detail-row">
                   <span className="detail-label">Games Count:</span> 
                   <span className="detail-value">{selectedCategory._count?.games || 0}</span>
+                </div>                <div className="category-detail-row">
+                  <span className="detail-label">Created At:</span> 
+                  <span className="detail-value">{formatDateTime(selectedCategory.createdAt)}</span>
                 </div>
                 <div className="category-detail-row">
-                  <span className="detail-label">Created:</span> 
-                  <span className="detail-value">{new Date(selectedCategory.createdAt).toLocaleDateString()}</span>
-                </div>
-                <div className="category-detail-row">
-                  <span className="detail-label">Updated:</span> 
-                  <span className="detail-value">{new Date(selectedCategory.updatedAt).toLocaleDateString()}</span>
+                  <span className="detail-label">Modified At:</span> 
+                  <span className="detail-value">{formatDateTime(selectedCategory.updatedAt)}</span>
                 </div>
               </div>
               
