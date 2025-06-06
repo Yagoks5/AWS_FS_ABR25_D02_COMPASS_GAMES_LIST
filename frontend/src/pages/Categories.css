@@ -87,7 +87,7 @@
 .add-category-btn {
   background-color: #00ffe1;
   color: #222;
-  border: none;
+  border: solid 1px #9393933a;
   padding: 8px 20px;
   border-radius: 8px;
   font-size: 1rem;
@@ -107,8 +107,8 @@
 
 .add-category-btn:hover,
 .add-category-btn:focus {
-  background-color: #00ccb2;
-  color: #111;
+  background-color: #2b073a;
+  color: #fff;
 }
 
 

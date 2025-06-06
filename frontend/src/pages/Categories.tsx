@@ -286,7 +286,7 @@ const Categories: React.FC = () => {
             <div className="categories-column updated-date" onClick={() => handleSort('updatedAt')}>
               <span className="categories-table-header-title">Modified At {sortConfig?.key === 'updatedAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</span>
             </div>
-            <div className="categories-column actions">Actions</div>
+            <div className="categories-column actions"></div>
           </div><div className="categories-table-content">            {paginatedCategories.length === 0 ? (
               <div className="empty-state">
                 <p>No categories found. Create your first category!</p>
