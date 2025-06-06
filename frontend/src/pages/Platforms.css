@@ -6,10 +6,36 @@
   margin-top: 10px;
 }
 
+.platforms-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.platforms-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.platforms-header h1 {
+  font-size: 2em;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.platforms-header-title svg {
+  color: #00ffff;
+  margin: 0;
+  width: 40px;
+  height: 40px;
+}
+
 .add-platform-btn {
   background-color: #00ffe1;
   color: #222;
-  border: none;
+  border: solid 1px #9393933a;
   padding: 8px 20px;
   border-radius: 8px;
   font-size: 1rem;
@@ -29,8 +55,8 @@
 
 .add-platform-btn:hover,
 .add-platform-btn:focus {
-  background-color: #00ccb2;
-  color: #111;
+  background-color: #3c0d4e;
+  color: #fff;
 }
 
 .platforms-stats-summary {
