@@ -57,11 +57,19 @@ body {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* cards um abaixo do outro em telas pequenas */
+  grid-template-columns: repeat(2, 1fr);
+  /* 2x2 grid */
   gap: 40px;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    /* Stack on mobile */
+  }
 }
 
 

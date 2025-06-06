@@ -560,3 +560,108 @@
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
+
+/* View modal styling to match Platforms */
+.view-modal-content {
+  padding: 0;
+  max-width: 600px;
+  overflow: hidden;
+}
+
+.view-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.view-modal-header h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #111;
+}
+
+.platform-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+}
+
+.platform-info {
+  width: 100%;
+}
+
+.platform-title {
+  font-size: 1.8rem;
+  margin: 0 0 20px 0;
+  color: #333;
+}
+
+.platform-detail-row {
+  display: flex;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.detail-label {
+  font-weight: bold;
+  width: 120px;
+  color: #555;
+}
+
+.detail-value {
+  flex: 1;
+  color: #333;
+}
+
+.view-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-view-btn {
+  padding: 8px 16px;
+  background-color: #d6d6d6;
+  color: #000000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.close-view-btn:hover {
+  background-color: #f33;
+  color: #fff;
+}
+
+/* Loading overlay that won't push content */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.loading-overlay.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hide the existing loading message */
+.loading {
+  display: none;
+}

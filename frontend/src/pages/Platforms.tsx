@@ -34,10 +34,8 @@ const Platforms: FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] =
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);  const [selectedPlatform, setSelectedPlatform] =
     useState<ExtendedPlatform | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -134,18 +132,14 @@ const Platforms: FC = () => {
       totalPages: total,
     };
   }, [allPlatforms, searchText, sortConfig, currentPage, itemsPerPage]);
-
   const loadAllPlatforms = async () => {
     try {
-      setLoading(true);
       const response = await platformAPI.getAllPlatforms();
       if (response.success) {
         setAllPlatforms(response.data);
       }
     } catch (err) {
       console.error('Error loading platforms:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -243,38 +237,18 @@ const Platforms: FC = () => {
     setSortConfig({ key, direction });
     setCurrentPage(1);
   };
-
-  if (loading) {
-    return (
-      <div
-        className={`dashboard-container ${
-          isSidebarCollapsed ? 'sidebar-collapsed' : ''
-        }`}
-      >
-        <Sidebar
-          isCollapsed={isSidebarCollapsed}
-          toggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
-          onLogout={handleLogout}
-        />
-        <main className="main-content">
-          <div className="loading">Loading platforms...</div>
-        </main>
-      </div>
-    );
-  }
+  // Let's use the loading overlay instead of a full-page loading state
 
   return (
     <div
       className={`dashboard-container ${
         isSidebarCollapsed ? 'sidebar-collapsed' : ''
       }`}
-    >
-      <Sidebar
+    >      <Sidebar
         isCollapsed={isSidebarCollapsed}
         toggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
         onLogout={handleLogout}
       />
-
       <main className="main-content">
         <div className="platforms-header">
           <h1>Platforms</h1>{' '}

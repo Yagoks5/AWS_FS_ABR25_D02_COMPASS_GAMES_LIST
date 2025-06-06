@@ -208,19 +208,17 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
                 setFormData((prev) => ({ ...prev, imageUrl: e.target.value }))
               }
             />
-          </div>
-
-          <div className="modal-footer">
+          </div>          <div className="modal-actions">
             <button
               type="button"
               onClick={props.onClose}
-              className="cancel-btn"
+              className="btn-cancel"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="submit-btn"
+              className="btn-submit"
               disabled={validationErrors.length > 0}
             >
               Save

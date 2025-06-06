@@ -23,9 +23,7 @@ interface ApiError {
 }
 
 const Categories: React.FC = () => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [allCategories, setAllCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);  const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [deleteModalError, setDeleteModalError] = useState<string | null>(null);
 
@@ -75,10 +73,8 @@ const Categories: React.FC = () => {
         return params;
       });    }
   }, [searchParams, setSearchParams]);
-
   const loadData = async () => {
     try {
-      setLoading(true);
       setError(null);
       
       const response = await categoryAPI.getAllCategories();
@@ -86,8 +82,6 @@ const Categories: React.FC = () => {
     } catch (err) {
       const error = err as ApiError;
       setError(error.response?.data?.message || error.message || 'Failed to load categories');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -202,31 +196,16 @@ const Categories: React.FC = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchText]);
-
-  if (loading) {
-    return (
-      <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-        <Sidebar 
-          isCollapsed={isSidebarCollapsed}
-          toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
-          onLogout={handleLogout}
-        />
-        <main className="main-content">
-          <div className="loading">Loading categories...</div>
-        </main>
-      </div>
-    );
-  }
+  // Don't render a separate loading state, handle within the main component
 
   return (
-    <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <Sidebar 
+    <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>      <Sidebar 
         isCollapsed={isSidebarCollapsed}
         toggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
         onLogout={handleLogout}
       />
-
-      <main className="main-content">        <div className="categories-header">
+      <main className="main-content">
+        <div className="categories-header">
           <div className="categories-header-title"><BiCategory /> <h1>Categories</h1></div>
           <button className="add-category-btn" onClick={handleAddCategory}><FiPlus /> New category</button>
         </div>
@@ -367,23 +346,26 @@ const Categories: React.FC = () => {
                 </button>
               </div>
               
-              <div className="category-info">
-                <h3 className="category-title">{selectedCategory.name}</h3>
-                
-                <div className="category-detail-row">
-                  <span className="detail-label">Description:</span> 
-                  <span className="detail-value">{selectedCategory.description || 'No description'}</span>
-                </div>
-                <div className="category-detail-row">
-                  <span className="detail-label">Games Count:</span> 
-                  <span className="detail-value">{selectedCategory._count?.games || 0}</span>
-                </div>                <div className="category-detail-row">
-                  <span className="detail-label">Created At:</span> 
-                  <span className="detail-value">{formatDateTime(selectedCategory.createdAt)}</span>
-                </div>
-                <div className="category-detail-row">
-                  <span className="detail-label">Modified At:</span> 
-                  <span className="detail-value">{formatDateTime(selectedCategory.updatedAt)}</span>
+              <div className="platform-details">
+                <div className="platform-info">
+                  <h3 className="platform-title">{selectedCategory.name}</h3>
+                  
+                  <div className="platform-detail-row">
+                    <span className="detail-label">Description:</span> 
+                    <span className="detail-value">{selectedCategory.description || 'No description'}</span>
+                  </div>
+                  <div className="platform-detail-row">
+                    <span className="detail-label">Games Count:</span> 
+                    <span className="detail-value">{selectedCategory._count?.games || 0}</span>
+                  </div>
+                  <div className="platform-detail-row">
+                    <span className="detail-label">Created At:</span> 
+                    <span className="detail-value">{formatDateTime(selectedCategory.createdAt)}</span>
+                  </div>
+                  <div className="platform-detail-row">
+                    <span className="detail-label">Modified At:</span> 
+                    <span className="detail-value">{formatDateTime(selectedCategory.updatedAt)}</span>
+                  </div>
                 </div>
               </div>
               

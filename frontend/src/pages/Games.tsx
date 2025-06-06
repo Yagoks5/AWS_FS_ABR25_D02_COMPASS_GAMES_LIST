@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import './Games.css';
+import './Games-styles.css';
 import { IoSearchOutline } from 'react-icons/io5';
 import { BsEye, BsPencil, BsTrash, BsHeart, BsHeartFill } from 'react-icons/bs';
 import Sidebar from '../components/Sidebar';
@@ -315,28 +316,7 @@ const Games: React.FC = () => {
     selectedPlatformId,
     selectedStatus,
     isFavoriteOnly,
-  ]);
-
-  if (loading) {
-    return (
-      <div
-        className={`dashboard-container ${
-          isSidebarCollapsed ? 'sidebar-collapsed' : ''
-        }`}
-      >
-        <Sidebar
-          isCollapsed={isSidebarCollapsed}
-          toggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
-          onLogout={handleLogout}
-        />
-        <main className="main-content">
-          <div className="loading">Loading games...</div>
-        </main>
-      </div>
-    );
-  }
-
-  return (
+  ]);  return (
     <div
       className={`dashboard-container ${
         isSidebarCollapsed ? 'sidebar-collapsed' : ''
@@ -347,8 +327,13 @@ const Games: React.FC = () => {
         toggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
         onLogout={handleLogout}
       />
+      
+      {/* Loading overlay with no message */}
+      <div className={`loading-overlay ${loading ? 'visible' : ''}`}>
+      </div>
 
-      <main className="main-content">        <div className="games-header">
+      <main className="main-content">
+        <div className="games-header">
           <h1>Games</h1>
           <button type="button" className="add-game-btn" onClick={handleAddGame}>
             <FiPlus /> New game
@@ -650,8 +635,7 @@ const Games: React.FC = () => {
             game={selectedGame}
           />
         )}{' '}
-        
-        {isViewModalOpen && selectedGame && (
+          {isViewModalOpen && selectedGame && (
           <div className="modal-overlay">
             <div className="modal-content view-modal-content">
               <div className="view-modal-header">
@@ -668,75 +652,78 @@ const Games: React.FC = () => {
                   ×
                 </button>
               </div>
-
-              <div className="game-info">
-                <h3 className="game-title">{selectedGame.title}</h3>
-
+              
+              <div className="game-details">
                 {selectedGame.imageUrl && (
-                  <div className="game-image-container">
-                    <img
-                      src={selectedGame.imageUrl}
-                      alt={selectedGame.title}
-                      className="game-detail-image"
-                    />
+                  <div className="game-image-wrapper">
+                    <div className="game-image-container">
+                      <img
+                        src={selectedGame.imageUrl}
+                        alt={selectedGame.title}
+                        className="game-detail-image"
+                      />
+                    </div>
                   </div>
                 )}
-
-                <div className="game-detail-row">
-                  <span className="detail-label">Description:</span>
-                  <span className="detail-value">
-                    {selectedGame.description || 'No description'}
-                  </span>
-                </div>
-                <div className="game-detail-row">
-                  <span className="detail-label">Category:</span>
-                  <span className="detail-value">
-                    {selectedGame.category.name}
-                  </span>
-                </div>
-                <div className="game-detail-row">
-                  <span className="detail-label">Platform:</span>
-                  <span className="detail-value">
-                    {selectedGame.platform?.title || 'No platform'}
-                  </span>
-                </div>
-                <div className="game-detail-row">
-                  <span className="detail-label">Status:</span>
-                  <span className="detail-value">
-                    {selectedGame.status || 'Playing'}
-                  </span>
-                </div>
-                {selectedGame.acquisitionDate && (
+                
+                <div className="game-info">
+                  <h3 className="game-title">{selectedGame.title}</h3>
                   <div className="game-detail-row">
-                    <span className="detail-label">Acquisition Date:</span>
+                    <span className="detail-label">Description:</span>
                     <span className="detail-value">
-                      {formatDateIso(selectedGame.acquisitionDate)}
+                      {selectedGame.description || 'No description'}
                     </span>
                   </div>
-                )}
-                {selectedGame.finishDate && (
                   <div className="game-detail-row">
-                    <span className="detail-label">Finish Date:</span>
+                    <span className="detail-label">Category:</span>
                     <span className="detail-value">
+                      {selectedGame.category.name}
+                    </span>
+                  </div>
+                  <div className="game-detail-row">
+                    <span className="detail-label">Platform:</span>
+                    <span className="detail-value">
+                      {selectedGame.platform?.title || 'No platform'}
+                    </span>
+                  </div>
+                  <div className="game-detail-row">
+                    <span className="detail-label">Status:</span>
+                    <span className="detail-value">
+                      {selectedGame.status || 'Playing'}
+                    </span>
+                  </div>
+                  {selectedGame.acquisitionDate && (
+                    <div className="game-detail-row">
+                      <span className="detail-label">Acquisition Date:</span>
+                      <span className="detail-value">
+                        {formatDateIso(selectedGame.acquisitionDate)}
+                      </span>
+                    </div>
+                  )}
+                  {selectedGame.finishDate && (
+                    <div className="game-detail-row">
+                      <span className="detail-label">Finish Date:</span>
                       <span className="detail-value">
                         {formatDateIso(selectedGame.finishDate)}
                       </span>
+                    </div>
+                  )}
+                  <div className="game-detail-row">
+                    <span className="detail-label">Created:</span>
+                    <span className="detail-value">
+                      {new Date(selectedGame.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                )}
-                <div className="game-detail-row">
-                  <span className="detail-label">Created:</span>
-                  <span className="detail-value">
-                    {new Date(selectedGame.createdAt).toLocaleDateString()}
-                  </span>
+                  <div className="game-detail-row">
+                    <span className="detail-label">Favorite:</span>
+                    <span className="detail-value">
+                      {selectedGame.isFavorite ? 'Yes ❤️' : 'No'}
+                    </span>
+                  </div>
                 </div>
-                <div className="game-detail-row">
-                  <span className="detail-label">Favorite:</span>
-                  <span className="detail-value">
-                    {selectedGame.isFavorite ? 'Yes ❤️' : 'No'}
-                  </span>
-                </div>
-              </div>              <div className="view-modal-footer">
+              </div>
+              
+              <div className="view-modal-footer">
                 <button
                   type="button"
                   className="close-view-btn"
