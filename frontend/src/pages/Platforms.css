@@ -63,7 +63,7 @@
   color: #fff;
 }
 
-/* Platform filters */
+
 .platforms-filters {
   display: flex;
   gap: 20px;
@@ -346,7 +346,15 @@
   padding: 12px 10px;
   font-weight: 600;
   font-size: 0.95rem;
-  color: #ccc;
+  color: #ffffff;
+  font-weight: bold;
+  
+}
+
+.platforms-table-header-title:hover{
+  color: #00ffff;
+  cursor: pointer;
+
 }
 
 .platforms-table-row {
@@ -379,7 +387,7 @@
   justify-content: flex-start;
   gap: 10px;
   padding-left: 20px;
-  /* This adds more padding to the left to move icons right */
+  
 }
 
 .platforms-action-btn {

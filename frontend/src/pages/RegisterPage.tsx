@@ -29,7 +29,7 @@ const RegisterPage = () => {
       return;
     }
 
-    // Validação adicional de campos obrigatórios
+    
     if (!fullName.trim() || !email.trim() || !password.trim()) {
       toast.error('All fields are required');
       setLoading(false);
@@ -37,10 +37,10 @@ const RegisterPage = () => {
     }
 
     try {
-      // Register the user
+      
       await register(fullName, email, password, confirmPassword);
 
-      // Automatically log in after successful registration
+      
       const loginResponse = await login(email, password);
 
       if (loginResponse.success) {
@@ -48,7 +48,7 @@ const RegisterPage = () => {
         toast.success(`Welcome, ${loginResponse.data.user.fullName!}`);
         navigate('/dashboard');
       } else {
-        // If auto-login fails, redirect to login page
+        
         toast.info('Please log in with your new account');
 
         navigate('/login');
@@ -93,7 +93,7 @@ const RegisterPage = () => {
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Full Name"
                 className="form-input"
-                // required
+                
               />
             </div>
             <div className="form-group">
@@ -107,7 +107,7 @@ const RegisterPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 className="form-input"
-                // required
+               
               />
             </div>
             <div className="form-group">
@@ -121,7 +121,7 @@ const RegisterPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className="form-input"
-                // required
+                
               />
             </div>
             <div className="form-group">
@@ -135,7 +135,7 @@ const RegisterPage = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm your password"
                 className="form-input"
-                // required
+                
               />
             </div>{' '}
             <button type="submit" className="form-button" disabled={loading}>
