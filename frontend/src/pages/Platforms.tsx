@@ -356,27 +356,27 @@ const Platforms: FC = () => {
                   </div>
                 </div>
               ))
-            )}
-          </div>
-                      <div className="platforms-pagination">
-            <button 
-              className="platforms-pagination-btn-previous" 
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span className="current-page">
-              Page {currentPage} of {totalPages || 1}
-            </span>
-            <button 
-              className="platforms-pagination-btn-next" 
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages || totalPages <= 1}
-            >
-              Next
-            </button>
-          </div>
+            )}          </div>
+        </div>
+        
+        <div className="platforms-pagination">
+          <button 
+            className="platforms-pagination-btn-previous" 
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className="current-page">
+            Page {currentPage} of {totalPages || 1}
+          </span>
+          <button 
+            className="platforms-pagination-btn-next" 
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages || totalPages <= 1}
+          >
+            Next
+          </button>
         </div>
         
         
