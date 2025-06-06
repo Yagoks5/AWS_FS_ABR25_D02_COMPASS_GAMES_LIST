@@ -12,14 +12,16 @@ interface PlatformModalProps {
 }
 
 const PlatformModal: FC<PlatformModalProps> = (props) => {
-  const [formData, setFormData] = useState<PlatformFormData>({
-    title: props.initialData?.title ?? '',
-    company: props.initialData?.company ?? '',
-    acquisitionYear:
-      props.initialData?.acquisitionYear ?? new Date().getFullYear(),
-    imageUrl: props.initialData?.imageUrl ?? '',
+  // Estado inicial padrão
+  const getInitialFormData = (): PlatformFormData => ({
+    title: '',
+    company: '',
+    acquisitionYear: new Date().getFullYear(),
+    imageUrl: '',
   });
 
+  const [formData, setFormData] =
+    useState<PlatformFormData>(getInitialFormData);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [touched, setTouched] = useState({
     title: false,
@@ -27,29 +29,47 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
     acquisitionYear: false,
   });
 
+  // Reset form quando o modal abrir/fechar ou initialData mudar
   useEffect(() => {
-    if (props.initialData) {
-      setFormData({
-        title: props.initialData.title,
-        company: props.initialData.company,
-        acquisitionYear: props.initialData.acquisitionYear,
-        imageUrl: props.initialData.imageUrl || '',
-      });
+    if (props.isOpen) {
+      if (props.initialData) {
+        // Modo edição - preencher com dados existentes
+        setFormData({
+          title: props.initialData.title,
+          company: props.initialData.company,
+          acquisitionYear: props.initialData.acquisitionYear,
+          imageUrl: props.initialData.imageUrl || '',
+        });
+      } else {
+        // Modo criação - resetar para valores iniciais
+        setFormData(getInitialFormData());
+      }
 
+      // Reset validation state
       setTouched({
         title: false,
         company: false,
         acquisitionYear: false,
       });
+      setValidationErrors([]);
     }
-  }, [props.initialData]);
+  }, [props.isOpen, props.initialData]);
 
-  // REMOVA este useEffect que está causando o problema
-  // useEffect(() => {
-  //   const errors: string[] = [];
-  //   // ... validação ...
-  //   setValidationErrors(errors);
-  // }, [formData, touched]);
+  // Reset quando modal fechar
+  useEffect(() => {
+    if (!props.isOpen) {
+      // Pequeno delay para evitar flash visual
+      setTimeout(() => {
+        setFormData(getInitialFormData());
+        setTouched({
+          title: false,
+          company: false,
+          acquisitionYear: false,
+        });
+        setValidationErrors([]);
+      }, 200);
+    }
+  }, [props.isOpen]);
 
   if (!props.isOpen) return null;
 
@@ -72,9 +92,8 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
     }
 
     const year = formData.acquisitionYear;
-    const currentYear = new Date().getFullYear(); // 2025
+    const currentYear = new Date().getFullYear();
     if (year < 1950 || year > currentYear + 2) {
-      // 2027
       errors.push(`Year must be between 1950 and ${currentYear + 2}`);
     }
 
@@ -82,6 +101,7 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
 
     if (errors.length === 0) {
       props.onSubmit(formData);
+      // Não resetar aqui - deixar o useEffect com props.isOpen fazer isso
     } else {
       // Marca todos como tocados para mostrar os erros visuais nos campos
       setTouched({
@@ -92,6 +112,18 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
     }
   };
 
+  const handleClose = () => {
+    // Reset imediato quando usuário cancela
+    setFormData(getInitialFormData());
+    setTouched({
+      title: false,
+      company: false,
+      acquisitionYear: false,
+    });
+    setValidationErrors([]);
+    props.onClose();
+  };
+
   return (
     <div className="modal-overlay">
       <div className="modal-content">
@@ -99,7 +131,7 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
           <h2>{props.title}</h2>
           <button
             type="button"
-            onClick={props.onClose}
+            onClick={handleClose}
             className="close-btn"
             aria-label="Close modal"
           >
@@ -208,12 +240,10 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
                 setFormData((prev) => ({ ...prev, imageUrl: e.target.value }))
               }
             />
-          </div>          <div className="modal-actions">
-            <button
-              type="button"
-              onClick={props.onClose}
-              className="btn-cancel"
-            >
+          </div>
+
+          <div className="modal-actions">
+            <button type="button" onClick={handleClose} className="btn-cancel">
               Cancel
             </button>
             <button
