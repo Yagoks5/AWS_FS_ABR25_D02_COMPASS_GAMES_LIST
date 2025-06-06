@@ -39,6 +39,18 @@ const Games: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Helper function to format date as DD/MM/YYYY HH:MM
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -481,8 +493,7 @@ const Games: React.FC = () => {
             Clear
           </button>
         </div>
-        <div className="games-table">
-          <div className="games-table-header">
+        <div className="games-table">          <div className="games-table-header">
             <div
               className="games-column title"
               onClick={() => handleSort('title')}
@@ -500,14 +511,28 @@ const Games: React.FC = () => {
               {sortConfig?.key === 'category' &&
                 (sortConfig.direction === 'asc' ? '↑' : '↓')} </span>
             </div>
-            <div className="games-column platform">Platform</div>
-            <div className="games-column status">Status</div>
             <div
               className="games-column release-date"
               onClick={() => handleSort('createdAt')}
             >
-              <span className = "games-table-header-title"> Created{' '}
+              <span className = "games-table-header-title"> Created At{' '}
               {sortConfig?.key === 'createdAt' &&
+                (sortConfig.direction === 'asc' ? '↑' : '↓')} </span>
+            </div>
+            <div
+              className="games-column modified-date"
+              onClick={() => handleSort('updatedAt')}
+            >
+              <span className = "games-table-header-title"> Modified At{' '}
+              {sortConfig?.key === 'updatedAt' &&
+                (sortConfig.direction === 'asc' ? '↑' : '↓')} </span>
+            </div>
+            <div
+              className="games-column status"
+              onClick={() => handleSort('status')}
+            >
+              <span className = "games-table-header-title"> Status{' '}
+              {sortConfig?.key === 'status' &&
                 (sortConfig.direction === 'asc' ? '↑' : '↓')} </span>
             </div>
             <div className="games-column favorite">Favorite</div>
@@ -520,8 +545,7 @@ const Games: React.FC = () => {
               <div className="empty-state">
                 <p>No games found. Create your first game!</p>
               </div>
-            ) : (
-              paginatedGames.map((game) => (
+            ) : (              paginatedGames.map((game) => (
                 <div className="games-table-row" key={game.id}>
                   <div className="games-column title">
                     {game.imageUrl && (
@@ -539,8 +563,11 @@ const Games: React.FC = () => {
                   <div className="games-column category">
                     {game.category.name}
                   </div>
-                  <div className="games-column platform">
-                    {game.platform?.title || 'N/A'}
+                  <div className="games-column release-date">
+                    {formatDateTime(game.createdAt)}
+                  </div>
+                  <div className="games-column modified-date">
+                    {formatDateTime(game.updatedAt)}
                   </div>
                   <div className="games-column status">
                     <span
@@ -548,9 +575,6 @@ const Games: React.FC = () => {
                     >
                       {game.status || 'Playing'}
                     </span>
-                  </div>
-                  <div className="column release-date">
-                    {new Date(game.createdAt).toLocaleDateString('pt-BR')}
                   </div>
                   <div
                     className="games-column favorite"

@@ -346,7 +346,7 @@
 .games-table-header {
   width: 100%;
   display: grid;
-  grid-template-columns: 2.5fr 3fr 1.5fr 1.5fr 1fr 1.2fr 0.8fr 1.2fr;
+  grid-template-columns: 2.5fr 2.5fr 1.2fr 1.5fr 1.5fr 1fr 0.8fr 1.2fr;
   align-items: center;
   padding: 15px 20px;
   background-color: #201624;
@@ -354,7 +354,7 @@
   font-weight: bold;
 }
 
-.games-table-header-title:hover{
+.games-table-header-title:hover {
   color: #00ffff;
   cursor: pointer;
 
@@ -366,7 +366,7 @@
 
 .games-table-row {
   display: grid;
-  grid-template-columns: 2.5fr 3fr 1.5fr 1.5fr 1fr 1.2fr 0.8fr 1.2fr;
+  grid-template-columns: 2.5fr 2.5fr 1.2fr 1.5fr 1.5fr 1fr 0.8fr 1.2fr;
   align-items: center;
   padding: 15px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -432,7 +432,12 @@
 
   .games-table-header,
   .games-table-row {
-    grid-template-columns: 2fr 2fr 1fr 1fr 0.5fr 0.8fr;
+    grid-template-columns: 2fr 2fr 1fr 1.2fr 1fr 0.8fr;
+  }
+
+  .games-column.description,
+  .games-column.modified-date {
+    display: none;
   }
 }
 
@@ -452,10 +457,12 @@
 
   .games-table-header,
   .games-table-row {
-    grid-template-columns: 2fr 2fr 1fr 0.8fr;
+    grid-template-columns: 2fr 1.5fr 1fr 0.8fr;
   }
 
   .games-column.description,
+  .games-column.release-date,
+  .games-column.modified-date,
   .games-column.favorite {
     display: none;
   }
