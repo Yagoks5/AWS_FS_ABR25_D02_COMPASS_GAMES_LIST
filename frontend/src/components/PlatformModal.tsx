@@ -24,7 +24,7 @@ const PlatformModal: FC<PlatformModalProps> = props => {  const [formData, setFo
     company: false,
     acquisitionYear: false
   });
-  // Update form data when initialData changes
+  
   useEffect(() => {
     if (props.initialData) {
       setFormData({
@@ -33,7 +33,7 @@ const PlatformModal: FC<PlatformModalProps> = props => {  const [formData, setFo
         acquisitionYear: props.initialData.acquisitionYear,
         imageUrl: props.initialData.imageUrl || ''
       });
-      // Reset touched state when loading new data
+      
       setTouched({
         title: false,
         company: false,
@@ -42,7 +42,7 @@ const PlatformModal: FC<PlatformModalProps> = props => {  const [formData, setFo
     }
   }, [props.initialData]);
 
-  // Validation rules
+  
   useEffect(() => {
     const errors: string[] = [];
     
@@ -74,7 +74,7 @@ const PlatformModal: FC<PlatformModalProps> = props => {  const [formData, setFo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Mark all fields as touched to trigger validation
+    
     setTouched({
       title: true,
       company: true,
@@ -100,7 +100,7 @@ const PlatformModal: FC<PlatformModalProps> = props => {  const [formData, setFo
             ×
           </button>
         </div>        <form onSubmit={handleSubmit}>
-          {/* Display validation errors or API error at the top */}
+          
           {(validationErrors.length > 0 || props.error) && (
             <div className="form-errors">
               {props.error && <p className="error-message">{props.error}</p>}

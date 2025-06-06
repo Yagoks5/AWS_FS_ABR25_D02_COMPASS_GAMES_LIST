@@ -35,7 +35,7 @@
   }
 }
 
-/* Responsivo */
+
 @media (max-width: 768px) {
   .loading-spinner {
     width: 40px;

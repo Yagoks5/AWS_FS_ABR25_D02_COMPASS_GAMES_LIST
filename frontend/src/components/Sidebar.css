@@ -8,7 +8,7 @@
   --transition-speed: 0.3s;
 }
 
-/* Sidebar principal */
+
 .sidebar {
   width: var(--sidebar-width);
   background-color: var(--sidebar-bg);
@@ -30,7 +30,7 @@
   width: var(--sidebar-width-collapsed);
 }
 
-/* Cabeçalho da Sidebar */
+
 .sidebar-header {
   padding: 0 10px;
   margin-bottom: 30px;
@@ -43,7 +43,7 @@
   justify-content: center;
 }
 
-/* Logo */
+
 .logo {
   background-image: url('/images/logo-icon.svg');
   width: 100%;
@@ -54,7 +54,7 @@
   background-position: center;
 }
 
-/* Botão de colapso */
+
 .collapse-btn {
   background: none;
   border: none;
@@ -76,7 +76,7 @@
   color: var(--sidebar-active-bg);
 }
 
-/* Navegação da Sidebar */
+
 .sidebar-nav {
   flex-grow: 1;
 }
@@ -120,7 +120,7 @@
   margin-left: 5px;
 }
 
-/* Ajustes quando a Sidebar está colapsada */
+
 .dashboard-container.sidebar-collapsed .sidebar-nav li a span {
   display: none;
 }
@@ -134,7 +134,7 @@
   margin-right: 0;
 }
 
-/* Rodapé da Sidebar */
+
 .sidebar-footer {
   padding: 10px 20px;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
@@ -164,7 +164,7 @@
   background-color: rgba(253, 71, 96, 0.9);
 }
 
-/* Ajustes quando a Sidebar está colapsada */
+
 .dashboard-container.sidebar-collapsed .logout-btn span {
   display: none;
 }
@@ -178,7 +178,7 @@
   margin-right: 0;
 }
 
-/* Responsividade */
+
 @media (max-width: 768px) {
   .sidebar {
     width: var(--sidebar-width-collapsed);
