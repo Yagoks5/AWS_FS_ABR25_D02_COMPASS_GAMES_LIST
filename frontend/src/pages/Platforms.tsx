@@ -416,6 +416,7 @@ const Platforms: FC = () => {
                   </div>
                 </div>
               ))
+
             )}
           </div>
           <div className="platforms-pagination">
@@ -439,6 +440,7 @@ const Platforms: FC = () => {
               Next
             </button>
           </div>
+
         </div>
         <PlatformModal
           isOpen={isAddModalOpen}
