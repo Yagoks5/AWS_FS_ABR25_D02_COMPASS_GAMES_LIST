@@ -192,11 +192,9 @@ const Categories: React.FC = () => {
     setSearchText('');
     setCurrentPage(1);
   };
-
   useEffect(() => {
     setCurrentPage(1);
   }, [searchText]);
-  // Don't render a separate loading state, handle within the main component
 
   return (
     <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>      <Sidebar 

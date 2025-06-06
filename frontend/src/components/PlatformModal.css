@@ -45,7 +45,6 @@ input.invalid {
     background-color: #ffeeee;
 }
 
-/* Modal styling */
 .modal-overlay {
     position: fixed;
     top: 0;

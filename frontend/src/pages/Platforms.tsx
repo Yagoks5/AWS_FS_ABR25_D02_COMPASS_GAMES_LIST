@@ -236,9 +236,7 @@ const Platforms: FC = () => {
         ? 'desc'
         : 'asc';
     setSortConfig({ key, direction });
-    setCurrentPage(1);
-  };
-  // Let's use the loading overlay instead of a full-page loading state
+    setCurrentPage(1);  };
 
   return (
     <div
@@ -450,22 +448,18 @@ const Platforms: FC = () => {
 
         </div>
         <PlatformModal
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
+          isOpen={isAddModalOpen}          onClose={() => setIsAddModalOpen(false)}
           onSubmit={handleCreatePlatform}
           title="New platform"
-          // error={error}
         />
         <PlatformModal
           isOpen={isEditModalOpen}
           onClose={() => {
             setIsEditModalOpen(false);
             setSelectedPlatform(null);
-          }}
-          onSubmit={handleUpdatePlatform}
+          }}          onSubmit={handleUpdatePlatform}
           title="Edit platform"
           initialData={selectedPlatform ?? undefined}
-          // error={error}
         />
         <ConfirmationModal
           isOpen={isDeleteModalOpen}

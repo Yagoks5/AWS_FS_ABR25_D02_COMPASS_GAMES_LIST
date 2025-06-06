@@ -68,7 +68,6 @@ export interface GameResponse {
 }
 
 export const gameAPI = {
-  // Get games with pagination and filters
   getGames: async (page?: number, limit?: number, filters?: GameFilters): Promise<PaginatedGamesResponse> => {
     const params = new URLSearchParams();
     if (page !== undefined) params.append('page', page.toString());
@@ -81,10 +80,11 @@ export const gameAPI = {
     
     const response = await api.get(`/games?${params.toString()}`);
     return response.data;
-  },  // Get all games without pagination (for sorting all data)
+  },
+
   getAllGames: async (filters?: GameFilters): Promise<{ success: boolean; data: Game[] }> => {
     const params = new URLSearchParams();
-    params.append('limit', '1000'); // Get a large number
+    params.append('limit', '1000');
     
     if (filters?.search) params.append('search', filters.search);
     if (filters?.categoryId) params.append('categoryId', filters.categoryId.toString());
@@ -92,35 +92,29 @@ export const gameAPI = {
     if (filters?.status) params.append('status', filters.status);
     if (filters?.isFavorite !== undefined) params.append('isFavorite', filters.isFavorite.toString());
     
-    const response = await api.get(`/games?${params.toString()}`);
-    return response.data;
+    const response = await api.get(`/games?${params.toString()}`);    return response.data;
   },
 
-  // Get game by ID
   getGameById: async (id: number): Promise<GameResponse> => {
     const response = await api.get(`/games/${id}`);
     return response.data;
   },
 
-  // Create game
   createGame: async (gameData: GameFormData): Promise<GameResponse> => {
     const response = await api.post('/games', gameData);
     return response.data;
   },
 
-  // Update game
   updateGame: async (id: number, gameData: Partial<GameFormData>): Promise<GameResponse> => {
     const response = await api.put(`/games/${id}`, gameData);
     return response.data;
   },
 
-  // Delete game
   deleteGame: async (id: number): Promise<{ success: boolean; message: string }> => {
     const response = await api.delete(`/games/${id}`);
     return response.data;
   },
 
-  // Toggle favorite status
   toggleFavorite: async (id: number, isFavorite: boolean): Promise<GameResponse> => {
     const response = await api.put(`/games/${id}`, { isFavorite });
     return response.data;

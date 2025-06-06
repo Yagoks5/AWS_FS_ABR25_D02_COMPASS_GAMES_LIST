@@ -12,7 +12,6 @@ interface PlatformModalProps {
 }
 
 const PlatformModal: FC<PlatformModalProps> = (props) => {
-  // Estado inicial padrão
   const getInitialFormData = (): PlatformFormData => ({
     title: '',
     company: '',
@@ -26,14 +25,11 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
   const [touched, setTouched] = useState({
     title: false,
     company: false,
-    acquisitionYear: false,
-  });
+    acquisitionYear: false,  });
 
-  // Reset form quando o modal abrir/fechar ou initialData mudar
   useEffect(() => {
     if (props.isOpen) {
       if (props.initialData) {
-        // Modo edição - preencher com dados existentes
         setFormData({
           title: props.initialData.title,
           company: props.initialData.company,
@@ -41,11 +37,9 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
           imageUrl: props.initialData.imageUrl || '',
         });
       } else {
-        // Modo criação - resetar para valores iniciais
         setFormData(getInitialFormData());
       }
 
-      // Reset validation state
       setTouched({
         title: false,
         company: false,
@@ -54,11 +48,8 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
       setValidationErrors([]);
     }
   }, [props.isOpen, props.initialData]);
-
-  // Reset quando modal fechar
   useEffect(() => {
     if (!props.isOpen) {
-      // Pequeno delay para evitar flash visual
       setTimeout(() => {
         setFormData(getInitialFormData());
         setTouched({
@@ -80,7 +71,6 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validação acontece APENAS no submit
     const errors: string[] = [];
 
     if (formData.title.trim().length < 2) {
@@ -103,8 +93,7 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
       props.onSubmit(formData);
       // Não resetar aqui - deixar o useEffect com props.isOpen fazer isso
     } else {
-      // Marca todos como tocados para mostrar os erros visuais nos campos
-      setTouched({
+            setTouched({
         title: true,
         company: true,
         acquisitionYear: true,
@@ -113,7 +102,6 @@ const PlatformModal: FC<PlatformModalProps> = (props) => {
   };
 
   const handleClose = () => {
-    // Reset imediato quando usuário cancela
     setFormData(getInitialFormData());
     setTouched({
       title: false,

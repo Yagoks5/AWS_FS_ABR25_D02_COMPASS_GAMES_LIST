@@ -702,7 +702,6 @@
   transform: translateY(0);
 }
 
-/* Hide the existing loading message */
 .loading {
   display: none;
 }

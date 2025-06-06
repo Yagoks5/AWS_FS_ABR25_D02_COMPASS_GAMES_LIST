@@ -27,9 +27,9 @@ export interface UpdatePlatformData {
 export interface PlatformResponse {
   id: number;
   title: string;
-  company: string | null; // Alterado
-  acquisitionYear: number | null; // Alterado
-  imageUrl: string | null; // Alterado
+  company: string | null;
+  acquisitionYear: number | null;
+  imageUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

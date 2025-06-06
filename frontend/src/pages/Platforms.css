@@ -515,7 +515,6 @@
   margin: 0;
 }
 
-/* Loading overlay that won't push content */
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -536,12 +535,10 @@
   transform: translateY(0);
 }
 
-/* Hide the existing loading message */
 .loading {
   display: none;
 }
 
-/* Media Queries for responsive design */
 @media (max-width: 1200px) {
 
   .platforms-table-header,

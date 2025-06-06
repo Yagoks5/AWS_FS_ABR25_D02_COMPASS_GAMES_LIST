@@ -78,16 +78,14 @@ export class AuthService {
 
     const user = await this.prisma.user.findFirst({
       where: { email: email.toLowerCase().trim(), isDeleted: false },
-    });
-
-    if (!user) {
-      throw new Error('Invalid email or password'); // mais seguro
+    });    if (!user) {
+      throw new Error('Invalid email or password');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new Error('Invalid email or password'); // mais seguro
+      throw new Error('Invalid email or password');
     }
 
     const token = generateToken({ userId: user.id, email: user.email });

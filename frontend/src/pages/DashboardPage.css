@@ -58,7 +58,6 @@ body {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  /* 2x2 grid */
   gap: 40px;
   max-width: 1200px;
   margin: 0 auto;
@@ -68,7 +67,6 @@ body {
 @media (max-width: 768px) {
   .stats-grid {
     grid-template-columns: 1fr;
-    /* Stack on mobile */
   }
 }
 

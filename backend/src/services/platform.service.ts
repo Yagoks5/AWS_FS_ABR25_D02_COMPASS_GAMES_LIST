@@ -66,7 +66,7 @@ export class PlatformService {
       take,
       page: currentPage,
       limit: currentLimit,
-    } = getPaginationParams(page, limit || 10); // Default limit 10 for platforms
+    } = getPaginationParams(page, limit || 10);
 
     const [platforms, totalItems] = await Promise.all([
       this.prisma.platform.findMany({
@@ -166,10 +166,7 @@ export class PlatformService {
 
     if (!existingPlatform) {
       throw new Error('Platform not found.');
-    }
-
-    if (updateData.title && updateData.title !== existingPlatform.title) {
-      // ✅ CORREÇÃO: Buscar outras plataformas e fazer validação case-insensitive
+    }    if (updateData.title && updateData.title !== existingPlatform.title) {
       const otherPlatforms = await this.prisma.platform.findMany({
         where: {
           userId,

@@ -6,7 +6,6 @@ import { categoryAPI } from '../services/categoryService';
 import { getAllPlatforms } from '../services/api';
 import './GameModal.css';
 import { IoClose } from 'react-icons/io5';
-import { toast } from 'react-toastify';
 
 interface GameModalProps {
   isOpen: boolean;
@@ -51,7 +50,6 @@ const GameModal: React.FC<GameModalProps> = ({
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // Load categories and platforms on mount
   useEffect(() => {
     const loadData = async () => {
       try {
