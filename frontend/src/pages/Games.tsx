@@ -262,13 +262,20 @@ const Games: React.FC = () => {
     }
     setSortConfig({ key, direction });
   };
-
   const sortedGames = useMemo(() => {
     if (!sortConfig) return allGames;
 
     return [...allGames].sort((a, b) => {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
+      let aValue, bValue;
+      
+      // Handle special case for category sorting - access the nested name property
+      if (sortConfig.key === 'category') {
+        aValue = a.category?.name;
+        bValue = b.category?.name;
+      } else {
+        aValue = a[sortConfig.key];
+        bValue = b[sortConfig.key];
+      }
 
       if (!aValue && !bValue) return 0;
       if (!aValue) return sortConfig.direction === 'asc' ? -1 : 1;
