@@ -16,6 +16,7 @@ import { useInvalidateCache } from '../hooks/useInvalidateCache';
 import { FiPlus } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { IoGameControllerOutline } from 'react-icons/io5';
 
 interface ApiError {
   response?: {
@@ -332,9 +333,8 @@ const Games: React.FC = () => {
       <div className={`loading-overlay ${loading ? 'visible' : ''}`}>
       </div>
 
-      <main className="main-content">
-        <div className="games-header">
-          <h1>Games</h1>
+      <main className="main-content">        <div className="games-header">
+        <div className="games-header-title"> <IoGameControllerOutline /><h1>Games</h1></div>
           <button type="button" className="add-game-btn" onClick={handleAddGame}>
             <FiPlus /> New game
           </button>
@@ -499,7 +499,7 @@ const Games: React.FC = () => {
                 (sortConfig.direction === 'asc' ? '↑' : '↓')} </span>
             </div>
             <div className="games-column favorite">Favorite</div>
-            <div className="games-column actions">Actions</div>
+            <div className="games-column actions"></div>
           </div>
 
           <div className="table-content">

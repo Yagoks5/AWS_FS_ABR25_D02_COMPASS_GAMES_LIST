@@ -45,9 +45,32 @@
   margin-left: var(--sidebar-width-collapsed);
 }
 
+
+
 .games-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.games-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.games-header h1 {
+  font-size: 2em;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.games-header-title svg {
+  color: #00ffff;
+  margin: 0;
+  width: 40px;
+  height: 40px;
 }
 
 .games-stats-summary {
@@ -82,16 +105,10 @@
   margin-bottom: 30px;
 }
 
-.games-header h1 {
-  font-size: 2em;
-  color: var(--text-color);
-  margin: 0;
-}
-
 .add-game-btn {
   background-color: #00ffe1;
   color: #222;
-  border: none;
+  border: solid 1px #9393933a;
   padding: 8px 20px;
   border-radius: 8px;
   font-size: 1rem;
@@ -110,8 +127,8 @@
 
 .add-game-btn:hover,
 .add-game-btn:focus {
-  background-color: #00ccb2;
-  color: #111;
+  background-color: #3c0d4e;
+  color: #fff;
 }
 
 .games-filters {

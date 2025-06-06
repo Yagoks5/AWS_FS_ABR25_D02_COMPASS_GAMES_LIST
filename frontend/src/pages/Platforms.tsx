@@ -12,6 +12,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as platformAPI from '../services/api';
 import './Platforms.css';
 import { toast } from 'react-toastify';
+import { HiOutlineCpuChip } from 'react-icons/hi2';
 
 interface ExtendedPlatform extends Platform {
   _count?: {
@@ -251,7 +252,7 @@ const Platforms: FC = () => {
       />
       <main className="main-content">
         <div className="platforms-header">
-          <h1>Platforms</h1>{' '}
+         <div className="platforms-header-title"><HiOutlineCpuChip /><h1>Platforms</h1>{' '}</div>
           <button
             className="add-platform-btn"
             onClick={() => setIsAddModalOpen(true)}
@@ -353,7 +354,7 @@ const Platforms: FC = () => {
                   (sortConfig.direction === 'asc' ? '↑' : '↓')}
               </span>
             </div>
-            <div className="platforms-column actions">Actions</div>
+            <div className="platforms-column actions"></div>
           </div>
 
           <div className="table-content">
