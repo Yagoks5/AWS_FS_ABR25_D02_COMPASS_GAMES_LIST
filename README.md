@@ -6,6 +6,14 @@ A comprehensive game tracking application that allows users to manage their vide
 
 COMPASS Games List is a full-stack web application designed for gamers who want to maintain an organized digital catalog of their video game collection. The application helps users track their gaming progress, categorize games, and manage their gaming platforms - providing insights into their gaming habits and collection.
 
+## Contributors
+
+- [Yago Ronchi](https://github.com/Yagoks5)
+- [Yuri Knebel](https://github.com/YuriKnebel1)
+- [Victor Junior](https://github.com/VictorJunior-creator)
+- [Thalles Fabian](https://github.com/thallesfabian)
+- [Wilians](https://github.com/wilians01)
+
 ## ✨ Features & Functionalities
 
 ### User Management
@@ -184,14 +192,6 @@ The application uses the following data models:
 ### Dashboard
 
 - `GET /dashboard` - Get dashboard statistics
-
-## 🧪 Running Tests
-
-_Currently in development_
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
