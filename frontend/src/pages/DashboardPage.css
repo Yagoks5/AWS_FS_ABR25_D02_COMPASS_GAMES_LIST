@@ -160,6 +160,12 @@ body {
   border-color: var(--sidebar-active-color);
 }
 
+.add-new-btn.favorite:hover {
+  background-color: rgba(251, 255, 0, 0.1);
+  color: var(--text-color);
+  border-color: rgba(251, 255, 0);
+}
+
 
 .add-new-btn:focus,
 .stat-card:focus {

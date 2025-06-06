@@ -137,7 +137,7 @@ const DashboardPage: React.FC = () => {
             </div>
             <p className="stat-card-label">Favorite Games</p>
             <button
-              className="add-new-btn"
+              className="add-new-btn favorite"
               onClick={() => handleAddNew('Favorite')}
             >
               + Add new
