@@ -214,7 +214,7 @@
   width: 100%;
   display: grid;
   background-color: #201624;
-  grid-template-columns: 2fr 3fr 2fr 2fr 1fr;
+  grid-template-columns: 2fr 3fr 1fr 1.5fr 1.5fr 1fr;
   padding: 12px 10px;
   font-weight: 600;
   font-size: 0.95rem;
@@ -223,7 +223,7 @@
   font-weight: bold;
 }
 
-.categories-table-header-title:hover{
+.categories-table-header-title:hover {
   color: #00ffff;
   cursor: pointer;
 
@@ -231,7 +231,7 @@
 
 .categories-table .categories-table-content .categories-table-row {
   display: grid;
-  grid-template-columns: 2fr 3fr 2fr 2fr 1fr;
+  grid-template-columns: 2fr 3fr 1fr 1.5fr 1.5fr 1fr;
   align-items: center;
   padding: 15px 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -343,23 +343,38 @@
 }
 
 
+@media (max-width: 1200px) {
+
+  .categories-table .categories-table-header,
+  .categories-table .categories-table-content .categories-table-row {
+    grid-template-columns: 2fr 2fr 1fr 1.5fr 80px;
+  }
+
+  .categories-column.updated-date {
+    display: none;
+  }
+}
+
 @media (max-width: 1024px) {
 
-  .categories-table-header,
-  .categories-table-content .categories-table-row {
-    grid-template-columns: 2fr 2fr 1fr 1fr 80px;
+  .categories-table .categories-table-header,
+  .categories-table .categories-table-content .categories-table-row {
+    grid-template-columns: 2fr 2fr 1fr 80px;
+  }
+
+  .categories-column.created-date {
+    display: none;
   }
 }
 
 @media (max-width: 768px) {
 
-  .categories-table-header,
-  .categories-table-content .categories-table-row {
-    grid-template-columns: 2fr 2fr 80px;
+  .categories-table .categories-table-header,
+  .categories-table .categories-table-content .categories-table-row {
+    grid-template-columns: 2fr 1fr 80px;
   }
 
-  .categories-column.created,
-  .categories-column.updated {
+  .categories-column.description {
     display: none;
   }
 
@@ -367,6 +382,18 @@
     flex-direction: column;
     gap: 15px;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .categories-table .categories-table-header,
+  .categories-table .categories-table-content .categories-table-row {
+    grid-template-columns: auto 80px;
+  }
+
+  .categories-column.games-count {
+    display: none;
   }
 }
 
