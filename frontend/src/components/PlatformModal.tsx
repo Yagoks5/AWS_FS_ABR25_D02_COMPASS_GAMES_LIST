@@ -11,78 +11,84 @@ interface PlatformModalProps {
   error?: string | null;
 }
 
-const PlatformModal: FC<PlatformModalProps> = props => {  const [formData, setFormData] = useState<PlatformFormData>({
+const PlatformModal: FC<PlatformModalProps> = (props) => {
+  const [formData, setFormData] = useState<PlatformFormData>({
     title: props.initialData?.title ?? '',
     company: props.initialData?.company ?? '',
-    acquisitionYear: props.initialData?.acquisitionYear ?? new Date().getFullYear(),
-    imageUrl: props.initialData?.imageUrl ?? ''
+    acquisitionYear:
+      props.initialData?.acquisitionYear ?? new Date().getFullYear(),
+    imageUrl: props.initialData?.imageUrl ?? '',
   });
-  
+
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [touched, setTouched] = useState({
     title: false,
     company: false,
-    acquisitionYear: false
+    acquisitionYear: false,
   });
-  
+
   useEffect(() => {
     if (props.initialData) {
       setFormData({
         title: props.initialData.title,
         company: props.initialData.company,
         acquisitionYear: props.initialData.acquisitionYear,
-        imageUrl: props.initialData.imageUrl || ''
+        imageUrl: props.initialData.imageUrl || '',
       });
-      
+
       setTouched({
         title: false,
         company: false,
-        acquisitionYear: false
+        acquisitionYear: false,
       });
     }
   }, [props.initialData]);
 
-  
-  useEffect(() => {
-    const errors: string[] = [];
-    
-    if (touched.title && formData.title.trim().length < 2) {
-      errors.push('Title must be at least 2 characters');
-    }
-    
-    if (touched.company && formData.company.trim().length < 2) {
-      errors.push('Company must be at least 2 characters');
-    }
-    
-    if (touched.acquisitionYear) {
-      const year = formData.acquisitionYear;
-      const currentYear = new Date().getFullYear();
-      if (year < 1950 || year > currentYear + 2) {
-        errors.push(`Year must be between 1950 and ${currentYear + 2}`);
-      }
-    }
-    
-    setValidationErrors(errors);
-  }, [formData, touched]);
+  // REMOVA este useEffect que está causando o problema
+  // useEffect(() => {
+  //   const errors: string[] = [];
+  //   // ... validação ...
+  //   setValidationErrors(errors);
+  // }, [formData, touched]);
 
   if (!props.isOpen) return null;
 
   const markAsTouched = (field: keyof typeof touched) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
+    setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    
-    setTouched({
-      title: true,
-      company: true,
-      acquisitionYear: true
-    });
-    
-    if (validationErrors.length === 0) {
+
+    // Validação acontece APENAS no submit
+    const errors: string[] = [];
+
+    if (formData.title.trim().length < 2) {
+      errors.push('Title must be at least 2 characters');
+    }
+
+    if (formData.company.trim().length < 2) {
+      errors.push('Company must be at least 2 characters');
+    }
+
+    const year = formData.acquisitionYear;
+    const currentYear = new Date().getFullYear(); // 2025
+    if (year < 1950 || year > currentYear + 2) {
+      // 2027
+      errors.push(`Year must be between 1950 and ${currentYear + 2}`);
+    }
+
+    setValidationErrors(errors);
+
+    if (errors.length === 0) {
       props.onSubmit(formData);
+    } else {
+      // Marca todos como tocados para mostrar os erros visuais nos campos
+      setTouched({
+        title: true,
+        company: true,
+        acquisitionYear: true,
+      });
     }
   };
 
@@ -91,34 +97,36 @@ const PlatformModal: FC<PlatformModalProps> = props => {  const [formData, setFo
       <div className="modal-content">
         <div className="modal-header">
           <h2>{props.title}</h2>
-          <button 
+          <button
             type="button"
-            onClick={props.onClose} 
+            onClick={props.onClose}
             className="close-btn"
             aria-label="Close modal"
           >
             ×
           </button>
-        </div>        <form onSubmit={handleSubmit}>
-          
+        </div>
+        <form onSubmit={handleSubmit}>
           {(validationErrors.length > 0 || props.error) && (
             <div className="form-errors">
               {props.error && <p className="error-message">{props.error}</p>}
               {validationErrors.map((error, index) => (
-                <p key={index} className="error-message">{error}</p>
+                <p key={index} className="error-message">
+                  {error}
+                </p>
               ))}
             </div>
           )}
-          
+
           <div className="validation-rules">
             <p>Please note the following requirements:</p>
             <ul>
               <li>Title and company must be at least 2 characters</li>
-              <li>Acquisition year must be between 1950 and {new Date().getFullYear() + 2}</li>
+              <li>Acquisition year must be between 1950 and 2027</li>
               <li>Image URL is optional but must be a valid URL if provided</li>
             </ul>
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="title">
               Title<span className="required">*</span>
@@ -127,12 +135,20 @@ const PlatformModal: FC<PlatformModalProps> = props => {  const [formData, setFo
               id="title"
               type="text"
               value={formData.title}
-              onChange={(e) => setFormData(prev => ({...prev, title: e.target.value}))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, title: e.target.value }))
+              }
               onBlur={() => markAsTouched('title')}
-              className={touched.title && formData.title.trim().length < 2 ? 'invalid' : ''}
+              className={
+                touched.title && formData.title.trim().length < 2
+                  ? 'invalid'
+                  : ''
+              }
               required
             />
-          </div>          <div className="form-group">
+          </div>
+
+          <div className="form-group">
             <label htmlFor="company">
               Company<span className="required">*</span>
             </label>
@@ -140,12 +156,20 @@ const PlatformModal: FC<PlatformModalProps> = props => {  const [formData, setFo
               id="company"
               type="text"
               value={formData.company}
-              onChange={(e) => setFormData(prev => ({...prev, company: e.target.value}))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, company: e.target.value }))
+              }
               onBlur={() => markAsTouched('company')}
-              className={touched.company && formData.company.trim().length < 2 ? 'invalid' : ''}
+              className={
+                touched.company && formData.company.trim().length < 2
+                  ? 'invalid'
+                  : ''
+              }
               required
             />
-          </div>          <div className="form-group">
+          </div>
+
+          <div className="form-group">
             <label htmlFor="year">
               Acquisition Year<span className="required">*</span>
             </label>
@@ -153,36 +177,49 @@ const PlatformModal: FC<PlatformModalProps> = props => {  const [formData, setFo
               id="year"
               type="number"
               min="1950"
-              max={new Date().getFullYear() + 2}
+              max="2027"
               value={formData.acquisitionYear}
-              onChange={(e) => setFormData(prev => ({...prev, acquisitionYear: parseInt(e.target.value) || new Date().getFullYear()}))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  acquisitionYear:
+                    parseInt(e.target.value) || new Date().getFullYear(),
+                }))
+              }
               onBlur={() => markAsTouched('acquisitionYear')}
-              className={touched.acquisitionYear && 
-                (formData.acquisitionYear < 1950 || formData.acquisitionYear > new Date().getFullYear() + 2) 
-                ? 'invalid' : ''}
+              className={
+                touched.acquisitionYear &&
+                (formData.acquisitionYear < 1950 ||
+                  formData.acquisitionYear > 2027)
+                  ? 'invalid'
+                  : ''
+              }
               required
             />
           </div>
+
           <div className="form-group">
-            <label htmlFor="image">
-              Image URL
-            </label>
+            <label htmlFor="image">Image URL</label>
             <input
               id="image"
               type="url"
               value={formData.imageUrl}
-              onChange={(e) => setFormData(prev => ({...prev, imageUrl: e.target.value}))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, imageUrl: e.target.value }))
+              }
             />
           </div>
+
           <div className="modal-footer">
-            <button 
-              type="button" 
-              onClick={props.onClose} 
+            <button
+              type="button"
+              onClick={props.onClose}
               className="cancel-btn"
             >
               Cancel
-            </button>            <button 
-              type="submit" 
+            </button>
+            <button
+              type="submit"
               className="submit-btn"
               disabled={validationErrors.length > 0}
             >
