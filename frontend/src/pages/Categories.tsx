@@ -29,21 +29,21 @@ const Categories: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [deleteModalError, setDeleteModalError] = useState<string | null>(null);
   
-  // Modal states
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   
-  // Filter states
+ 
   const [searchText, setSearchText] = useState('');
   
-  // Pagination
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   
-  // Sorting
+ 
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Category;
     direction: 'asc' | 'desc';
@@ -53,11 +53,11 @@ const Categories: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Load data on component mount
+ 
   useEffect(() => {
     loadData();
     
-    // Check for add modal query parameter
+   
     if (searchParams.get('add') === 'true') {
       setIsAddModalOpen(true);
       setSearchParams(params => {
@@ -103,26 +103,26 @@ const Categories: React.FC = () => {
   const handleDeleteCategory = (category: Category) => {
     setSelectedCategory(category);
     setIsDeleteModalOpen(true);
-    // Clear any previous error messages when opening the modal
+    
     setDeleteModalError(null);
   };
   
   const confirmDelete = async () => {
     if (!selectedCategory) return;
     
-    // Check if category has associated games
+    
     if (selectedCategory._count?.games && selectedCategory._count.games > 0) {
       const errorMsg = `Cannot delete this category because it is being used by ${selectedCategory._count.games} game${selectedCategory._count.games > 1 ? 's' : ''}.`;
       setDeleteModalError(errorMsg);
-      // Keep the modal open to show the error
+      
       return;
     }
     
     try {
       await categoryAPI.deleteCategory(selectedCategory.id);
       setAllCategories(prev => prev.filter(category => category.id !== selectedCategory.id));
-      invalidateCategories(); // Invalidate categories cache
-      invalidateDashboard(); // Update dashboard counters
+      invalidateCategories(); 
+      invalidateDashboard(); 
       setIsDeleteModalOpen(false);
       setDeleteModalError(null);
       setSelectedCategory(null);
@@ -134,9 +134,9 @@ const Categories: React.FC = () => {
   const { invalidateCategories, invalidateDashboard } = useInvalidateCache();
 
   const handleCategorySaved = () => {
-    loadData(); // Reload data after save
-    invalidateCategories(); // Invalidate categories cache
-    invalidateDashboard(); // Update dashboard counters
+    loadData(); 
+    invalidateCategories(); 
+    invalidateDashboard(); 
     setIsAddModalOpen(false);
     setIsEditModalOpen(false);
     setSelectedCategory(null);
@@ -240,7 +240,7 @@ const Categories: React.FC = () => {
                   const sorted = [...allCategories].sort((a, b) => 
                     (b._count?.games || 0) - (a._count?.games || 0)
                   );
-                  // Only show categories that have at least one game
+                  
                   const mostPopular = sorted.find(cat => (cat._count?.games || 0) > 0);
                   return mostPopular ? mostPopular.name : 'None';
                 })() : 'None'}
@@ -269,12 +269,12 @@ const Categories: React.FC = () => {
         </div>        <div className="categories-table">
           <div className="categories-table-header">
             <div className="categories-column name" onClick={() => handleSort('name')}>
-              Name {sortConfig?.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+             <span className = "table-header-title">Name  {sortConfig?.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</span>
             </div>
             <div className="categories-column description">Description</div>
             <div className="categories-column games-count">Games</div>
             <div className="categories-column created-date" onClick={() => handleSort('createdAt')}>
-              Created {sortConfig?.key === 'createdAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+             <span className = "categories-table-header-title"> Created {sortConfig?.key === 'createdAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</span>
             </div>
             <div className="categories-column actions">Actions</div>
           </div>          <div className="categories-table-content">
@@ -322,7 +322,7 @@ const Categories: React.FC = () => {
           </button>
         </div>
 
-        {/* Add/Edit Modal */}
+        
         {(isAddModalOpen || isEditModalOpen) && (
           <CategoryModal
             isOpen={isAddModalOpen || isEditModalOpen}
@@ -335,7 +335,7 @@ const Categories: React.FC = () => {
             mode={isAddModalOpen ? 'create' : 'edit'}
             category={selectedCategory}
           />
-        )}        {/* View Modal */}
+        )}        
         {isViewModalOpen && selectedCategory && (
           <div className="modal-overlay">
             <div className="modal-content view-modal-content">
@@ -390,7 +390,7 @@ const Categories: React.FC = () => {
           </div>
         )}
 
-        {/* Delete Confirmation Modal */}
+        
         <ConfirmationModal
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}

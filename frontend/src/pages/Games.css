@@ -1,4 +1,3 @@
-/* Import global variables */
 :root {
   --primary-bg: #181818;
   --secondary-bg: #201624;
@@ -11,7 +10,7 @@
   --card-padding: 20px;
 }
 
-/* Reuse existing Dashboard styles for sidebar */
+
 .dashboard-container {
   display: flex;
   min-height: 100vh;
@@ -33,7 +32,7 @@
   z-index: 100;
 }
 
-/* Games specific styles */
+
 .main-content {
   flex-grow: 1;
   padding: 30px 40px;
@@ -300,7 +299,7 @@
   overflow: hidden;
 }
 
-/* Hover suave e elegante */
+
 .clear-btn:hover {
   background-color: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
@@ -309,13 +308,13 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Estado ativo (quando clicado) */
+
 .clear-btn:active {
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Efeito de ondinha ao clicar (opcional) */
+
 .clear-btn::before {
   content: '';
   position: absolute;
@@ -334,7 +333,7 @@
   height: 300px;
 }
 
-/* Games Table */
+
 .games-table {
   margin-bottom: 20px;
   background-color: #1c171f;
@@ -352,10 +351,18 @@
   padding: 15px 20px;
   background-color: #201624;
   transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  font-weight: bold;
 }
 
 .games-table-header:hover {
   background-color: #201624;
+  
+}
+
+.games-table-header-title:hover{
+  color: #00ffff;
+  cursor: pointer;
+
 }
 
 .games-table-row {
@@ -421,7 +428,7 @@
   color: #f33;
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 1200px) {
 
   .games-table-header,
@@ -455,7 +462,7 @@
   }
 }
 
-/* Pagination */
+
 .games-pagination {
   display: flex;
   justify-content: center;

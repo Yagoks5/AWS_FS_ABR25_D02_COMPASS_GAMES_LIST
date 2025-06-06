@@ -17,7 +17,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.527); /* mais escuro se quiser */
+  background-color: rgba(0, 0, 0, 0.527); 
   z-index: 1;
   pointer-events: none;
 }

@@ -7,7 +7,7 @@ import { IoClose } from "react-icons/io5";
 interface CategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: () => void; // Called after successful save
+  onSubmit: () => void; 
   mode: 'create' | 'edit' | 'view';
   category?: Category | null;
 }
@@ -27,7 +27,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
 
-  // Update form data when category changes
+  
   useEffect(() => {
     if (category && mode !== 'create') {
       setFormData({
@@ -73,7 +73,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
           await categoryAPI.createCategory(submitData);
         } else if (mode === 'edit' && category) {
           await categoryAPI.updateCategory(category.id, submitData);
-        }        onSubmit(); // Notify parent of successful save
+        }        onSubmit(); 
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to save category';
         setErrors({ submit: errorMessage });
@@ -89,7 +89,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
       [field]: value,
     }));
     
-    // Clear error when user starts typing
+    
     if (errors[field]) {
       setErrors(prev => ({
         ...prev,
@@ -138,14 +138,14 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
             />
           </div>
 
-          {/* Display submit errors */}
+          
           {errors.submit && (
             <div className="error-message submit-error">
               {errors.submit}
             </div>
           )}
 
-          {/* Show game count in view mode */}
+          
           {isReadonly && category?._count && (
             <div className="form-group">
               <label>Games in this category</label>
@@ -158,7 +158,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
             </div>
           )}
 
-          {/* Show creation/update dates in view mode */}
+          
           {isReadonly && category && (
             <div className="form-row">
               <div className="form-group">

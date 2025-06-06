@@ -48,7 +48,7 @@ const DashboardPage: React.FC = () => {
     } else if (type === 'Category') {
       navigate('/categories?add=true');
     } else if (type === 'Favorite') {
-      // For favorites, we redirect to the games page with a special parameter
+      
       navigate('/games?add=true&favorite=true');
     } else {
       alert(`Add new ${type} - functionality to be implemented.`);

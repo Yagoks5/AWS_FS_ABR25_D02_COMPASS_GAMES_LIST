@@ -39,14 +39,14 @@ const Games: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Modal states
+  
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
 
-  // Filter states
+  
   const [searchText, setSearchText] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<
     number | undefined
@@ -59,11 +59,11 @@ const Games: React.FC = () => {
   );
   const [isFavoriteOnly, setIsFavoriteOnly] = useState(false);
 
-  // Pagination
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-  // Sorting
+  
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Game;
     direction: 'asc' | 'desc';
@@ -73,10 +73,10 @@ const Games: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Use React Query to fetch data
+  
   const { invalidateGames, invalidateDashboard } = useInvalidateCache();
 
-  // Create a filter object for React Query
+  
   const filters: GameFilters = useMemo(() => {
     const result: GameFilters = {};
     if (selectedCategoryId !== undefined)
@@ -95,7 +95,7 @@ const Games: React.FC = () => {
     searchText,
   ]);
 
-  // Fetch games data with React Query - will automatically re-fetch when filters change
+  
   const { data: gamesData, isLoading: isLoadingGames } = useQuery({
     queryKey: ['games', filters],
     queryFn: async () => {
@@ -114,7 +114,7 @@ const Games: React.FC = () => {
     },
   });
 
-  // Fetch categories data with React Query
+  
   const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
@@ -133,7 +133,7 @@ const Games: React.FC = () => {
     },
   });
 
-  // Fetch platforms data with React Query
+  
   const { data: platformsData, isLoading: isLoadingPlatforms } = useQuery({
     queryKey: ['platforms'],
     queryFn: async () => {
@@ -150,7 +150,7 @@ const Games: React.FC = () => {
         throw error;
       }
     },
-  }); // Extract data from React Query results
+  }); 
   const allGames = useMemo(() => gamesData || [], [gamesData]);
   const categories = useMemo(() => categoriesData || [], [categoriesData]);
   const platforms: Platform[] = useMemo(
@@ -158,10 +158,10 @@ const Games: React.FC = () => {
     [platformsData],
   );
 
-  // Determine if anything is loading
+  
   const loading = isLoadingGames || isLoadingCategories || isLoadingPlatforms;
 
-  // Handle URL parameter for adding a new game
+  
   useEffect(() => {
     if (searchParams.get('add') === 'true') {
       const shouldFavorite = searchParams.get('favorite') === 'true';
@@ -210,8 +210,8 @@ const Games: React.FC = () => {
 
     try {
       await gameAPI.deleteGame(selectedGame.id);
-      invalidateGames(); // Invalidate games cache to refresh the data
-      invalidateDashboard(); // Update dashboard counters
+      invalidateGames(); 
+      invalidateDashboard(); 
       setIsDeleteModalOpen(false);
       setSelectedGame(null);
       toast.success(`${selectedGame.title} deleted successfully!`);
@@ -227,8 +227,8 @@ const Games: React.FC = () => {
       if (!game) return;
 
       await gameAPI.toggleFavorite(gameId, !game.isFavorite);
-      invalidateGames(); // Invalidate games cache to refresh the data
-      invalidateDashboard(); // Update dashboard counters for favorites
+      invalidateGames(); 
+      invalidateDashboard(); 
     } catch (err) {
       const error = err as ApiError;
       const message = error.response?.data?.message || error.message;
@@ -236,8 +236,8 @@ const Games: React.FC = () => {
     }
   };
   const handleGameSaved = () => {
-    invalidateGames(); // Invalidate games cache
-    invalidateDashboard(); // Update dashboard counters
+    invalidateGames(); 
+    invalidateDashboard(); 
     setIsAddModalOpen(false);
     setIsEditModalOpen(false);
     setSelectedGame(null);
@@ -272,10 +272,10 @@ const Games: React.FC = () => {
     });
   }, [allGames, sortConfig]);
 
-  // Apply client-side filtering if search text is used
+  
   const filteredGames = useMemo(() => {
-    // Since we're already filtering on the server for categories, platforms, status, and favorites,
-    // we only need to apply search filter on the client side when it changes
+    
+    
     if (!searchText) return sortedGames;
 
     return sortedGames.filter((game) => {
@@ -304,7 +304,7 @@ const Games: React.FC = () => {
     setCurrentPage(1);
   };
 
-  // Reset pagination when filters change
+  
   useEffect(() => {
     setCurrentPage(1);
   }, [
@@ -479,18 +479,18 @@ const Games: React.FC = () => {
               className="games-column title"
               onClick={() => handleSort('title')}
             >
-              Title{' '}
+             <span className = "games-table-header-title"> Title{' '}
               {sortConfig?.key === 'title' &&
-                (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                (sortConfig.direction === 'asc' ? '↑' : '↓')} </span>
             </div>
             <div className="games-column description">Description</div>
             <div
               className="games-column category"
               onClick={() => handleSort('category')}
             >
-              Category{' '}
+             <span className = "games-table-header-title"> Category{' '}
               {sortConfig?.key === 'category' &&
-                (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                (sortConfig.direction === 'asc' ? '↑' : '↓')} </span>
             </div>
             <div className="games-column platform">Platform</div>
             <div className="games-column status">Status</div>
@@ -498,9 +498,9 @@ const Games: React.FC = () => {
               className="games-column release-date"
               onClick={() => handleSort('createdAt')}
             >
-              Created{' '}
+             <span className = "games-table-header-title"> Created{' '}
               {sortConfig?.key === 'createdAt' &&
-                (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                (sortConfig.direction === 'asc' ? '↑' : '↓')} </span>
             </div>
             <div className="games-column favorite">Favorite</div>
             <div className="games-column actions">Actions</div>
@@ -601,7 +601,7 @@ const Games: React.FC = () => {
             Next
           </button>
         </div>
-        {/* Add/Edit Modal */}
+        
         {(isAddModalOpen || isEditModalOpen) && (
           <GameModal
             isOpen={isAddModalOpen || isEditModalOpen}
@@ -634,7 +634,7 @@ const Games: React.FC = () => {
             game={selectedGame}
           />
         )}
-        {/* View Modal */}
+        
         {isViewModalOpen && selectedGame && (
           <div className="modal-overlay">
             <div className="modal-content view-modal">
@@ -695,7 +695,7 @@ const Games: React.FC = () => {
             </div>
           </div>
         )}
-        {/* Delete Confirmation Modal */}
+        
         <ConfirmationModal
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}

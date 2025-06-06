@@ -50,7 +50,7 @@ const GameModal: React.FC<GameModalProps> = ({
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // Load categories and platforms on mount
+  
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -74,10 +74,10 @@ const GameModal: React.FC<GameModalProps> = ({
       loadData();
     }
   }, [isOpen]);
-  // Update form data when game changes
+  
   useEffect(() => {
     if (game && mode !== 'create') {
-      // For a complete game object with all properties
+      
       if (game.title) {
         setFormData({
           title: game.title,
@@ -91,7 +91,7 @@ const GameModal: React.FC<GameModalProps> = ({
           isFavorite: game.isFavorite,
         });
       }
-      // Special case for partial game object (favorite flag only)
+      
       else if (game.isFavorite !== undefined) {
         setFormData((current) => ({
           ...current,
@@ -108,7 +108,7 @@ const GameModal: React.FC<GameModalProps> = ({
         status: GameStatus.PLAYING,
         categoryId: 0,
         platformId: null,
-        isFavorite: game?.isFavorite || false, // Use game.isFavorite if it exists
+        isFavorite: game?.isFavorite || false, 
       });
     }
     setErrors({});
@@ -182,7 +182,7 @@ const GameModal: React.FC<GameModalProps> = ({
       [field]: value,
     }));
 
-    // Clear error when user starts typing
+    
     if (errors[field]) {
       setErrors((prev) => ({
         ...prev,
@@ -190,7 +190,7 @@ const GameModal: React.FC<GameModalProps> = ({
       }));
     }
 
-    // Auto-clear finish date when status is Playing
+    
     if (field === 'status' && value === GameStatus.PLAYING) {
       setFormData((prev) => ({
         ...prev,

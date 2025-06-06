@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // ou  se estiver testando localmente
+  baseURL: 'http://localhost:3000', 
   headers: {
     'Content-Type': 'application/json',
   },
@@ -35,7 +35,7 @@ api.interceptors.response.use(
 );
 
 export const login = async (email: string, password: string) => {
-  const credentials = btoa(`${email}:${password}`); // codifica email:senha em base64
+  const credentials = btoa(`${email}:${password}`); 
 
   const response = await api.post(
     '/auth/login',
@@ -54,14 +54,14 @@ export const register = async (
   fullName: string,
   email: string,
   password: string,
-  confirmPassword: string, // corrigido
+  confirmPassword: string, 
 ) => {
   const response = await api.post('/auth/register', {
     fullName,
     email,
     password,
-    confirmPassword, // corrigido
-  }); // corrigido
+    confirmPassword, 
+  }); 
   return response.data;
 };
 
@@ -75,7 +75,7 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
-// Platform API functions
+
 export const getPlatforms = async (page?: number, limit?: number) => {
   const params = new URLSearchParams();
   if (page !== undefined) params.append('page', page.toString());
@@ -85,7 +85,7 @@ export const getPlatforms = async (page?: number, limit?: number) => {
   return response.data;
 };
 
-// Get all platforms without pagination (for sorting all data)
+
 export const getAllPlatforms = async () => {
   const response = await api.get('/platforms/all');
   return response.data;
