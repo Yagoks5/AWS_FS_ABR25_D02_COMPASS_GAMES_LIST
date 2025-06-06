@@ -38,11 +38,21 @@ const Platforms: FC = () => {
   const [selectedPlatform, setSelectedPlatform] =
     useState<ExtendedPlatform | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Platform;
     direction: 'asc' | 'desc';
-  } | null>(null);
+  }>({ key: 'createdAt', direction: 'desc' });
 
   const [searchText, setSearchText] = useState('');
 
@@ -128,7 +138,6 @@ const Platforms: FC = () => {
   const loadAllPlatforms = async () => {
     try {
       setLoading(true);
-      setError(null);
       const response = await platformAPI.getAllPlatforms();
       if (response.success) {
         setAllPlatforms(response.data);
@@ -179,9 +188,8 @@ const Platforms: FC = () => {
 
         toast.success('Platform updated successfully!', { autoClose: 2000 });
         loadAllPlatforms();
-      } else {
-        toast.error(response.message || 'Failed to update platform', {
-          autoClose,
+      } else {        toast.error(response.message || 'Failed to update platform', {
+          autoClose: 2000,
         });
       }
     } catch (err) {
@@ -320,8 +328,7 @@ const Platforms: FC = () => {
             Clear
           </button>
         </div>
-        <div className="platforms-table">
-          <div className="platforms-table-header">
+        <div className="platforms-table">          <div className="platforms-table-header">
             <div
               className="platforms-column title"
               onClick={() => handleSort('title')}
@@ -352,6 +359,26 @@ const Platforms: FC = () => {
                   (sortConfig.direction === 'asc' ? '↑' : '↓')}
               </span>
             </div>
+            <div
+              className="platforms-column created-date"
+              onClick={() => handleSort('createdAt')}
+            >
+              <span className="platforms-table-header-title">
+                Created At{' '}
+                {sortConfig?.key === 'createdAt' &&
+                  (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              </span>
+            </div>
+            <div
+              className="platforms-column updated-date"
+              onClick={() => handleSort('updatedAt')}
+            >
+              <span className="platforms-table-header-title">
+                Updated At{' '}
+                {sortConfig?.key === 'updatedAt' &&
+                  (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              </span>
+            </div>
             <div className="platforms-column actions">Actions</div>
           </div>
 
@@ -361,8 +388,7 @@ const Platforms: FC = () => {
                 <p>No platforms found. Create your first platform!</p>
               </div>
             ) : (
-              paginatedPlatforms.map((platform) => (
-                <div className="platforms-table-row" key={platform.id}>
+              paginatedPlatforms.map((platform) => (                <div className="platforms-table-row" key={platform.id}>
                   <div className="platforms-column title">
                     {platform.imageUrl && (
                       <img
@@ -378,6 +404,12 @@ const Platforms: FC = () => {
                   </div>
                   <div className="platforms-column year">
                     {platform.acquisitionYear}
+                  </div>
+                  <div className="platforms-column created-date">
+                    {formatDateTime(platform.createdAt)}
+                  </div>
+                  <div className="platforms-column updated-date">
+                    {formatDateTime(platform.updatedAt)}
                   </div>
                   <div className="platforms-column actions">
                     <button
@@ -515,21 +547,16 @@ const Platforms: FC = () => {
                     <span className="detail-value">
                       {selectedPlatform.acquisitionYear}
                     </span>
-                  </div>
-                  <div className="platform-detail-row">
-                    <span className="detail-label">Created:</span>
+                  </div>                  <div className="platform-detail-row">
+                    <span className="detail-label">Created At:</span>
                     <span className="detail-value">
-                      {new Date(
-                        selectedPlatform.createdAt,
-                      ).toLocaleDateString()}
+                      {formatDateTime(selectedPlatform.createdAt)}
                     </span>
                   </div>
                   <div className="platform-detail-row">
-                    <span className="detail-label">Updated:</span>
+                    <span className="detail-label">Updated At:</span>
                     <span className="detail-value">
-                      {new Date(
-                        selectedPlatform.updatedAt,
-                      ).toLocaleDateString()}
+                      {formatDateTime(selectedPlatform.updatedAt)}
                     </span>
                   </div>
                 </div>

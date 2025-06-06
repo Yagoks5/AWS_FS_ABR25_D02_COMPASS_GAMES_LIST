@@ -341,17 +341,17 @@
 
 .platforms-table-header {
   display: grid;
-  grid-template-columns: 2fr 1.5fr 1fr 0.8fr;
+  grid-template-columns: 2fr 1.5fr 1fr 1.5fr 1.5fr 0.8fr;
   background-color: #201624;
   padding: 12px 10px;
   font-weight: 600;
   font-size: 0.95rem;
   color: #ffffff;
   font-weight: bold;
-  
+
 }
 
-.platforms-table-header-title:hover{
+.platforms-table-header-title:hover {
   color: #00ffff;
   cursor: pointer;
 
@@ -359,7 +359,7 @@
 
 .platforms-table-row {
   display: grid;
-  grid-template-columns: 2fr 1.5fr 1fr 0.8fr;
+  grid-template-columns: 2fr 1.5fr 1fr 1.5fr 1.5fr 0.8fr;
   padding: 15px 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   align-items: center;
@@ -387,7 +387,7 @@
   justify-content: flex-start;
   gap: 10px;
   padding-left: 20px;
-  
+
 }
 
 .platforms-action-btn {
@@ -488,4 +488,53 @@
   color: #aaa;
   font-size: 16px;
   margin: 0;
+}
+
+/* Media Queries for responsive design */
+@media (max-width: 1200px) {
+
+  .platforms-table-header,
+  .platforms-table-row {
+    grid-template-columns: 2fr 1.5fr 1fr 1.5fr 0.8fr;
+  }
+
+  .platforms-column.updated-date {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+
+  .platforms-table-header,
+  .platforms-table-row {
+    grid-template-columns: 2fr 1.5fr 1fr 0.8fr;
+  }
+
+  .platforms-column.created-date {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .platforms-table-header,
+  .platforms-table-row {
+    grid-template-columns: 2fr 1fr 0.8fr;
+  }
+
+  .platforms-column.year {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .platforms-table-header,
+  .platforms-table-row {
+    grid-template-columns: 2fr 0.8fr;
+  }
+
+  .platforms-column.company {
+    display: none;
+  }
 }
