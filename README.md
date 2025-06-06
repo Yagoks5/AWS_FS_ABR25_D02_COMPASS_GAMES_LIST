@@ -6,7 +6,7 @@ A comprehensive game tracking application that allows users to manage their vide
 
 COMPASS Games List is a full-stack web application designed for gamers who want to maintain an organized digital catalog of their video game collection. The application helps users track their gaming progress, categorize games, and manage their gaming platforms - providing insights into their gaming habits and collection.
 
-## Contributors
+## 🤝 Contributors
 
 - [Yago Ronchi](https://github.com/Yagoks5)
 - [Yuri Knebel](https://github.com/YuriKnebel1)
@@ -71,6 +71,67 @@ COMPASS Games List is a full-stack web application designed for gamers who want 
 - **React Icons** - Icon library
 - **Axios** - HTTP client
 
+## 📁 Project Structure
+
+### Backend
+
+```
+backend/
+├── prisma/
+│   └── ...
+├── src/
+│   ├── controllers/
+│   ├── generated/prisma/
+│   ├── middleware/
+│   ├── routes/
+│   ├── services/
+│   ├── types/
+│   ├── utils/
+│   ├── app.ts
+│   └── server.ts
+├── .env
+├── .env.example
+├── .eslintrc.json
+├── .gitignore
+├── .prettierrc
+├── package.json
+├── package-lock.json
+└── tsconfig.json
+```
+
+### Frontend
+
+```
+frontend/
+├── node_modules/
+├── public/
+├── src/
+│   ├── components/
+│   ├── contexts/
+│   ├── hooks/
+│   ├── lib/
+│   ├── pages/
+│   ├── services/
+│   ├── types/
+│   ├── App.css
+│   ├── App.tsx
+│   ├── custom-toast.css
+│   ├── index.css
+│   ├── main.tsx
+│   └── vite-env.d.ts
+├── .gitignore
+├── .prettierrc
+├── eslint.config.js
+├── index.html
+├── package.json
+├── package-lock.json
+├── README.md
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+```
+
 ## 🚀 Setup & Installation
 
 ### Prerequisites
@@ -133,13 +194,7 @@ COMPASS Games List is a full-stack web application designed for gamers who want 
    npm install
    ```
 
-3. Create a `.env` file in the frontend directory with the following content:
-
-   ```
-   VITE_API_URL=http://localhost:3000
-   ```
-
-4. Start the development server:
+3. Start the development server:
 
    ```bash
    npm run dev
@@ -196,7 +251,3 @@ The application uses the following data models:
 ## 📄 License
 
 This project is licensed under the ISC License.
-
-## 👨‍💻 Author
-
-COMPASS UOL - AWS Full Stack Development Program
