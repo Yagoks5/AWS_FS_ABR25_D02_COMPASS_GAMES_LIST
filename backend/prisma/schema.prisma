@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -51,6 +50,7 @@ model Game {
   @@index([platformId])
   @@index([isFavorite])
   @@index([status])
+  @@unique([userId, title, isDeleted])
 }
 
 model Category {
@@ -66,6 +66,7 @@ model Category {
   games       Game[]
 
   @@index([userId])
+  @@unique([userId, name, isDeleted])
 
 }
 
@@ -84,6 +85,7 @@ model Platform {
   games           Game[]
 
   @@index([userId])
+  @@unique([userId, title, isDeleted])
  
 }
 

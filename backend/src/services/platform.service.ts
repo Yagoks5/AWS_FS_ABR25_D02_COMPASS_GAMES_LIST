@@ -1,4 +1,5 @@
-import { PrismaClient } from '../generated/prisma';
+import prisma from '../lib/prisma';
+import { BadRequestError, NotFoundError } from '../utils/appError';
 import {
   CreatePlatformData,
   UpdatePlatformData,
@@ -12,7 +13,7 @@ import {
 } from '../utils/pagination.utils';
 
 export class PlatformService {
-  private prisma = new PrismaClient();
+  private prisma = prisma;
 
   async createPlatform(
     userId: number,
@@ -34,7 +35,7 @@ export class PlatformService {
     );
 
     if (titleExists) {
-      throw new Error('A platform with this title already exists.');
+      throw new BadRequestError('A platform with this title already exists.');
     }
 
     const platform = await this.prisma.platform.create({
@@ -145,7 +146,7 @@ export class PlatformService {
     });
 
     if (!platform) {
-      throw new Error('Platform not found.');
+      throw new NotFoundError('Platform not found.');
     }
 
     return platform;
@@ -165,8 +166,9 @@ export class PlatformService {
     });
 
     if (!existingPlatform) {
-      throw new Error('Platform not found.');
-    }    if (updateData.title && updateData.title !== existingPlatform.title) {
+      throw new NotFoundError('Platform not found.');
+    }
+    if (updateData.title && updateData.title !== existingPlatform.title) {
       const otherPlatforms = await this.prisma.platform.findMany({
         where: {
           userId,
@@ -186,7 +188,7 @@ export class PlatformService {
       );
 
       if (titleExists) {
-        throw new Error('A platform with this title already exists.');
+        throw new BadRequestError('A platform with this title already exists.');
       }
     }
 
@@ -233,11 +235,11 @@ export class PlatformService {
     });
 
     if (!platform) {
-      throw new Error('Platform not found.');
+      throw new NotFoundError('Platform not found.');
     }
 
     if (platform._count.games > 0) {
-      throw new Error(
+      throw new BadRequestError(
         'Cannot delete platform that has games associated with it.',
       );
     }
@@ -252,7 +254,9 @@ export class PlatformService {
       },
     });
   }
-  async getAllPlatformsForUser(userId: number): Promise<PlatformWithGameCount[]> {
+  async getAllPlatformsForUser(
+    userId: number,
+  ): Promise<PlatformWithGameCount[]> {
     const platforms = await this.prisma.platform.findMany({
       where: {
         userId,

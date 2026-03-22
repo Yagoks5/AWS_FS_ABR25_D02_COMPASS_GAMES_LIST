@@ -1,10 +1,4 @@
-import {
-  Router,
-  Request,
-  Response,
-  NextFunction,
-  RequestHandler,
-} from 'express';
+import { Router } from 'express';
 import {
   createCategory,
   getCategories,
@@ -14,17 +8,13 @@ import {
   getAllCategories,
 } from '../controllers/categoryController';
 import { authenticateJWT } from '../middleware/auth.middleware';
-import { validateCategoryData } from '../middleware/validation.middleware';
+import {
+  validateCategoryData,
+  validateCategoryUpdateData,
+} from '../middleware/validation.middleware';
+import { asyncHandler } from '../utils/asyncHandler';
 
 const router = Router();
-
-const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>,
-): RequestHandler => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-};
 
 router.use(authenticateJWT);
 
@@ -36,7 +26,7 @@ router.get('/:id', asyncHandler(getCategoryById));
 
 router.post('/', validateCategoryData, asyncHandler(createCategory));
 
-router.put('/:id', validateCategoryData, asyncHandler(updateCategory));
+router.put('/:id', validateCategoryUpdateData, asyncHandler(updateCategory));
 
 router.delete('/:id', asyncHandler(deleteCategory));
 

@@ -1,8 +1,8 @@
-import { PrismaClient } from '../generated/prisma';
+import prisma from '../lib/prisma';
 import { DashboardStats, DashboardResponse } from '../types/dashboard.types';
 
 export class DashboardService {
-  private prisma = new PrismaClient();
+  private prisma = prisma;
 
   async getDashboardStats(userId: number): Promise<DashboardResponse> {
     const [totalGames, totalCategories, totalPlatforms, totalFavorites] =
@@ -40,10 +40,16 @@ export class DashboardService {
       },
     });
 
-    return gamesByStatus.reduce((acc, item) => {
-      acc[item.status] = item._count.status;
-      return acc;
-    }, {} as Record<string, number>);
+    const statusSummary: Record<string, number> = {};
+
+    for (const item of gamesByStatus as Array<{
+      status: string;
+      _count: { status: number };
+    }>) {
+      statusSummary[item.status] = item._count.status;
+    }
+
+    return statusSummary;
   }
 
   async getRecentGames(userId: number, limit: number = 5) {

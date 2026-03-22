@@ -1,11 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import { PlatformService } from '../services/platform.service';
+import { platformService } from '../services';
+import {
+  requireAuthenticatedUserId,
+  parseIdParam,
+  parseOptionalPositiveIntQueryParam,
+} from '../utils/request.utils';
 import {
   CreatePlatformData,
   UpdatePlatformData,
 } from '../types/platform.types';
-
-const platformService = new PlatformService();
+import logger from '../lib/logger';
 
 export const createPlatform = async (
   req: Request,
@@ -13,14 +17,7 @@ export const createPlatform = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
     const platformData: CreatePlatformData = req.body;
 
     const platform = await platformService.createPlatform(userId, platformData);
@@ -31,15 +28,6 @@ export const createPlatform = async (
       data: platform,
     });
   } catch (error) {
-    console.error('Create platform error:', error);
-
-    if (error instanceof Error) {
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-      return;
-    }
     next(error);
   }
 };
@@ -50,20 +38,15 @@ export const getPlatforms = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
     const { page, limit } = req.query;
+    const parsedPage = parseOptionalPositiveIntQueryParam(page, 'page');
+    const parsedLimit = parseOptionalPositiveIntQueryParam(limit, 'limit');
 
     const result = await platformService.getPlatformsPaginated(
       userId,
-      page ? Number(page) : undefined,
-      limit ? Number(limit) : undefined,
+      parsedPage,
+      parsedLimit,
     );
 
     res.status(200).json({
@@ -73,7 +56,7 @@ export const getPlatforms = async (
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Get platforms error:', error);
+    logger.error({ err: error }, 'Get platforms failed');
     next(error);
   }
 };
@@ -84,23 +67,8 @@ export const getPlatformById = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
-    const platformId = parseInt(req.params.id, 10);
-
-    if (isNaN(platformId)) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid platform ID',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
+    const platformId = parseIdParam(req.params.id, 'platform');
 
     const platform = await platformService.getPlatformById(userId, platformId);
 
@@ -110,22 +78,6 @@ export const getPlatformById = async (
       data: platform,
     });
   } catch (error) {
-    console.error('Get platform by ID error:', error);
-
-    if (error instanceof Error) {
-      if (error.message.includes('not found')) {
-        res.status(404).json({
-          success: false,
-          message: error.message,
-        });
-        return;
-      }
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-      return;
-    }
     next(error);
   }
 };
@@ -136,24 +88,9 @@ export const updatePlatform = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
-    const platformId = parseInt(req.params.id, 10);
+    const userId = requireAuthenticatedUserId(req);
+    const platformId = parseIdParam(req.params.id, 'platform');
     const updateData: UpdatePlatformData = req.body;
-
-    if (isNaN(platformId)) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid platform ID',
-      });
-      return;
-    }
 
     const platform = await platformService.updatePlatform(
       userId,
@@ -167,22 +104,6 @@ export const updatePlatform = async (
       data: platform,
     });
   } catch (error) {
-    console.error('Update platform error:', error);
-
-    if (error instanceof Error) {
-      if (error.message.includes('not found')) {
-        res.status(404).json({
-          success: false,
-          message: error.message,
-        });
-        return;
-      }
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-      return;
-    }
     next(error);
   }
 };
@@ -193,24 +114,8 @@ export const deletePlatform = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
-
-    const platformId = parseInt(req.params.id, 10);
-
-    if (isNaN(platformId)) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid platform ID',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
+    const platformId = parseIdParam(req.params.id, 'platform');
 
     await platformService.deletePlatform(userId, platformId);
 
@@ -219,22 +124,6 @@ export const deletePlatform = async (
       message: 'Platform deleted successfully',
     });
   } catch (error) {
-    console.error('Delete platform error:', error);
-
-    if (error instanceof Error) {
-      if (error.message.includes('not found')) {
-        res.status(404).json({
-          success: false,
-          message: error.message,
-        });
-        return;
-      }
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-      return;
-    }
     next(error);
   }
 };
@@ -245,14 +134,7 @@ export const getAllPlatforms = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
 
     const platforms = await platformService.getAllPlatformsForUser(userId);
 
@@ -262,7 +144,6 @@ export const getAllPlatforms = async (
       data: platforms,
     });
   } catch (error) {
-    console.error('Get all platforms error:', error);
     next(error);
   }
 };

@@ -1,10 +1,4 @@
-import {
-  Router,
-  Request,
-  Response,
-  NextFunction,
-  RequestHandler,
-} from 'express';
+import { Router } from 'express';
 import {
   createPlatform,
   getPlatforms,
@@ -14,17 +8,13 @@ import {
   getAllPlatforms,
 } from '../controllers/platformController';
 import { authenticateJWT } from '../middleware/auth.middleware';
-import { validatePlatformData } from '../middleware/validation.middleware';
+import {
+  validatePlatformData,
+  validatePlatformUpdateData,
+} from '../middleware/validation.middleware';
+import { asyncHandler } from '../utils/asyncHandler';
 
 const router = Router();
-
-const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>,
-): RequestHandler => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-};
 
 router.use(authenticateJWT);
 
@@ -36,7 +26,7 @@ router.get('/:id', asyncHandler(getPlatformById));
 
 router.post('/', validatePlatformData, asyncHandler(createPlatform));
 
-router.put('/:id', validatePlatformData, asyncHandler(updatePlatform));
+router.put('/:id', validatePlatformUpdateData, asyncHandler(updatePlatform));
 
 router.delete('/:id', asyncHandler(deletePlatform));
 

@@ -2,10 +2,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import app from './app';
+import logger from './lib/logger';
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Health check URL: http://localhost:${PORT}/health`);
+  logger.info({ port: PORT }, 'Server is running');
+  logger.info(
+    { healthUrl: `http://localhost:${PORT}/health` },
+    'Health check endpoint',
+  );
 });

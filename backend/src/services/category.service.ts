@@ -1,4 +1,5 @@
-import { PrismaClient } from '../generated/prisma';
+import prisma from '../lib/prisma';
+import { BadRequestError, NotFoundError } from '../utils/appError';
 import {
   Category,
   CreateCategoryData,
@@ -13,7 +14,7 @@ import {
 } from '../utils/pagination.utils';
 
 export class CategoryService {
-  private prisma = new PrismaClient();
+  private prisma = prisma;
 
   async createCategory(
     userId: number,
@@ -35,7 +36,7 @@ export class CategoryService {
     );
 
     if (nameExists) {
-      throw new Error('A category with this name already exists.');
+      throw new BadRequestError('A category with this name already exists.');
     }
 
     const category = await this.prisma.category.create({
@@ -141,7 +142,7 @@ export class CategoryService {
     });
 
     if (!category) {
-      throw new Error('Category not found.');
+      throw new NotFoundError('Category not found.');
     }
 
     return category;
@@ -161,7 +162,7 @@ export class CategoryService {
     });
 
     if (!existingCategory) {
-      throw new Error('Category not found.');
+      throw new NotFoundError('Category not found.');
     }
 
     if (updateData.name && updateData.name !== existingCategory.name) {
@@ -184,7 +185,7 @@ export class CategoryService {
       );
 
       if (nameExists) {
-        throw new Error('A category with this name already exists.');
+        throw new BadRequestError('A category with this name already exists.');
       }
     }
 
@@ -229,11 +230,11 @@ export class CategoryService {
     });
 
     if (!category) {
-      throw new Error('Category not found.');
+      throw new NotFoundError('Category not found.');
     }
 
     if (category._count.games > 0) {
-      throw new Error(
+      throw new BadRequestError(
         'Cannot delete category that has games associated with it.',
       );
     }
@@ -248,7 +249,9 @@ export class CategoryService {
       },
     });
   }
-  async getAllCategoriesForUser(userId: number): Promise<CategoryWithGameCount[]> {
+  async getAllCategoriesForUser(
+    userId: number,
+  ): Promise<CategoryWithGameCount[]> {
     const categories = await this.prisma.category.findMany({
       where: {
         userId,

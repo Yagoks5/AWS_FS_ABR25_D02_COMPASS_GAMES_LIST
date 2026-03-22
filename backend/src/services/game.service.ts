@@ -1,4 +1,6 @@
-import { PrismaClient, GameStatus } from '../generated/prisma';
+import { GameStatus } from '@prisma/client';
+import prisma from '../lib/prisma';
+import { BadRequestError, NotFoundError } from '../utils/appError';
 import {
   CreateGameData,
   UpdateGameData,
@@ -12,7 +14,7 @@ import {
 } from '../utils/pagination.utils';
 
 export class GameService {
-  private prisma = new PrismaClient();
+  private prisma = prisma;
 
   async createGame(
     userId: number,
@@ -33,14 +35,14 @@ export class GameService {
     );
 
     if (titleExists) {
-      throw new Error('A game with this title already exists.');
+      throw new BadRequestError('A game with this title already exists.');
     }
 
     const category = await this.prisma.category.findFirst({
       where: { id: gameData.categoryId, userId, isDeleted: false },
     });
     if (!category) {
-      throw new Error('Category not found or access denied.');
+      throw new NotFoundError('Category not found or access denied.');
     }
 
     if (gameData.platformId) {
@@ -48,7 +50,7 @@ export class GameService {
         where: { id: gameData.platformId, userId, isDeleted: false },
       });
       if (!platform) {
-        throw new Error('Platform not found or access denied.');
+        throw new NotFoundError('Platform not found or access denied.');
       }
     }
 
@@ -59,12 +61,14 @@ export class GameService {
       finalFinishDate = null;
     } else {
       if (!finalFinishDate) {
-        throw new Error(
+        throw new BadRequestError(
           'Finish date is required for Done or Abandoned status.',
         );
       }
       if (finalFinishDate < new Date(gameData.acquisitionDate)) {
-        throw new Error('Finish date cannot be earlier than acquisition date.');
+        throw new BadRequestError(
+          'Finish date cannot be earlier than acquisition date.',
+        );
       }
     }
 
@@ -110,30 +114,23 @@ export class GameService {
 
     const whereClause: any = { userId, isDeleted: false };
 
-    let searchMatchingIds: number[] | undefined;
     if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      const allUserGames = await this.prisma.game.findMany({
-        where: { userId, isDeleted: false },
-        select: { id: true, title: true, description: true },
-      });
+      const searchTerm = filters.search.trim();
 
-      searchMatchingIds = allUserGames
-        .filter(
-          (game) =>
-            game.title.toLowerCase().includes(searchLower) ||
-            (game.description &&
-              game.description.toLowerCase().includes(searchLower)),
-        )
-        .map((game) => game.id);
-
-      if (searchMatchingIds.length === 0) {
-        return createPaginationResult([], 0, currentPage, currentLimit);
+      if (searchTerm.length > 0) {
+        whereClause.OR = [
+          {
+            title: {
+              contains: searchTerm,
+            },
+          },
+          {
+            description: {
+              contains: searchTerm,
+            },
+          },
+        ];
       }
-    }
-
-    if (searchMatchingIds) {
-      whereClause.id = { in: searchMatchingIds };
     }
     if (filters.categoryId) {
       whereClause.categoryId = filters.categoryId;
@@ -202,7 +199,7 @@ export class GameService {
       },
     });
     if (!game) {
-      throw new Error('Game not found or access denied.');
+      throw new NotFoundError('Game not found or access denied.');
     }
     return game as GameResponse;
   }
@@ -217,7 +214,7 @@ export class GameService {
     });
 
     if (!game) {
-      throw new Error('Game not found or access denied.');
+      throw new NotFoundError('Game not found or access denied.');
     }
 
     if (updateData.categoryId) {
@@ -225,7 +222,7 @@ export class GameService {
         where: { id: updateData.categoryId, userId, isDeleted: false },
       });
       if (!category) {
-        throw new Error('Category not found or access denied.');
+        throw new NotFoundError('Category not found or access denied.');
       }
     }
 
@@ -235,7 +232,7 @@ export class GameService {
           where: { id: updateData.platformId, userId, isDeleted: false },
         });
         if (!platform) {
-          throw new Error('Platform not found or access denied.');
+          throw new NotFoundError('Platform not found or access denied.');
         }
       }
     }
@@ -260,7 +257,7 @@ export class GameService {
       );
 
       if (titleExists) {
-        throw new Error('A game with this title already exists.');
+        throw new BadRequestError('A game with this title already exists.');
       }
     }
 
@@ -279,12 +276,14 @@ export class GameService {
       currentStatus === GameStatus.Abandoned
     ) {
       if (updateData.finishDate === undefined && game.finishDate === null) {
-        throw new Error(
+        throw new BadRequestError(
           'Finish date is required for Done or Abandoned status.',
         );
       }
       if (finalFinishDate && finalFinishDate < currentAcquisitionDate) {
-        throw new Error('Finish date cannot be earlier than acquisition date.');
+        throw new BadRequestError(
+          'Finish date cannot be earlier than acquisition date.',
+        );
       }
     }
 
@@ -299,7 +298,7 @@ export class GameService {
         platformId:
           updateData.platformId === null
             ? null
-            : updateData.platformId ?? undefined,
+            : (updateData.platformId ?? undefined),
         updatedAt: new Date(),
       },
       select: {
@@ -326,7 +325,7 @@ export class GameService {
     });
 
     if (!game) {
-      throw new Error('Game not found or access denied.');
+      throw new NotFoundError('Game not found or access denied.');
     }
 
     await this.prisma.game.update({

@@ -1,7 +1,8 @@
-import { PrismaClient } from '../generated/prisma';
+import prisma from '../lib/prisma';
 import bcrypt from 'bcryptjs';
 import { RegisterRequest } from '../types/auth.types';
 import { generateToken } from '../utils/jwt.utils';
+import { BadRequestError, UnauthorizedError } from '../utils/appError';
 import { User } from '../types/user.types';
 import type { AuthResponse } from '../types/auth.types';
 import {
@@ -12,24 +13,28 @@ import {
 } from '../utils/validation.utils';
 
 export class AuthService {
-  private prisma = new PrismaClient();
+  private prisma = prisma;
 
   async registerUser(userData: RegisterRequest): Promise<User> {
     const { fullName, email, password, confirmPassword } = userData;
 
     const fullNameValidation = validateFullName(fullName);
     if (!fullNameValidation.isValid) {
-      throw new Error(fullNameValidation.message);
+      throw new BadRequestError(
+        fullNameValidation.message ?? 'Invalid full name.',
+      );
     }
 
     const emailValidation = validateEmail(email);
     if (!emailValidation.isValid) {
-      throw new Error(emailValidation.message);
+      throw new BadRequestError(emailValidation.message ?? 'Invalid email.');
     }
 
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.isValid) {
-      throw new Error(passwordValidation.message);
+      throw new BadRequestError(
+        passwordValidation.message ?? 'Invalid password.',
+      );
     }
 
     const passwordConfirmationValidation = validatePasswordConfirmation(
@@ -38,7 +43,10 @@ export class AuthService {
     );
 
     if (!passwordConfirmationValidation.isValid) {
-      throw new Error(passwordConfirmationValidation.message);
+      throw new BadRequestError(
+        passwordConfirmationValidation.message ??
+          'Password confirmation does not match.',
+      );
     }
 
     const existingUser = await this.prisma.user.findFirst({
@@ -46,7 +54,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new Error('User with this email already exists.');
+      throw new BadRequestError('User with this email already exists.');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -73,19 +81,20 @@ export class AuthService {
     password: string,
   ): Promise<AuthResponse> {
     if (!email || !password) {
-      throw new Error('Email and password are required.');
+      throw new BadRequestError('Email and password are required.');
     }
 
     const user = await this.prisma.user.findFirst({
       where: { email: email.toLowerCase().trim(), isDeleted: false },
-    });    if (!user) {
-      throw new Error('Invalid email or password');
+    });
+    if (!user) {
+      throw new UnauthorizedError('Invalid email or password');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new Error('Invalid email or password');
+      throw new UnauthorizedError('Invalid email or password');
     }
 
     const token = generateToken({ userId: user.id, email: user.email });
