@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { verifyToken } from '../utils/jwt.utils';
+import { UnauthorizedError } from '../utils/appError';
 
 export const authenticateJWT = async (
   req: Request,
@@ -10,10 +12,7 @@ export const authenticateJWT = async (
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      res.status(401).json({
-        success: false,
-        message: 'Token required',
-      });
+      next(new UnauthorizedError('Token required'));
       return;
     }
 
@@ -26,9 +25,16 @@ export const authenticateJWT = async (
     };
     next();
   } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: 'Invalid token',
-    });
+    if (error instanceof TokenExpiredError) {
+      next(new UnauthorizedError('Token expired'));
+      return;
+    }
+
+    if (error instanceof JsonWebTokenError) {
+      next(new UnauthorizedError('Invalid token'));
+      return;
+    }
+
+    next(error);
   }
 };

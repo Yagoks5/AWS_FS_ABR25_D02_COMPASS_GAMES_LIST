@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { DashboardService } from '../services/dashboard.service';
+import { dashboardService } from '../services';
+import {
+  requireAuthenticatedUserId,
+  parseOptionalPositiveIntQueryParam,
+} from '../utils/request.utils';
 
-const dashboardService = new DashboardService();
+const MAX_RECENT_GAMES_LIMIT = 100;
 
 export const getDashboardStats = async (
   req: Request,
@@ -9,14 +13,7 @@ export const getDashboardStats = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
     const dashboardData = await dashboardService.getDashboardStats(userId);
 
     res.status(200).json({
@@ -25,7 +22,6 @@ export const getDashboardStats = async (
       data: dashboardData,
     });
   } catch (error) {
-    console.error('Get dashboard stats error:', error);
     next(error);
   }
 };
@@ -36,14 +32,7 @@ export const getGamesByStatus = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
     const gamesByStatus = await dashboardService.getGamesByStatus(userId);
 
     res.status(200).json({
@@ -52,7 +41,6 @@ export const getGamesByStatus = async (
       data: gamesByStatus,
     });
   } catch (error) {
-    console.error('Get games by status error:', error);
     next(error);
   }
 };
@@ -63,15 +51,14 @@ export const getRecentGames = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
-    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 5;
+    const userId = requireAuthenticatedUserId(req);
+    const requestedLimit = parseOptionalPositiveIntQueryParam(
+      req.query.limit,
+      'limit',
+    );
+
+    const limit = Math.min(requestedLimit ?? 5, MAX_RECENT_GAMES_LIMIT);
+
     const recentGames = await dashboardService.getRecentGames(userId, limit);
 
     res.status(200).json({
@@ -80,7 +67,6 @@ export const getRecentGames = async (
       data: recentGames,
     });
   } catch (error) {
-    console.error('Get recent games error:', error);
     next(error);
   }
 };

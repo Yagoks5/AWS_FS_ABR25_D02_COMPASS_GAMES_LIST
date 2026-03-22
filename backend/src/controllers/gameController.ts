@@ -1,13 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
-import { GameService } from '../services/game.service';
+import { gameService } from '../services';
+import {
+  requireAuthenticatedUserId,
+  parseIdParam,
+  parseOptionalPositiveIntQueryParam,
+} from '../utils/request.utils';
 import {
   CreateGameData,
   UpdateGameData,
   GameFilters,
   GameStatus,
 } from '../types/game.types';
-
-const gameService = new GameService();
+import logger from '../lib/logger';
 
 export const createGame = async (
   req: Request,
@@ -15,14 +19,7 @@ export const createGame = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
     const gameData: CreateGameData = req.body;
     const game = await gameService.createGame(userId, gameData);
     res.status(201).json({
@@ -31,11 +28,6 @@ export const createGame = async (
       data: game,
     });
   } catch (error) {
-    console.error('Create game error:', error);
-    if (error instanceof Error) {
-      res.status(400).json({ success: false, message: error.message });
-      return;
-    }
     next(error);
   }
 };
@@ -46,35 +38,34 @@ export const getGames = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
     const { page, limit, search, categoryId, platformId, status, isFavorite } =
       req.query;
 
+    const parsedCategoryId = parseOptionalPositiveIntQueryParam(
+      categoryId,
+      'categoryId',
+    );
+    const parsedPlatformId = parseOptionalPositiveIntQueryParam(
+      platformId,
+      'platformId',
+    );
+    const parsedPage = parseOptionalPositiveIntQueryParam(page, 'page');
+    const parsedLimit = parseOptionalPositiveIntQueryParam(limit, 'limit');
+
     const filters: GameFilters = {
       search: search as string | undefined,
-      categoryId: categoryId ? parseInt(categoryId as string, 10) : undefined,
-      platformId: platformId ? parseInt(platformId as string, 10) : undefined,
+      categoryId: parsedCategoryId,
+      platformId: parsedPlatformId,
       status: status as GameStatus | undefined,
       isFavorite: isFavorite !== undefined ? isFavorite === 'true' : undefined,
     };
 
-    if (filters.categoryId && isNaN(filters.categoryId))
-      delete filters.categoryId;
-    if (filters.platformId && isNaN(filters.platformId))
-      delete filters.platformId;
-
     const result = await gameService.getGamesPaginated(
       userId,
       filters,
-      page ? Number(page) : undefined,
-      limit ? Number(limit) : undefined,
+      parsedPage,
+      parsedLimit,
     );
     res.status(200).json({
       success: true,
@@ -83,7 +74,7 @@ export const getGames = async (
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Get games error:', error);
+    logger.error({ err: error }, 'Get games failed');
     next(error);
   }
 };
@@ -94,19 +85,8 @@ export const getGameById = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
-    const gameId = parseInt(req.params.id, 10);
-    if (isNaN(gameId)) {
-      res.status(400).json({ success: false, message: 'Invalid game ID' });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
+    const gameId = parseIdParam(req.params.id, 'game');
     const game = await gameService.getGameById(userId, gameId);
     res.status(200).json({
       success: true,
@@ -114,14 +94,7 @@ export const getGameById = async (
       data: game,
     });
   } catch (error) {
-    console.error('Get game by ID error:', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ success: false, message: error.message });
-    } else if (error instanceof Error) {
-      res.status(400).json({ success: false, message: error.message });
-    } else {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -131,18 +104,8 @@ export const updateGame = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res
-        .status(401)
-        .json({ success: false, message: 'User not authenticated' });
-      return;
-    }
-    const gameId = parseInt(req.params.id, 10);
-    if (isNaN(gameId)) {
-      res.status(400).json({ success: false, message: 'Invalid game ID' });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
+    const gameId = parseIdParam(req.params.id, 'game');
     const updateData: UpdateGameData = req.body;
     const game = await gameService.updateGame(userId, gameId, updateData);
     res.status(200).json({
@@ -151,14 +114,7 @@ export const updateGame = async (
       data: game,
     });
   } catch (error) {
-    console.error('Update game error:', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ success: false, message: error.message });
-    } else if (error instanceof Error) {
-      res.status(400).json({ success: false, message: error.message });
-    } else {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -168,31 +124,14 @@ export const deleteGame = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res
-        .status(401)
-        .json({ success: false, message: 'User not authenticated' });
-      return;
-    }
-    const gameId = parseInt(req.params.id, 10);
-    if (isNaN(gameId)) {
-      res.status(400).json({ success: false, message: 'Invalid game ID' });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
+    const gameId = parseIdParam(req.params.id, 'game');
     await gameService.deleteGame(userId, gameId);
     res.status(200).json({
       success: true,
       message: 'Game deleted successfully',
     });
   } catch (error) {
-    console.error('Delete game error:', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ success: false, message: error.message });
-    } else if (error instanceof Error) {
-      res.status(400).json({ success: false, message: error.message });
-    } else {
-      next(error);
-    }
+    next(error);
   }
 };

@@ -25,6 +25,49 @@ export const validateCategoryData = (
   next();
 };
 
+export const validateCategoryUpdateData = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const { name, description } = req.body;
+
+  if (name === undefined && description === undefined) {
+    res.status(400).json({
+      success: false,
+      message: 'At least one field must be provided to update category.',
+    });
+    return;
+  }
+
+  if (name !== undefined) {
+    if (typeof name !== 'string' || name.trim().length < 3) {
+      res.status(400).json({
+        success: false,
+        message: 'Category name must be at least 3 characters long.',
+      });
+      return;
+    }
+    req.body.name = name.trim();
+  }
+
+  if (description !== undefined) {
+    if (description !== null && typeof description !== 'string') {
+      res.status(400).json({
+        success: false,
+        message: 'Category description must be a string or null.',
+      });
+      return;
+    }
+
+    if (typeof description === 'string') {
+      req.body.description = description.trim();
+    }
+  }
+
+  next();
+};
+
 export const validatePlatformData = (
   req: Request,
   res: Response,
@@ -44,6 +87,80 @@ export const validatePlatformData = (
   req.body.title = title.trim();
   if (req.body.company) {
     req.body.company = req.body.company.trim();
+  }
+
+  next();
+};
+
+export const validatePlatformUpdateData = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const { title, company, acquisitionYear, imageUrl } = req.body;
+
+  if (
+    title === undefined &&
+    company === undefined &&
+    acquisitionYear === undefined &&
+    imageUrl === undefined
+  ) {
+    res.status(400).json({
+      success: false,
+      message: 'At least one field must be provided to update platform.',
+    });
+    return;
+  }
+
+  if (title !== undefined) {
+    if (typeof title !== 'string' || title.trim().length < 3) {
+      res.status(400).json({
+        success: false,
+        message: 'Platform title must be at least 3 characters long.',
+      });
+      return;
+    }
+    req.body.title = title.trim();
+  }
+
+  if (company !== undefined) {
+    if (company !== null && typeof company !== 'string') {
+      res.status(400).json({
+        success: false,
+        message: 'Platform company must be a string or null.',
+      });
+      return;
+    }
+
+    if (typeof company === 'string') {
+      req.body.company = company.trim();
+    }
+  }
+
+  if (
+    acquisitionYear !== undefined &&
+    acquisitionYear !== null &&
+    !Number.isInteger(acquisitionYear)
+  ) {
+    res.status(400).json({
+      success: false,
+      message: 'Acquisition year must be an integer or null.',
+    });
+    return;
+  }
+
+  if (imageUrl !== undefined) {
+    if (imageUrl !== null && typeof imageUrl !== 'string') {
+      res.status(400).json({
+        success: false,
+        message: 'Platform imageUrl must be a string or null.',
+      });
+      return;
+    }
+
+    if (typeof imageUrl === 'string') {
+      req.body.imageUrl = imageUrl.trim();
+    }
   }
 
   next();

@@ -1,11 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import { CategoryService } from '../services/category.service';
+import { categoryService } from '../services';
+import {
+  requireAuthenticatedUserId,
+  parseIdParam,
+  parseOptionalPositiveIntQueryParam,
+} from '../utils/request.utils';
 import {
   CreateCategoryData,
   UpdateCategoryData,
 } from '../types/category.types';
-
-const categoryService = new CategoryService();
+import logger from '../lib/logger';
 
 export const createCategory = async (
   req: Request,
@@ -13,14 +17,7 @@ export const createCategory = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
     const categoryData: CreateCategoryData = req.body;
 
     const category = await categoryService.createCategory(userId, categoryData);
@@ -31,16 +28,6 @@ export const createCategory = async (
       data: category,
     });
   } catch (error) {
-    console.error('Create category error:', error);
-
-    if (error instanceof Error) {
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-      return;
-    }
-
     next(error);
   }
 };
@@ -51,20 +38,15 @@ export const getCategories = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
     const { page, limit } = req.query;
+    const parsedPage = parseOptionalPositiveIntQueryParam(page, 'page');
+    const parsedLimit = parseOptionalPositiveIntQueryParam(limit, 'limit');
 
     const result = await categoryService.getCategoriesPaginated(
       userId,
-      page ? Number(page) : undefined,
-      limit ? Number(limit) : undefined,
+      parsedPage,
+      parsedLimit,
     );
 
     res.status(200).json({
@@ -74,7 +56,7 @@ export const getCategories = async (
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Get categories error:', error);
+    logger.error({ err: error }, 'Get categories failed');
     next(error);
   }
 };
@@ -85,23 +67,8 @@ export const getCategoryById = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
-    const categoryId = parseInt(req.params.id, 10);
-
-    if (isNaN(categoryId)) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid category ID',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
+    const categoryId = parseIdParam(req.params.id, 'category');
 
     const category = await categoryService.getCategoryById(userId, categoryId);
 
@@ -111,16 +78,6 @@ export const getCategoryById = async (
       data: category,
     });
   } catch (error) {
-    console.error('Get category by ID error:', error);
-
-    if (error instanceof Error) {
-      res.status(404).json({
-        success: false,
-        message: error.message,
-      });
-      return;
-    }
-
     next(error);
   }
 };
@@ -131,24 +88,9 @@ export const updateCategory = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
-    const categoryId = parseInt(req.params.id, 10);
+    const userId = requireAuthenticatedUserId(req);
+    const categoryId = parseIdParam(req.params.id, 'category');
     const updateData: UpdateCategoryData = req.body;
-
-    if (isNaN(categoryId)) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid category ID',
-      });
-      return;
-    }
 
     const category = await categoryService.updateCategory(
       userId,
@@ -162,16 +104,6 @@ export const updateCategory = async (
       data: category,
     });
   } catch (error) {
-    console.error('Update category error:', error);
-
-    if (error instanceof Error) {
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-      return;
-    }
-
     next(error);
   }
 };
@@ -182,23 +114,8 @@ export const deleteCategory = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
-    const categoryId = parseInt(req.params.id, 10);
-
-    if (isNaN(categoryId)) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid category ID',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
+    const categoryId = parseIdParam(req.params.id, 'category');
 
     await categoryService.deleteCategory(userId, categoryId);
 
@@ -207,16 +124,6 @@ export const deleteCategory = async (
       message: 'Category deleted successfully',
     });
   } catch (error) {
-    console.error('Delete category error:', error);
-
-    if (error instanceof Error) {
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-      return;
-    }
-
     next(error);
   }
 };
@@ -227,14 +134,7 @@ export const getAllCategories = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User not authenticated',
-      });
-      return;
-    }
+    const userId = requireAuthenticatedUserId(req);
 
     const categories = await categoryService.getAllCategoriesForUser(userId);
 
@@ -244,7 +144,6 @@ export const getAllCategories = async (
       data: categories,
     });
   } catch (error) {
-    console.error('Get all categories error:', error);
     next(error);
   }
 };
