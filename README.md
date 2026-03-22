@@ -139,6 +139,28 @@ frontend/
 - Node.js (v18 or higher)
 - npm (v8 or higher)
 
+### Run Frontend + Backend With One Command
+
+1. Install dependencies for the root scripts:
+
+   ```bash
+   npm install
+   ```
+
+2. Run both apps in one command:
+
+   ```bash
+   npm run dev:setup
+   ```
+
+   This command installs frontend and backend dependencies (if needed), generates Prisma Client, and starts both dev servers together.
+
+3. For next runs, you can use only:
+
+   ```bash
+   npm run dev
+   ```
+
 ### Backend Setup
 
 1. Navigate to the backend directory:
